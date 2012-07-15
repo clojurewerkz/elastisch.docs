@@ -1,6 +1,6 @@
-# Project Name Documentation
+# Elastisch Documentation
 
-This is a documentation site for [Project Name]. Copy or clone me and adapt for your project
+This is a documentation site for [Elastisch](http://github.com/clojurewerkz/elastisch). Copy or clone me and adapt for your project
 that needs documentation guides similar to [rubyamqp.info](http://rubyamqp.info), [clojuremongodb.info](http://clojuremongodb.info) and so on.
 
 
@@ -13,18 +13,15 @@ With Bundler:
 
 ## How to run a development server
 
-    ./bin/jekyll --server
+    ./bin/jekyll --auto --server
 
 
 ## How to regenerate the site
 
-In order to modify contents and launch dev environment, run:
+In order to regenerate the entire site, run:
 
-      ./bin/jekyll
+      ./bin/jekyll --no-auto
 
-In order to recompile haml and sass files for publishing, run
-
-      ./recompile_haml.sh
 
 ## License & Copyright
 
