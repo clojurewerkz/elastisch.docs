@@ -47,7 +47,7 @@ Monger artifacts are [released to Clojars](https://clojars.org/clojurewerkz/elas
 
 ### With Leiningen
 
-    [clojurewerkz/elastisch "1.0.0-alpha4"]
+    [clojurewerkz/elastisch "1.0.0-beta1"]
 
 ### With Maven
 
@@ -60,7 +60,7 @@ And then the dependency:
     <dependency>
       <groupId>clojurewerkz</groupId>
       <artifactId>elastisch</artifactId>
-      <version>1.0.0-alpha4</version>
+      <version>1.0.0-beta1</version>
     </dependency>
 
 It is recommended to stay up-to-date with new versions. New releases and important changes are announced [@ClojureWerkz](http://twitter.com/ClojureWerkz).
@@ -119,7 +119,25 @@ Please refer to the [Indexing guide](/articles/indexing.html) for more informati
 
 ### Indexing documents
 
+To add a document to an index, use the `clojurewerkz.elastisch.rest.document/create` function. This will cause document id to be generated
+automatically:
+
+{% gist 09098979301600a233a7 %}
+
+`clojurewerkz.elastisch.rest.document/put` will add a document to the index but expects document id to be provided:
+
+{% gist 17e77615e93abad1b109 %}
+
 TBD
+
+
+### Checking responses
+
+`clojurewerkz.elastisch.rest.document/create`, `clojurewerkz.elastisch.rest.document/put`, `clojurewerkz.elastisch.rest.index/create` and other functions
+return ElasticSearch responses as Clojure maps. To check if they are successful, use functions in the `clojurewerkz.elastisch.rest.response` namespace,
+for example, `clojurewerkz.elastisch.rest.response/ok?` or `clojurewerkz.elastisch.rest.response/conflict?`:
+
+{% gist 3696c16de1665fe6f055 %}
 
 
 
