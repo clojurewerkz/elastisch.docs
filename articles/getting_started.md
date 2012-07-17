@@ -19,7 +19,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Elastisch does this guide cover?
 
-This guide covers Elastisch 1.0.0-alpha4 and later 1.0.x preview releases.
+This guide covers Elastisch 1.0 preview releases.
 
 
 
@@ -145,23 +145,163 @@ for example, `clojurewerkz.elastisch.rest.response/ok?` or `clojurewerkz.elastis
 
 ### Overview
 
-TBD
+ElasticSearch supports [multiple kinds of queries](http://www.elasticsearch.org/guide/reference/query-dsl/): from simple like term and prefix query to compound like the bool query. Some queries can also have
+filters associated with them.
 
 
 ### Performing queries
 
-TBD
+To perform a query with Elastisch, use the `clojurewerkz.elastisch.rest.document/search` function. It takes index name, mapping name and query
+(as a Clojure map):
+
+{% gist 1dfaf5fa28a46712c41a %}
+
+Queries with Elastisch have exactly the same structure as JSON documents in the [ElasticSearch Query API guide](http://www.elasticsearch.org/guide/reference/query-dsl/)
+but passed as Clojure maps. You can either pass the entire query as a map or use one or more convenience functions from the `clojurewerkz.elastisch.query` namespace
+(more on them later in this guide).
+
+The example from above can also be written like so:
+
+{% gist a0b3f8e653769688e1dd %}
+
+Results returned by this function have the same structure as ElasticSearch JSON responses:
+
+{% gist 5e0892e1fd56a33f3083 %}
+
+Several functions in the `clojurewerkz.elastisch.rest.response` namespace can be used to access more specific piece of information from a response,
+such as total number of hits.
+
+The most commonly used are:
+
+ * `clojurewerkz.elastisch.rest.response/total-hits`: returns number of hits (documents found)
+ * `clojurewerkz.elastisch.rest.response/hits-from`: returns a collection of hits (stored document plus id, score and index information)
+ * `clojurewerkz.elastisch.rest.response/any-hits?`: returns true if there is at least one document found
+ * `clojurewerkz.elastisch.rest.response/no-hits?` is a [complement function](http://clojuredocs.org/clojure_core/clojure.core/complement) to `any-hits?`
+ * `clojurewerkz.elastisch.rest.response/ids-from`: returns a collection of document ids collected from hits
+
+All of them take a response map as the only argument.
 
 
 ### Different kinds of queries
 
+ElasticSearch is a feature rich search engine and it supports many types of queries. Even though
+all queries can be passed as Clojure maps, it is common to use convenient functions from the
+`clojurewerkz.elastisch.query` to construct queries.
+
+We won't cover all the functions in this guide but will take a closer look at a few of them:
+
+#### Term query
+
+[Term query]() matches documents that have fields that contain a term (exactly as given, not analyzed).
+
+Short example:
+
+{% gist fc01bb14221852a4175d %}
+
+Raw query:
+
+{% gist e47f48e9f2879e9285f8 %}
+
+TBD: full example
+
+#### Query string query
+
+[Query string query](http://www.elasticsearch.org/guide/reference/query-dsl/query-string-query.html) parses provided query string using a query parser. It supports Lucene query language
+expressions such as "this AND that OR thus":
+
+Short example:
+
+{% gist e9613b3f2c5b9141ff23 %}
+
+Raw query:
+
+{% gist f469349de876d1122883 %}
+
+TBD: full example
+
+#### Range query
+
 TBD
+
+Short example:
+
+{% gist  %}
+
+Raw query:
+
+{% gist  %}
+
+TBD: full example
+
+#### Boolean (bool) query
+
+TBD
+
+Short example:
+
+{% gist  %}
+
+Raw query:
+
+{% gist  %}
+
+TBD: full example
+
+#### IDs query
+
+TBD
+
+Short example:
+
+{% gist  %}
+
+Raw query:
+
+{% gist  %}
+
+TBD: full example
+
+#### Field query
+
+TBD
+
+Short example:
+
+{% gist  %}
+
+Raw query:
+
+{% gist  %}
+
+TBD: full example
+
+#### More Like This query
+
+TBD
+
+Short example:
+
+{% gist  %}
+
+Raw query:
+
+{% gist  %}
+
+TBD: full example
 
 
 
 ## Wrapping up
 
-Congratulations, you now can use Elastisch to work with ElasticSearch. Now you know enough to start building a real application.
+Congratulations, you now can use Elastisch to work with ElasticSearch. Now you know enough to start building a real application. ElasticSearch is very feature rich and
+this guide does not cover many topics:
+
+ * Filtering
+ * Facets
+ * Percolation
+ * Routing and distribution features
+
+and more. They are covered in the rest of the guides.
 
 We hope you find Elastisch reliable, consistent and easy to use. In case you need help, please ask on the [mailing list](https://groups.google.com/forum/#!forum/clojure-elasticsearch)
 and follow us on Twitter [@ClojureWerkz](http://twitter.com/ClojureWerkz).
