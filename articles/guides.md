@@ -23,8 +23,12 @@ This guide covers:
  * What are indexes
  * What are mappings
  * How to define mappings with Elastisch
+ * Advanced mapping settings
+ * Index operations
  * How to index documents
  * Other topics related to indexing
+
+(TBD)
 
 
 ### [Querying](/articles/querying.html)
@@ -34,6 +38,23 @@ This guide covers:
  * How to perform search queries with Elastisch
  * Various kinds of queries
  * Other topics related to querying
+
+(TBD)
+
+
+### [Facets](/articles/facets.html)
+
+TBD
+
+
+### [Percolation](/articles/percolation.html)
+
+TBD
+
+
+### [Routing and Distribution](/articles/distribution.html)
+
+TBD
 
 
 ## Tell Us What You Think!

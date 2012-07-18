@@ -156,15 +156,28 @@ To perform a query with Elastisch, use the `clojurewerkz.elastisch.rest.document
 
 {% gist 1dfaf5fa28a46712c41a %}
 
-Queries with Elastisch have exactly the same structure as JSON documents in the [ElasticSearch Query API guide](http://www.elasticsearch.org/guide/reference/query-dsl/)
-but passed as Clojure maps. You can either pass the entire query as a map or use one or more convenience functions from the `clojurewerkz.elastisch.query` namespace
-(more on them later in this guide).
+Search requests with Elastisch have exactly the same structure as JSON documents in the [ElasticSearch Query API guide](http://www.elasticsearch.org/guide/reference/query-dsl/)
+but passed as Clojure maps. `:query`, `:sort`, `:facets` and other keys that [ElasticSearch Search API documentation](http://www.elasticsearch.org/guide/reference/api/search/)
+mentions are passed as maps.
+
+Because every search request contains query information (the `:query` key), you can either pass an entire query as a map or use one or more convenience functions
+from the `clojurewerkz.elastisch.query` namespace (more on them later in this guide).
 
 The example from above can also be written like so:
 
 {% gist a0b3f8e653769688e1dd %}
 
-Results returned by this function have the same structure as ElasticSearch JSON responses:
+
+### Searching Against Multiple Indexes or Mappings
+
+To search against multiple indexes or mappings, pass them as vectors to their respective function arguments.
+
+TBD: example
+
+
+### Checking results
+
+Results returned by search functions have the same structure as ElasticSearch JSON responses:
 
 {% gist 5e0892e1fd56a33f3083 %}
 
@@ -218,6 +231,8 @@ Raw query:
 {% gist f469349de876d1122883 %}
 
 TBD: full example
+
+Query string query accepts many parameters that can be found on the [ElasticSearch documentation site](http://www.elasticsearch.org/guide/reference/query-dsl/query-string-query.html).
 
 #### Range query
 
@@ -290,21 +305,101 @@ Raw query:
 TBD: full example
 
 
+### Sorting Results
+
+ElasticSearch supports flexible sorting of search results. To specify the desired sorting,
+use the `:sort` option `clojurewerkz.elastisch.rest.document/search` accepts:
+
+{% gist 304487b510685f04384d %}
+
+More examples can be found in this [ElasticSearch documentation section on sorting](http://www.elasticsearch.org/guide/reference/api/search/sort.html).
+`:sort` values that Elastisch accepts are structured exactly the same as JSON documents in that section.
+
+
+### Using Offset, Limit
+
+To limit returned number of results, use `:from` and `:size` options `clojurewerkz.elastisch.rest.document/search` accepts:
+
+{% gist 2b80925039b047a8df9b %}
+
+Default value of `:from` is 0, of `:size` is 10.
+
+
+### Using Filters
+
+TBD
+
+
+### Highlighting
+
+Having search matches highlighted in the UI is very useful in many cases. ElasticSearch can highlight matched in search results. To enable highlighting,
+use the `:highlight` option `clojurewerkz.elastisch.rest.document/search` accepts. In the example above, search matches in the `biography` field will
+be highlighted (wrapped in `em` tags) and search hits will include one extra "virtual" field called `:highlight` that includes the highlighted fields and the highlighted fragments
+that can be used by your application.
+
+{% gist ae91b88ca45fa83bf417 %}
+
+More examples can be found in this [ElasticSearch documentation section on retrieving subsets of fields](http://www.elasticsearch.org/guide/reference/api/search/highlighting.html).
+`:highlight` values that Elastisch accepts are structured exactly the same as JSON documents in that section.
+
+Highlighting will be covered in more detail in the [Querying](/articles/querying.html) guide.
+
+
+### Retrieving a Subset of Fields
+
+To limit returned number of results, use the `:fields` option `clojurewerkz.elastisch.rest.document/search` accepts:
+
+{% gist 2ff96ae345b858cae055 %}
+
+More examples can be found in this [ElasticSearch documentation section on retrieving subsets of fields](http://www.elasticsearch.org/guide/reference/api/search/fields.html).
+`:fields` values that Elastisch accepts are structured exactly the same as JSON documents in that section.
+
+
+## Updating documents
+
+TDB
+
+
+## Deleting documents
+
+TBD
+
+
 
 ## Wrapping up
 
 Congratulations, you now can use Elastisch to work with ElasticSearch. Now you know enough to start building a real application. ElasticSearch is very feature rich and
-this guide does not cover many topics:
+this guide does not cover many topics (or does not cover them in detail):
 
+ * Index operations
+ * Advanced mapping features (e.g. settings or nested mappings)
+ * Search across multiple indexes and/or mapping types
  * Filtering
+ * Analyzers
  * Facets
+ * "More like this" queries
+ * Multi Search and Bulk Operations
  * Percolation
+ * Index templates
  * Routing and distribution features
 
-and more. They are covered in the rest of the guides.
+and more. They are covered in the rest of the guides, with links to respective ElasticSearch documentation sections.
 
 We hope you find Elastisch reliable, consistent and easy to use. In case you need help, please ask on the [mailing list](https://groups.google.com/forum/#!forum/clojure-elasticsearch)
 and follow us on Twitter [@ClojureWerkz](http://twitter.com/ClojureWerkz).
+
+
+## What to Read Next
+
+The documentation is organized as [a number of guides](/articles/guides.html), covering different topics in depth:
+
+ * [Indexing](/articles/indexing.html)
+ * [Querying](/articles/querying.html)
+ * [Facets](/articles/facets.html)
+ * [Percolation](/articles/percolation.html)
+ * [Routing and Distribution](/articles/distribution.html)
+
+They also cover topics from this guide in more detail.
 
 
 ## Tell Us What You Think!
