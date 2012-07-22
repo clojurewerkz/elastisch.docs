@@ -47,7 +47,7 @@ Monger artifacts are [released to Clojars](https://clojars.org/clojurewerkz/elas
 
 ### With Leiningen
 
-    [clojurewerkz/elastisch "1.0.0-beta1"]
+    [clojurewerkz/elastisch "1.0.0-beta2"]
 
 ### With Maven
 
@@ -119,8 +119,7 @@ Please refer to the [Indexing guide](/articles/indexing.html) for more informati
 
 ### Indexing documents
 
-To add a document to an index, use the `clojurewerkz.elastisch.rest.document/create` function. This will cause document id to be generated
-automatically:
+To add a document to an index, use the `clojurewerkz.elastisch.rest.document/create` function. This will cause document id to be generated automatically:
 
 {% gist 09098979301600a233a7 %}
 
@@ -128,7 +127,7 @@ automatically:
 
 {% gist 17e77615e93abad1b109 %}
 
-TBD
+There is much more to indexing that we won't cover in this guide. A separate [guide on indexing](/articles/indexing.html) will go into much more detail on various aspects related to indexing.
 
 
 ### Checking responses
@@ -170,9 +169,9 @@ The example from above can also be written like so:
 
 ### Searching Against Multiple Indexes or Mappings
 
-To search against multiple indexes or mappings, pass them as vectors to their respective function arguments.
+To search against multiple indexes or mappings, pass them as vectors to their respective function arguments:
 
-TBD: example
+{% gist 51b9bab4f00a6e533c9d %}
 
 
 ### Checking results
@@ -355,15 +354,64 @@ More examples can be found in this [ElasticSearch documentation section on retri
 `:fields` values that Elastisch accepts are structured exactly the same as JSON documents in that section.
 
 
-## Updating documents
+## Updating Documents
 
-TDB
+ElasticSearch provides several ways of updating an indexed document:
+
+ * Replace the entire document by first deleting it and then adding it back
+ * Replace the entire document with a newer version
+ * Run a script that updates one or more documents and causes them to be reindexed
+
+Each has its own pros and cons: replacing the entire document is easier but less efficient, using scripts usually requires more effort
+on the developer side but offers higher efficiency and more fine-grained control over concurrent updates.
+
+### Replacing a Document
+
+To replace the entire document, use the `clojurewerkz.elastisch.rest.document/replace` function:
+
+{% gist 2bb63a4ec51540379ee5 %}
+
+it will delete the document first and then add the new version. To create a new version of a document, use
+`clojurewerkz.elastisch.rest.document/put` with explicitly provided id. If the document already exists, ElasticSearch
+will create a new version.
 
 
-## Deleting documents
+### Using Update Scripts
 
-TBD
+Updates via scripts will be covered in the [Indexing guide](/articles/indexing.html).
 
+
+
+## Deleting Documents
+
+### Deleting Individual Documents
+
+To delete a single document by id, use the `clojurewerkz.elastisch.rest.document/delete` function:
+
+{% gist 638a0ccb0c322ebda806 %}
+
+This function takes additional options that are not covered in this guide. Please see the [Indexing guide](/articles/indexing.html) for more details.
+
+
+### Deleting Multiple Documents via Query
+
+It is also possible to delete multiple documents that match a query using the `clojurewerkz.elastisch.rest.document/delete-by-query` function:
+
+{% gist 09098979301600a233a7 %}
+
+it is possible to specify multiple mappings or indexes:
+
+{% gist 0b5b0f04933525062ad4 %}
+
+it is also possible to delete documents across all mapping types or indexes with `clojurewerkz.elastisch.rest.document/delete-by-query-across-all-types`:
+
+{% gist fdaef2289391b9dd39a3 %}
+
+as well as globally with `clojurewerkz.elastisch.rest.document/delete-by-query-across-all-indexes-and-types`:
+
+{% gist ff9656e136aff0c1f85c %}
+
+Those functions take additional options that are not covered in this guide. Please see the [Indexing guide](/articles/indexing.html) for more details.
 
 
 ## Wrapping up
