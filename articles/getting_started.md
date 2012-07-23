@@ -107,7 +107,7 @@ please refer to the [Indexing guide](/articles/indexing.html) for more details.
 ### Creating a Mapping
 
 Mappings define which fields in documents are indexed, if/how they are tokenized, analyzed and so on. Each index in ElasticSearch may have one or more
-**mapping types**. Mapping types can be thought of as tables in a database (although this analygy does not always stand).
+**mapping types**. Mapping types can be thought of as tables in a database (although this analogy does not always stand).
 
 Mapping types are specified when an index is created using the `:mapping` option:
 
