@@ -74,28 +74,49 @@ For the reference list of index settings, see
 
 
 
-## Mapping Types
+## Overview of Mapping Types
 
 ElasticSearch has the concept of **mappings** that define which fields in documents are indexed, if/how they are analyzed and if they are stored. Each index in
 ElasticSearch may have one or more **mapping types**. Mapping types can be thought of as tables in a database (although this analogy does not always stand).
 
-### Creating and Updating Mapping Types
+
+## Creating Mapping Types
 
 Mapping types can specified when an index is created using the `:mapping` option:
 
 {% gist 917d482b6b017e626302 %}
 
-Or using the `clojurewerkz.elastisch.index/update-mapping` function:
+It is possible to update mapping types after they are created, as described later in this guide.
 
-{% gist %}
+
+### Mapping Type Settings
+
+TBD
+
+
+## Getting Mapping Types
+
+To retrieve information about an existing mapping type, use the `clojurewerkz.elastisch.index/get-mapping` function:
+
+{% gist a5b4dc1cea1d62fcd5aa %}
+
+It is possible to fetch multiple mapping types in a single request by passing a collection (typically a vector) for the
+second argument.
+
+It is possible to specify a collection of indexes (typically a vector) or the special `"_all"` value to fetch mapping types
+information for multiple (or all) indexes.
+
+
+## Updating Mapping Types
+
+It is possible to update an existing mapping type using the `clojurewerkz.elastisch.index/update-mapping` function:
+
+{% gist f8d296a40c496d793444 %}
 
 It is possible to specify multiple indexes by passing a vector of names or the special value `"_all"` to update a mapping for all
 existing indexes:
 
-{% gist %}
-
-TBD
-
+{% gist b9211ee31ed658056113 %}
 
 ### Mapping Conflicts
 
@@ -106,29 +127,19 @@ it is not possible to do. In that case, by default ElasticSearch will respond wi
 It is possible to instruct ElasticSearch to ignore conflicts and simply use the most recent provided mapping by passing the `:ignore_conflicts` option
 to `clojurewerkz.elastisch.index.update-mapping`:
 
-{% gist %}
-
-TBD
+{% gist 9411e81621cde484b3bf %}
 
 For more information, see [ElasticSearch guide on Put Mapping operation](http://www.elasticsearch.org/guide/reference/api/admin-indices-put-mapping.html).
 
 
-### Getting Mapping Types
-
-To retrieve information about an existing mapping type, use the `clojurewerkz.elastisch.index.get-mapping` function:
-
-{% gist %}
-
-TBD
-
 
 ### Deleting Mapping Types
 
-To delete an existing mapping type, use the `clojurewerkz.elastisch.index.delete-mapping` function:
+To delete an existing mapping type, use the `clojurewerkz.elastisch.index/delete-mapping` function:
 
-{% gist %}
+{% gist 7eab32561f3e61ffb24a %}
 
-TBD
+Deleting a mapping type **causes all its data/documents to be deleted**. Think of it as dropping a database table.
 
 
 ## Disabling Analysis for Fields
@@ -195,13 +206,48 @@ TBD
 TBD
 
 
+## Checking If an Index Exists
+
+To check if an index exists, use the `clojurewerkz.elastisch.rest.index/exists?` function:
+
+{% gist  %}
+
+TBD
+
+
+## Getting Index Settings
+
+TBD
+
+
+### Updating Index Settings
+
+TBD
+
+
+## Deleting an Index
+
+To delete an index, use the `clojurewerkz.elastisch.rest.index/delete` function:
+
+{% gist ece83eac980f48a748b2 %}
+
+
 ## Opening and Closing Indexes
+
+ElasticSearch lets you "close" an index and later "reopen" it. Closed indexes only have their metadata in memory
+so if an index is not used (for example, belongs to a suspended account), it is possible to save
+some resources by closing it. When an index is reopened, it goes through the regular recovery process.
 
 To open and close an index, use the `clojurewerkz.elastisch.rest-api.index/open` and `clojurewerkz.elastisch.rest-api.index/close`
 functions, respectively. Both take index name as the only argument.
 
 
-## Flushing an Index
+## Refreshing an Index
+
+Refreshing an index makes all changes (added, modified and deleted documents) since the last refresh available for search. In other
+words, index changes become "visible" to clients. ElasticSearch periodically refreshes indexes (configurable via index settings,
+see earlier in this guide) but it is possible to refresh an index manually with the `clojurewerkz.elastisch.rest.index/refresh` function
+that takes index name as the only argument.
 
 TBD
 
@@ -209,6 +255,12 @@ TBD
 ## Optimizing an Index
 
 TBD
+
+
+## Flushing an Index
+
+TBD
+
 
 
 
