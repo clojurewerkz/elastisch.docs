@@ -42,6 +42,38 @@ ElasticSearch has excellent support for **multi-tenancy**: an ElasticSearch clus
 For example, you can use a separate index per user account or organization in a SaaS (software as a service) product.
 
 
+## Creating Indexes
+
+ElasticSearch will create an index the first time it is used but it is also possible to precreate an index with
+specific settings, mappings, and so on with the `clojurewerkz.elastisch.index/create` function. In the simplest case,
+it only takes index name (a string) as the only argument:
+
+{% gist af984cb5bc86339bcaae %}
+
+It is also possible to define settings and mapping types at the time an index is created. Just pass `:settings` and `:mappings` options:
+
+{% gist 0e462a2bdcd2e744bb57 %}
+
+{% gist 917d482b6b017e626302 %}
+
+
+### Index Settings
+
+Index settings let you control many aspects of how ElasticSearch will use an index, store it, update it and so on.
+ElasticSearch documentation on index settings uses dot separated names for nested setting map attributes.
+
+For example, to set `index.refresh_interval` to 10, pass the following map for the `:settings` key:
+
+{% gist 1c524ff9ea227da6df34 %}
+
+
+For the reference list of index settings, see
+
+ * [Update Index Settings Operation guide](http://www.elasticsearch.org/guide/reference/api/admin-indices-update-settings.html)
+ * [Index modules guide](http://www.elasticsearch.org/guide/reference/index-modules/)
+
+
+
 ## Mapping Types
 
 ElasticSearch has the concept of **mappings** that define which fields in documents are indexed, if/how they are analyzed and if they are stored. Each index in
@@ -53,7 +85,7 @@ Mapping types can specified when an index is created using the `:mapping` option
 
 {% gist 917d482b6b017e626302 %}
 
-Or using the `clojurewerkz.elastisch.index.update-mapping` function:
+Or using the `clojurewerkz.elastisch.index/update-mapping` function:
 
 {% gist %}
 
@@ -153,9 +185,59 @@ TBD
 TBD
 
 
+## Document TTL (Time-to-Live)
+
+TBD
+
+
 ## Document Versioning
 
 TBD
+
+
+## Opening and Closing Indexes
+
+To open and close an index, use the `clojurewerkz.elastisch.rest-api.index/open` and `clojurewerkz.elastisch.rest-api.index/close`
+functions, respectively. Both take index name as the only argument.
+
+
+## Flushing an Index
+
+TBD
+
+
+## Optimizing an Index
+
+TBD
+
+
+
+## Misc Topics
+
+### How to Set Index Refresh Interval
+
+TBD
+
+
+### The _all Field
+
+The `_all` field is a special document field that includes the content of one or more (possibly all) document fields combined.
+It is helpful in cases when querying against documents with unknown document structure.
+
+It is possible to disable the `_all` field for a mapping or exclude certain fields from being added to it.
+
+TBD
+
+
+### Default Query Field
+
+TBD
+
+
+### Testing How Text is Analyzed
+
+It is possible to use the [ElasticSearch Analyze API operation](http://www.elasticsearch.org/guide/reference/api/admin-indices-analyze.html) to see how different
+analyzers process (tokenize and filter) various pieces of text.
 
 
 ## Wrapping Up
