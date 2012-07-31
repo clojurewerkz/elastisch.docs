@@ -224,7 +224,7 @@ It is possible to fetch index settings using the `clojurewerkz.elastisch.rest.in
 It returns a Clojure map of settings.
 
 
-### Updating Index Settings
+## Updating Index Settings
 
 To update index settings, use the `clojurewerkz.elastisch.rest.index/update-settings` function:
 
@@ -277,6 +277,14 @@ Use `clojurewerkz.elastisch.rest.index/flush` to flush an index:
 
 It accepts the only option: `:refresh`. When passed as true, it will also refresh the index after flushing it.
 
+
+## Clearing Index Cache
+
+Use `clojurewerkz.elastisch.rest.index/clear-cache` to clear index cache:
+
+{% gist 61957a1630e094318b66 %}
+
+It takes the same options as documented in the [ElasticSearch guide on the Clear Cache Index operation](http://www.elasticsearch.org/guide/reference/api/admin-indices-clearcache.html)
 
 
 
