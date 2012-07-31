@@ -287,6 +287,15 @@ Use `clojurewerkz.elastisch.rest.index/clear-cache` to clear index cache:
 It takes the same options as documented in the [ElasticSearch guide on the Clear Cache Index operation](http://www.elasticsearch.org/guide/reference/api/admin-indices-clearcache.html)
 
 
+## Getting Index Stats
+
+Use `clojurewerkz.elastisch.rest.index/stats` to get statistics about an index or multiple indexes:
+
+{% gist e6eeb4925e952197afdf %}
+
+It takes the same options as documented in the [ElasticSearch guide on the Index Stats operation](http://www.elasticsearch.org/guide/reference/api/admin-indices-stats.html)
+
+
 ## Getting Index Status
 
 Use `clojurewerkz.elastisch.rest.index/status` to retrieve status of one or more indexes:
