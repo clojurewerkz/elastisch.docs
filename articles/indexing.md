@@ -5,13 +5,15 @@ layout: article
 
 ## About this guide
 
-This guide combines an overview of Elastisch with a quick tutorial that helps you to get started with it.
-It should take about 15 minutes to read and study the provided code examples. This guide covers:
+This guide covers ElasticSearch indexing capabilities in depth, explains how Elastisch presents them in the API and
+how some of the key features are commonly used. This guide covers:
 
+ * What is indexing in the context of full text search
+ * What kind of features ElasticSearch has w.r.t. indexing, how Elastisch exposes them in the API
  * Mapping types and how they define how the data is indexed by ElasticSearch
  * How to define mapping types with Elastisch
  * Lucene built-in analyzers, their characteristics, what different kind of analyzers are good for.
- * Other topics related to indexing
+ * Other topics related to indexing and working with indexes
 
 This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a> (including images & stylesheets). The source is available [on Github](https://github.com/clojurewerkz/elastisch.docs).
 
@@ -210,19 +212,25 @@ TBD
 
 To check if an index exists, use the `clojurewerkz.elastisch.rest.index/exists?` function:
 
-{% gist  %}
-
-TBD
+{% gist 776db68817a2febd847d %}
 
 
 ## Getting Index Settings
 
-TBD
+It is possible to fetch index settings using the `clojurewerkz.elastisch.rest.index/get-settings` function:
+
+{% gist 51d27636d46c9941c9cf %}
+
+It returns a Clojure map of settings.
 
 
 ### Updating Index Settings
 
-TBD
+To update index settings, use the `clojurewerkz.elastisch.rest.index/update-settings` function:
+
+{% gist d57e34d65603b14566fc %}
+
+See also ElasticSearch [Update Index Setting operation guide](http://www.elasticsearch.org/guide/reference/api/admin-indices-update-settings.html)
 
 
 ## Deleting an Index
@@ -247,19 +255,27 @@ functions, respectively. Both take index name as the only argument.
 Refreshing an index makes all changes (added, modified and deleted documents) since the last refresh available for search. In other
 words, index changes become "visible" to clients. ElasticSearch periodically refreshes indexes (configurable via index settings,
 see earlier in this guide) but it is possible to refresh an index manually with the `clojurewerkz.elastisch.rest.index/refresh` function
-that takes index name as the only argument.
+that takes index name as the only argument:
 
-TBD
+{% gist 20f584500af4540a2f6a %}
 
 
 ## Optimizing an Index
 
-TBD
+Use `clojurewerkz.elastisch.rest.index/optimize` to optimize an index:
+
+{% gist fae56a5583e204718004 %}
+
+It takes the same options as documented in the [ElasticSearch guide on the Optimize Index operation](http://www.elasticsearch.org/guide/reference/api/admin-indices-optimize.html)
 
 
 ## Flushing an Index
 
-TBD
+Use `clojurewerkz.elastisch.rest.index/flush` to flush an index:
+
+{% gist 34fe2aa404f8585e1ff8 %}
+
+It accepts the only option: `:refresh`. When passed as true, it will also refresh the index after flushing it.
 
 
 
