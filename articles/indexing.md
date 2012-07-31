@@ -304,6 +304,16 @@ the operation on multiple indexes.
 The `:indices` key in the returned map contains status for all requested indexes.
 
 
+## Getting Segments Information for an Index
+
+Use `clojurewerkz.elastisch.rest.index/segments` to retrieve information about index segments:
+
+{% gist ca796b8a0c16402e5209 %}
+
+It is possible to get info for multiple indexes at the same time: just pass a collection or the special value `"_all"`
+for index name. This function accepts no options.
+
+
 ## Misc Topics
 
 ### How to Set Index Refresh Interval
