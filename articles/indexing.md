@@ -64,10 +64,12 @@ It is also possible to define settings and mapping types at the time an index is
 Index settings let you control many aspects of how ElasticSearch will use an index, store it, update it and so on.
 ElasticSearch documentation on index settings uses dot separated names for nested setting map attributes.
 
-For example, to set `index.refresh_interval` to 10, pass the following map for the `:settings` key:
+For example, to set `index.refresh_interval` to 10 seconds, pass the following map for the `:settings` key:
 
 {% gist 1c524ff9ea227da6df34 %}
 
+Index settings can be updated for an existing index using the `clojurewerkz.elastisch.rest.index/update-settings` function, as
+described later in this guide.
 
 For the reference list of index settings, see
 
