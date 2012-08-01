@@ -359,7 +359,14 @@ It is possible to have multiple aliases for an index or one alias to refer to mu
 
 ### How to Set Index Refresh Interval
 
-TBD
+Set the `index.refresh_interval` to a value like `"5s"`, `"30s"`, `"30m"` and so on when you create an index or update index settings:
+
+{% gist 0a097f151376d37e0af4 %}
+
+For example, to set `index.refresh_interval` to 10 seconds, pass the following map for the `:settings` key:
+
+{% gist 1c524ff9ea227da6df34 %}
+
 
 
 ### The _all Field
