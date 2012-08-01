@@ -323,6 +323,38 @@ It is possible to get info for multiple indexes at the same time: just pass a co
 for index name. This function accepts no options.
 
 
+## Index Templates
+
+ElasticSearch [index templates](http://www.elasticsearch.org/guide/reference/api/admin-indices-templates.html) let you specify settings and/or mappings
+for indexes that match certain name patterns upfront. For example, in the case of one index per company in the app, it may be desirable to
+use the same mapping types (schema) for all indexes. Because it is likely that the indexes are named the same way (e.g. `customer[identifier]`),
+index templates are applied to indexes matching a certain naming pattern.
+
+To create a template, use the `clojurewerkz.elastisch.rest.index/create-template` function:
+
+{% gist 9f7fffcb78e719110c17 %}
+
+To delete a template, there is `clojurewerkz.elastisch.rest.index/delete-template`:
+
+{% gist 26770b5c2ffcfa4ea22a %}
+
+Finally, `clojurewerkz.elastisch.rest.index/get-template` lets you retrieve information about an indexisting index template:
+
+{% gist 3589cb1631f2782b3e45 %}
+
+
+
+
+## Index Aliases
+
+`clojurewerkz.elastisch.rest.index/update-aliases` and `clojurewerkz.elastisch.rest.index/get-aliases`
+are new functions that implement support for [index aliases](http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases.html):
+
+{% gist f5ac6d24d74494f047a9 %}
+
+It is possible to have multiple aliases for an index or one alias to refer to multiple indexes.
+
+
 ## Misc Topics
 
 ### How to Set Index Refresh Interval
