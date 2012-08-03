@@ -98,6 +98,11 @@ It is possible to update mapping types after they are created, as described late
 TBD
 
 
+### Core ElasticSearch Mapping Types
+
+ElasticSearch documentation covers [core mapping types](http://www.elasticsearch.org/guide/reference/mapping/core-types.html).
+
+
 ## Getting Mapping Types
 
 To retrieve information about an existing mapping type, use the `clojurewerkz.elastisch.index/get-mapping` function:
@@ -148,15 +153,31 @@ Deleting a mapping type **causes all its data/documents to be deleted**. Think o
 
 ## Disabling Analysis for Fields
 
-It is possible to disable analysis for a field. In that case, the field's value still will be searchable as a single
-token (exact match).
+Analyzing fields during indexing makes many types of queries possible but also may result in some information being
+split into tokens that don't have any real value on their own and won't be useful for the kind of queries performed
+in an app. Some examples include usernames, URLs, filesystem paths, human names.
 
-TBD
+It is possible to disable analysis for a field. In that case, the field's value still will be searchable as a single
+token (exact match, case sensitive).
+
+To disable analysis for a field, set the `:index` setting for the field in index mapping:
+
+{% gist d70854f334a656a8c868 %}
+
+A more complete example:
+
+{% gist 770dff256b6a0c34249d %}
 
 
 ## Stored Fields
 
-TBD
+In addition to being analyzed, field values can be stored in ElasticSearch. Stored fields then will be included in the results.
+To instruct ElasticSearch to store values in a field, use the `:store` setting in the mapping:
+
+{% gist b42785c708eafaa8fab4 %}
+
+By default fields are not stored but the entire JSON document submitted for indexing is stored and can be (and often is) displayed
+by applications in the UI.
 
 
 ## Built-in Analyzers
@@ -174,30 +195,98 @@ TBD
 
 ### Whitespace Analyzer
 
-Whitespace analyzer is very simplistic: it splits text into tokens on whitespace characters. Tokens are not lowercased.
-
-TBD
+Whitespace analyzer is very simplistic: it splits text into tokens on whitespace characters. Tokens are not lowercased. Can be useful for
+lists of identifiers that are separated by spaces, if case sensitivity is not an issue.
 
 ### Simple Analyzer
 
 Splits text into tokens on non-letter characters. Tokens are lowercased. *Discards numeric characters*.
 
-TBD
-
 ### Stopword Analyzer
 
 The same as simple analyzer but also removes [stop words](http://en.wikipedia.org/wiki/Stop_words).
 
-TBD
-
-### Language-specific Analyzers
-
-TBD
 
 
-## Common Use Cases for Built-in Analyzers
+## Defining Custom Analyzers
+
+It is possible to define custom analyzers as demonstrated [in the ElasticSearch configuration](http://www.elasticsearch.org/guide/reference/index-modules/analysis/).
 
 TBD
+
+
+## Language-specific Analyzers
+
+ElasticSearch offers a variety of [language-specific analyzers](http://www.elasticsearch.org/guide/reference/index-modules/analysis/lang-analyzer.html) that come with language-specific (e.g. Russian or Arabic or German) stop words:
+
+ * arabic
+ * armenian
+ * basque
+ * brazilian
+ * bulgarian
+ * catalan
+ * chinese
+ * cjk (Chinese, Japanese, Korean)
+ * czech
+ * danish
+ * dutch
+ * english
+ * finnish
+ * french
+ * galician
+ * german
+ * greek
+ * hindi
+ * hungarian
+ * indonesian
+ * italian
+ * norwegian
+ * persian
+ * portuguese
+ * romanian
+ * russian
+ * spanish
+ * swedish
+ * turkish
+ * thai
+
+All analyzers support setting custom stopwords either via configuration, or by using an external stopwords file by setting `stopwords_path`.
+
+
+## Choosing Analyzers For Common Use Cases
+
+### Usernames, Ids, Zip Codes
+
+For "keyword-like" fields like usernames, ZIP codes or other identifiers, it usually makes sense to make the field
+non-analyzed. It will then be searchable by the exact case sensitive match. If case sensitivity is an issue, it is
+possible to define a custom analyzer that uses the [lowercase token filter](http://www.elasticsearch.org/guide/reference/index-modules/analysis/lowercase-tokenfilter.html)
+or your application can lowercase all values before submitting them to ElasticSearch for indexing.
+
+
+### Email, URLs
+
+Email and URLs can either be non-analyzed or use a custom analyzer that tokenizes emails and URLs as single tokens with the [UAX Email URL Tokenizer ](http://www.elasticsearch.org/guide/reference/index-modules/analysis/uaxurlemail-tokenizer.html).
+
+
+### Human Names
+
+If your application does not need sophisticated search capabilities like finding people named Shawn for the query "Sean", first and last name can be
+good candidates for non-analyzed fields.
+
+For phonetic name matching, there is a [phonetic analysis plugin for ElasticSearch](https://github.com/elasticsearch/elasticsearch-analysis-phonetic).
+
+
+### Document Titles
+
+Standard analyzer is usually a very good choice for document titles in most non-specialized applications. Some exceptions to that include technical or scientific
+documents (for example, of biological or chemical nature). In that case, a custom analyzer may be necessary.
+
+
+### Document Body
+
+Standard analyzer is usually a very good choice for document titles in most non-specialized applications. Just like with title, technical or scientific
+documents may need a custom analyzer.
+
 
 
 ## Document TTL (Time-to-Live)
