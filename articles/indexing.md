@@ -82,25 +82,109 @@ For the reference list of index settings, see
 
 ElasticSearch has the concept of **mappings** that define which fields in documents are indexed, if/how they are analyzed and if they are stored. Each index in
 ElasticSearch may have one or more **mapping types**. Mapping types can be thought of as tables in a database (although this analogy does not always stand).
+Mapping types is the heart of indexing in ElasticSearch and provide access to a lot of ElasticSearch functionality.
+
+For example, a blogging application may have types such as "article", "comment" and "person". Each has distinct **mapping settings** that define a set of fields
+documents of the type have, how they are supposed to be indexed (and, in turn, what kind of queries will be possible over them), what language each field is in
+and so on. Getting mapping types right for your application is the key to good search experience. It also takes time and experimentation.
+
+Searches can be performed across multiple types or a single type across multiple indexes.
 
 
 ## Creating Mapping Types
 
-Mapping types can specified when an index is created using the `:mapping` option:
+Mapping types can specified when an index is created using the `:mappings` option:
 
 {% gist 917d482b6b017e626302 %}
 
 It is possible to update mapping types after they are created, as described later in this guide.
 
 
-### Mapping Type Settings
+## Mapping Type Settings
 
-TBD
+### Overview
+
+Mapping types define document fields and of what core types (e.g. string, integer or date/time) they are. Settings are provided to ElasticSearch as a JSON document
+and this is how they are [documented on the ElasticSearch site](http://www.elasticsearch.org/guide/reference/mapping/), for example:
+
+{% gist 714418e5b21a0d7b439c %}
+
+With Elastisch, mapping settings are specified as Clojure maps. A very minimalistic example:
+
+{% gist 3423279800b78b313fbf %}
+
+Here is a brief and very incomplete list of things that you can define via mapping settings:
+
+ * Document fields, their types, whether they are analyzed
+ * Document time-to-live (TTL)
+ * Whether document type is indexed
+ * Special fields (`"_all"`, default field, etc)
+ * [Document-level boosting](http://www.elasticsearch.org/guide/reference/mapping/boost-field.html)
+ * [Timestamp field](http://www.elasticsearch.org/guide/reference/mapping/timestamp-field.html)
+
+When an index is created using the `clojurewerkz.elastisch.rest.index/create` function, mapping settings are passed with the `:mappings` option:
+
+{% gist 917d482b6b017e626302 %}
+
+When it is necessary to update mapping for an indexing index with the `clojurewerkz.elastisch.index/update-mapping` function, they are passed as a positional argument:
+
+{% gist f8d296a40c496d793444 %}
 
 
-### Core ElasticSearch Mapping Types
+### Defining Fields
 
-ElasticSearch documentation covers [core mapping types](http://www.elasticsearch.org/guide/reference/mapping/core-types.html).
+Settings are passed as maps where keys are names (strings or keywords) and values are maps of the actual settings. In this example, the only setting is
+`:properties` which defines a single field which is a string that is not analyzed:
+
+{% gist 3423279800b78b313fbf %}
+
+Next lets take a look at a more realistic example of the tweet type where we have both username and text, and text is analyzed:
+
+{% gist 41c33566daaf7bb996a1 %}
+
+The second field has the same core type (string) and specifies an analyzer we want ElasticSearch to use for this field. Different types of analyzers
+are described later in this guide. Note that the default value of the `:analyzer` field is `"default"`, so in this example it could have been omitted.
+
+In the example below the same tweet type is extended with one more field, `:timestamp`:
+
+{% gist 0696da93ad048c545762 %}
+
+Because `:timestamp` is a date and there are multiple date formats in use, we specify which particular format will be used by our application: `"basic_date_time_no_millis"`.
+An example timestamp in this format looks like this: `"20120802T101232+0100"`, generalized version is `"yyyyDDD’T’HHmmssZ"`. [ElasticSearch supports multiple date/time formats](http://www.elasticsearch.org/guide/reference/mapping/date-format.html).
+
+The `:include_in_all` setting instructs ElasticSearch to not include timestamps in the special `"_all"` field (described later in this document).
+
+Another common type of field is integer:
+
+{% gist 05c2593eb8bb3630e14a %}
+
+Boolean fields are also very common and supported by ElasticSearch:
+
+{% gist 197c42bad2a448f12be2 %}
+
+Here we see one more setting in action, `:boost`. Boost is a multipler that is applied to field score during document scoring. It lets developer express
+that matches in some fields (e.g. title) are more important than others (for example, metadata). In the previous example we also define default
+boolean field value with the`:default` key.
+
+ElasticSearch supports indexing and querying over nested documents (very much like document databases MongoDB and CouchDB):
+
+{% gist db2a15ae779e94d68a98 %}
+
+Location field in the example above is of type `"object"` and has its own set of `:properties`. It is possible to have one of those properties to
+be of type `"object"` and have its own set of properties, and so on.
+
+
+### Core ElasticSearch Field Types
+
+So far we have demonstrated a few core field types:
+
+ * string
+ * date/time
+ * integer
+ * boolean
+ * object
+
+ElasticSearch documentation covers more [mapping/field types](http://www.elasticsearch.org/guide/reference/mapping/core-types.html).
 
 
 ## Getting Mapping Types
@@ -182,7 +266,8 @@ by applications in the UI.
 
 ## Built-in Analyzers
 
-ElasticSearch supports several kinds of analyzers. This section briefly describes some of them. To experiment with
+ElasticSearch supports multiple analyzers and it is possible to define custom ones, often without writing any code (just reusing
+existing tokenizers and filters). This section briefly describes some of them. To experiment with
 analysis and analyzers, you can use the [Analyze API operation](http://www.elasticsearch.org/guide/reference/api/admin-indices-analyze.html) on
 any existent index, for example, via tool like `curl`.
 
@@ -191,7 +276,7 @@ any existent index, for example, via tool like `curl`.
 The most sophisticated built-in analyzer. Intelligent enough to handle (tokenize correctly) email addresses, most of organization names
 and so on.
 
-TBD
+TBD: more details
 
 ### Whitespace Analyzer
 
@@ -291,7 +376,14 @@ documents may need a custom analyzer.
 
 ## Document TTL (Time-to-Live)
 
-TBD
+ElasticSearch supports [Time-to-Live](http://www.elasticsearch.org/guide/reference/mapping/ttl-field.html) documents: it is possible to specify expiration period
+on a document. It can either be done per mapping type via mapping definition, as demonstrated below:
+
+{% gist 980374a17ba4e25632a5 %}
+
+or on a per-document basis by including the `:_ttl` field in a document.
+
+TBD: full examples
 
 
 ## Document Versioning
