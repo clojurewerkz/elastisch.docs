@@ -22,13 +22,12 @@ This guide covers:
 
  * What are indexes
  * What are mappings
+ * How to index documents
  * How to define mappings with Elastisch
  * Advanced mapping settings
- * Index operations
- * How to index documents
+ * Different kinds of analyzers
+ * Operations on indexes: refresh, optimize, snapshot, etc
  * Other topics related to indexing
-
-(TBD)
 
 
 ### [Querying](/articles/querying.html)

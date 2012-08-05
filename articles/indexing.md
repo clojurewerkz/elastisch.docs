@@ -44,10 +44,47 @@ ElasticSearch has excellent support for **multi-tenancy**: an ElasticSearch clus
 For example, you can use a separate index per user account or organization in a SaaS (software as a service) product.
 
 
+## Indexing Documents
+
+There are two ways to index a document with ElasticSearch: submit it for indexing without the id or update a document with
+a provided id, in which case if the document already exists, it will be updated (a new version will be created).
+
+Document ids are internal to ES and don't have to match identifiers in other data stores you may be using side by side
+with ElasticSearch.
+
+While it is fine and common to use automatically created indexes early in development, manually creating indexes lets you configure
+a lot about how ElasticSearch will index your data and, in turn, what kind of queries it will be possible to execute against it.
+
+### Creating Documents
+
+To submit a document and have its id generated, use the `clojurewerkz.elastisch.rest.document/create` function. It takes an index name,
+a mapping type (more on mappings later in this guide) and the document you want to be indexed, as a Clojure map:
+
+{% gist 0f22eeb2ff459e37ecd8 %}
+
+It returns the response as a Clojure map that contains whether the response was successful, the generated document id,
+and so on. `clojurewerkz.elastisch.rest.response/ok?` is a predicate function that should be used to verify that the
+response is was successful.
+
+If the index does not exist, it will be automatically created.
+
+TBD: the `:op_type` option.
+
+
+### Updating Documents
+
+`clojurewerkz.elastisch.rest.document/put` works a lot like `clojurewerkz.elastisch.rest.document/create` but it requires document id
+to be passed as the 3rd argument  and can be used to update existing documents (the common "put-if-absent" idiom):
+
+{% gist 4903ddfd635e08b3b49a %}
+
+ElasticSearch will version documents when they are updated by default. More on this later in this guide.
+
+
 ## Creating Indexes
 
 ElasticSearch will create an index the first time it is used but it is also possible to precreate an index with
-specific settings, mappings, and so on with the `clojurewerkz.elastisch.index/create` function. In the simplest case,
+specific settings, mappings, and so on with the `clojurewerkz.elastisch.rest.index/create` function. In the simplest case,
 it only takes index name (a string) as the only argument:
 
 {% gist af984cb5bc86339bcaae %}
@@ -126,7 +163,7 @@ When an index is created using the `clojurewerkz.elastisch.rest.index/create` fu
 
 {% gist 917d482b6b017e626302 %}
 
-When it is necessary to update mapping for an indexing index with the `clojurewerkz.elastisch.index/update-mapping` function, they are passed as a positional argument:
+When it is necessary to update mapping for an indexing index with the `clojurewerkz.elastisch.rest.index/update-mapping` function, they are passed as a positional argument:
 
 {% gist f8d296a40c496d793444 %}
 
@@ -187,9 +224,10 @@ So far we have demonstrated a few core field types:
 ElasticSearch documentation covers more [mapping/field types](http://www.elasticsearch.org/guide/reference/mapping/core-types.html).
 
 
-## Getting Mapping Types
 
-To retrieve information about an existing mapping type, use the `clojurewerkz.elastisch.index/get-mapping` function:
+## Getting Mappings
+
+To retrieve information about an existing mapping type, use the `clojurewerkz.elastisch.rest.index/get-mapping` function:
 
 {% gist a5b4dc1cea1d62fcd5aa %}
 
@@ -200,9 +238,9 @@ It is possible to specify a collection of indexes (typically a vector) or the sp
 information for multiple (or all) indexes.
 
 
-## Updating Mapping Types
+## Updating Mappings
 
-It is possible to update an existing mapping type using the `clojurewerkz.elastisch.index/update-mapping` function:
+It is possible to update an existing mapping type using the `clojurewerkz.elastisch.rest.index/update-mapping` function:
 
 {% gist f8d296a40c496d793444 %}
 
@@ -218,7 +256,7 @@ ElasticSearch will try to be reasonably smart and merge mapping definitions. How
 it is not possible to do. In that case, by default ElasticSearch will respond with an error (40x status code) and Elastisch will raise an exception.
 
 It is possible to instruct ElasticSearch to ignore conflicts and simply use the most recent provided mapping by passing the `:ignore_conflicts` option
-to `clojurewerkz.elastisch.index.update-mapping`:
+to `clojurewerkz.elastisch.rest.index.update-mapping`:
 
 {% gist 9411e81621cde484b3bf %}
 
@@ -226,9 +264,9 @@ For more information, see [ElasticSearch guide on Put Mapping operation](http://
 
 
 
-### Deleting Mapping Types
+### Deleting Mappings
 
-To delete an existing mapping type, use the `clojurewerkz.elastisch.index/delete-mapping` function:
+To delete an existing mapping type, use the `clojurewerkz.elastisch.rest.index/delete-mapping` function:
 
 {% gist 7eab32561f3e61ffb24a %}
 
@@ -293,11 +331,23 @@ The same as simple analyzer but also removes [stop words](http://en.wikipedia.or
 
 
 
-## Defining Custom Analyzers
+### Defining Custom Analyzers
 
-It is possible to define custom analyzers as demonstrated [in the ElasticSearch configuration](http://www.elasticsearch.org/guide/reference/index-modules/analysis/).
+With ElasticSearch, it is possible to define custom analyzers without writing any code. Analyzers combine
 
-TBD
+ * A tokenizer, an entity that takes a string and produces **tokens**
+ * Zero or more **token filters** that modify or remove tokens (similarly to how `clojure.core/filter`, `clojure.core/map` and `clojure.core/remove` functions
+   work)
+ * Char filters that modify inputs before tokenization (for example, strip HTML or replace some characters with other ones that are written or sound similarly)
+
+Analyzers are [configured](http://www.elasticsearch.org/guide/reference/index-modules/analysis/) using index settings:
+
+{% gist 898c8a5813de6e280b30 %}
+
+In the above example we define a custom analyzer that uses 3 predefined filters and a custom list of stop words. In addition, we instruct ElasticSearch to use this
+custom analyzer for the `:text` field of the `:tweet` type in the mapping.
+
+ElasticSearch has many [predefined analyzers, tokenizers and token filters to choose from](http://www.elasticsearch.org/guide/reference/index-modules/analysis/).
 
 
 ## Language-specific Analyzers
@@ -387,6 +437,20 @@ TBD: full examples
 
 
 ## Document Versioning
+
+Each indexed document in ElasticSearch has a version number. It is accessible via the `:_version` key in the response to operations like `clojurewerkz.elastisch.rest.document/create`, `clojurewerkz.elastisch.rest.document/put`.
+
+When you update a document, it is possible to specify the exact version being used.
+This helps ensure that no data is lost due to concurrent updates of the same document in the read-modify-write update scenarios.
+
+To do so, pass the `:version` option to `clojurewerkz.elastisch.rest.document/put`:
+
+{% gist  %}
+
+When reading to update, setting `:preference` to `"_primary"` helps ensure you won't get stale reads:
+
+{% gist  %}
+
 
 TBD
 
@@ -554,15 +618,24 @@ For example, to set `index.refresh_interval` to 10 seconds, pass the following m
 
 ### The _all Field
 
-The `_all` field is a special document field that includes the content of one or more (possibly all) document fields combined.
+[The `_all` field](http://www.elasticsearch.org/guide/reference/mapping/all-field.html) is a special document field that includes the content of one or more (possibly all) document fields combined.
 It is helpful in cases when querying against documents with unknown document structure.
 
-It is possible to disable the `_all` field for a mapping or exclude certain fields from being added to it.
+It is possible to disable the `_all` field for a mapping or exclude certain fields from being added to it. This is done
+on the per mapping type basis, via mapping settings:
+
+{% gist 81c050ecfbc288ea1b52 %}
+
+When disabling the _all field, it is a good practice to set `index.query.default_field` to a different value
+(for example, `:text` or `:body` in case of article-like documents).
+
+
+### Default Query Field
 
 TBD
 
 
-### Default Query Field
+### Per-Document Boosting
 
 TBD
 
