@@ -632,6 +632,13 @@ When disabling the _all field, it is a good practice to set `index.query.default
 
 ### Default Query Field
 
+To set default query field for a mapping, specify `index.query.default_field` in index settings:
+
+{% gist 42eae254ac4cc5771923 %}
+
+
+### Field Boosting
+
 TBD
 
 
@@ -648,7 +655,11 @@ analyzers process (tokenize and filter) various pieces of text.
 
 ## Wrapping Up
 
-TBD
+The indexing process is a very important aspect of search. Get it right, and your application's search results will be useful. Get it wrong, it most likely they won't
+be useful at all. ElasticSearch is very flexible and feature rich when it comes to indexing and how your data is analyzed. Support for custom and language-specific analyzers
+will satisfy even the most demanding needs.
+
+Elastisch follows ElasticSearch REST API structure and supports nearly all features related to indexing.
 
 
 ## What to Read Next
