@@ -38,10 +38,14 @@ This guide covers:
  * Various kinds of queries
  * Other topics related to querying
 
-(TBD)
-
 
 ### [Facets](/articles/facets.html)
+
+This guide covers:
+
+ * What are facets in ElasticSearch
+ * How to use facets with Elastisch
+ * Other topics related to facets
 
 TBD
 
