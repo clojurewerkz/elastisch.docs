@@ -1,0 +1,272 @@
+---
+title: "Elastisch, a minimalistic Clojure client for ElasticSearch: Getting Started with ElasticSearch and Clojure"
+layout: article
+---
+
+## About this guide
+
+This guide covers ElasticSearch search capabilities in depth, explains how Elastisch presents them in the API and how some of the key features are commonly used. This guide covers:
+
+ * An overview of ElasticSearch search features
+ * How to perform queries with Elastisch
+ * How to work with responses
+ * Different kinds of queries
+ * Other topics related to querying
+
+This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a> (including images & stylesheets). The source is available [on Github](https://github.com/clojurewerkz/elastisch.docs).
+
+
+## Overview
+
+The whole point of a search server is to be able to run search queries against it and ElasticSearch has a lot to offer in this area.
+
+ES supports multiple kinds of queries plus **filters**, which can be roughly thought as conditions in the `WHERE ...` clause in SQL.
+Filters do not perform relevance scoring, only decide whether a particular document should be included or excluded from final
+results. Because there is no relevance calculation involved, they are more efficient than compound queries with additional
+conditions. A good use case for filters is filtering out results just for one customer (or organization, or any related group of documents).
+
+"Full text" queries are analyzed just like documents are during indexing. ElasticSearch is distributed and lets users control request
+routing on per-query basis.
+
+Queries are submitted to ElasticSearch as JSON documents with a certain structure. With Elastisch, you can either use Clojure maps
+that have exactly the same structure, or use a few helpful functions that make queries a little bit more concise. In all cases,
+whenever a query requires nesting maps, Elastisch uses exactly the same structure as described in [ElasticSearch documentation on
+query DSL](http://www.elasticsearch.org/guide/reference/query-dsl/).
+
+
+## Performing queries
+
+To perform a query with Elastisch, use the `clojurewerkz.elastisch.rest.document/search` function. It takes index name, mapping name and query
+(as a Clojure map):
+
+{% gist 1dfaf5fa28a46712c41a %}
+
+Search requests with Elastisch have exactly the same structure as JSON documents in the [ElasticSearch Query API guide](http://www.elasticsearch.org/guide/reference/query-dsl/)
+but passed as Clojure maps. `:query`, `:sort`, `:facets` and other keys that [ElasticSearch Search API documentation](http://www.elasticsearch.org/guide/reference/api/search/)
+mentions are passed as maps.
+
+Because every search request contains query information (the `:query` key), you can either pass an entire query as a map or use one or more convenience functions
+from the `clojurewerkz.elastisch.query` namespace (more on them later in this guide).
+
+The example from above can also be written like so:
+
+{% gist a0b3f8e653769688e1dd %}
+
+
+### Searching Against Multiple Indexes or Mappings
+
+To search against multiple indexes or mappings, pass them as vectors to their respective function arguments:
+
+{% gist 51b9bab4f00a6e533c9d %}
+
+
+## Checking results
+
+Results returned by search functions have the same structure as ElasticSearch JSON responses:
+
+{% gist 5e0892e1fd56a33f3083 %}
+
+Several functions in the `clojurewerkz.elastisch.rest.response` namespace can be used to access more specific piece of information from a response,
+such as total number of hits.
+
+The most commonly used are:
+
+ * `clojurewerkz.elastisch.rest.response/total-hits`: returns number of hits (documents found)
+ * `clojurewerkz.elastisch.rest.response/hits-from`: returns a collection of hits (stored document plus id, score and index information)
+ * `clojurewerkz.elastisch.rest.response/any-hits?`: returns true if there is at least one document found
+ * `clojurewerkz.elastisch.rest.response/no-hits?` is a [complement function](http://clojuredocs.org/clojure_core/clojure.core/complement) to `any-hits?`
+ * `clojurewerkz.elastisch.rest.response/ids-from`: returns a collection of document ids collected from hits
+
+All of them take a response map as the only argument.
+
+
+## Different kinds of queries
+
+ElasticSearch is a feature rich search engine and it supports many types of queries. Even though
+all queries can be passed as Clojure maps, it is common to use convenient functions from the
+`clojurewerkz.elastisch.query` to construct queries.
+
+### Term and Terms Queries
+
+Term query is the most basic query type. It matches documents that have a particular term.
+A common use case for term queries is looking up documents with unanalyzed identifiers
+such as usernames.
+
+A close relative of the term query is the **terms query** which works the same way but takes multiple term values.
+
+With Elastisch, term query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/term-query.html):
+
+{% gist 2a66899e2b200cca499f %}
+
+Elastisch provides a helper function for constructing term queries is `clojurewerkz.elastisch.query.term`:
+
+{% gist 2d7b9e0b59f728a35751 %}
+
+If provided values is a collection, Elastisch will construct a terms query under the hood.
+
+
+
+### Query String Query
+
+TBD
+
+### Text Query
+
+TBD
+
+### Range Query
+
+TBD
+
+### Boolean Query
+
+TBD
+
+### Filtered Query
+
+TBD
+
+### Field Query
+
+TBD
+
+### Prefix Query
+
+TBD
+
+### Wildcard Query
+
+TBD
+
+### IDs Query
+
+TBD
+
+### Match All Query
+
+TBD
+
+### Dis-Max Query
+
+TBD
+
+### Boosting Query
+
+TBD
+
+### More Like This Query
+
+TBD
+
+### More Like This Field Query
+
+TBD
+
+### Fuzzy Query
+
+TBD
+
+### Fuzzy Like This Query
+
+TBD
+
+### Fuzzy Like This Field Query
+
+TBD
+
+### Nested Query
+
+TBD
+
+### Span First Query
+
+TBD
+
+### Span Near Query
+
+TBD
+
+### Span Not Query
+
+TBD
+
+### Span Or Query
+
+TBD
+
+### Span Term Query
+
+TBD
+
+### Indices Query
+
+TBD
+
+### Top Children Query
+
+TBD
+
+### Has Child Query
+
+TBD
+
+### Constant Score Query
+
+TBD
+
+### Custom Score Query
+
+TBD
+
+### Custom Filter Score Query
+
+TBD
+
+
+## Examples
+
+### Term Query
+
+Given an index with the following mapping type:
+
+{% gist 2832fa205ad1ea8044b2 %}
+
+and indexed documents
+
+{% gist bb5a6ca3179114ed40e8 %}
+
+The following term query
+
+{% gist 2d7b9e0b59f728a35751 %}
+
+Will return the 1st document in hits and
+
+{% gist 34ce76ceab1628c17370 %}
+
+will also return the 1st document.
+
+
+
+## Wrapping Up
+
+ElasticSearch querying capabilities are just as rich as the indexing ones. With multiple kinds of queries, filtering, ability to query multiple indexes or
+mapping types at once and features like ad-hoc boosting, you have plenty of tools and knobs for making search work exactly the way your domain model requires.
+
+Elastisch follows ElasticSearch REST API structure (for example, the query DSL) and is strives to be as feature complete as possible when it comes to querying.
+
+
+## What to Read Next
+
+The documentation is organized as [a number of guides](/articles/guides.html), covering different topics in depth:
+
+ * [Facets](/articles/facets.html)
+ * [Percolation](/articles/percolation.html)
+ * [Routing and Distribution](/articles/distribution.html)
+
+
+## Tell Us What You Think!
+
+Please take a moment to tell us what you think about this guide on Twitter or the [Elastisch mailing list](https://groups.google.com/forum/#!forum/clojure-elasticsearch)
+
+Let us know what was unclear or what has not been covered. Maybe you do not like the guide style or grammar or discover spelling mistakes. Reader feedback is key to making the
+documentation better.
