@@ -204,7 +204,7 @@ We won't cover all the functions in this guide but will take a closer look at a 
 
 #### Term query
 
-[Term query]() matches documents that have fields that contain a term (exactly as given, not analyzed).
+[Term query](http://www.elasticsearch.org/guide/reference/query-dsl/term-query.html) matches documents that have fields that contain a term (exactly as given, not analyzed).
 
 Short example:
 
@@ -213,8 +213,6 @@ Short example:
 Raw query:
 
 {% gist e47f48e9f2879e9285f8 %}
-
-TBD: full example
 
 #### Query string query
 
@@ -229,9 +227,7 @@ Raw query:
 
 {% gist f469349de876d1122883 %}
 
-TBD: full example
-
-Query string query accepts many parameters that can be found on the [ElasticSearch documentation site](http://www.elasticsearch.org/guide/reference/query-dsl/query-string-query.html).
+For more information, see our [guide on Querying](/articles/querying.html).
 
 #### Range query
 
@@ -245,7 +241,7 @@ Raw query:
 
 {% gist  %}
 
-TBD: full example
+For more information, see our [guide on Querying](/articles/querying.html).
 
 #### Boolean (bool) query
 
@@ -259,7 +255,7 @@ Raw query:
 
 {% gist  %}
 
-TBD: full example
+For more information, see our [guide on Querying](/articles/querying.html).
 
 #### IDs query
 
@@ -273,7 +269,7 @@ Raw query:
 
 {% gist  %}
 
-TBD: full example
+For more information, see our [guide on Querying](/articles/querying.html).
 
 #### Field query
 
@@ -287,7 +283,7 @@ Raw query:
 
 {% gist  %}
 
-TBD: full example
+For more information, see our [guide on Querying](/articles/querying.html).
 
 #### More Like This query
 
@@ -301,7 +297,7 @@ Raw query:
 
 {% gist  %}
 
-TBD: full example
+For more information, see our [guide on Querying](/articles/querying.html).
 
 
 ### Sorting Results

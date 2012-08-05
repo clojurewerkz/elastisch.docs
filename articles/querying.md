@@ -11,6 +11,7 @@ This guide covers ElasticSearch search capabilities in depth, explains how Elast
  * How to perform queries with Elastisch
  * How to work with responses
  * Different kinds of queries
+ * How to use highlighting
  * Other topics related to querying
 
 This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a> (including images & stylesheets). The source is available [on Github](https://github.com/clojurewerkz/elastisch.docs).
@@ -88,7 +89,7 @@ all queries can be passed as Clojure maps, it is common to use convenient functi
 
 ### Term and Terms Queries
 
-Term query is the most basic query type. It matches documents that have a particular term.
+The Term query is the most basic query type. It matches documents that have a particular term.
 A common use case for term queries is looking up documents with unanalyzed identifiers
 such as usernames.
 
@@ -98,21 +99,50 @@ With Elastisch, term query structure is the same as described in the [ElasticSea
 
 {% gist 2a66899e2b200cca499f %}
 
-Elastisch provides a helper function for constructing term queries is `clojurewerkz.elastisch.query.term`:
+Elastisch provides a helper function for constructing term queries, `clojurewerkz.elastisch.query/term`:
 
 {% gist 2d7b9e0b59f728a35751 %}
 
 If provided values is a collection, Elastisch will construct a terms query under the hood.
 
 
+### Text Query
+
+The Text query accepts text, analyzes it and performs a boolean (the default), fuzzy or phrase query. Each query type takes additional options.
+Depending on the exact "subtype", query structure will be slightly different so it is common to pass queries as Clojure maps instead of using the
+helper function (described below).
+
+The difference with field and query string query types is that text queries do not support field prefixes and do not attempt to Lucene Query syntax parsing.
+As such, text queries can be seen as more limited and slighly more efficient kind of the query string query, suitable for many apps with non-technical
+audience.
+
+With Elastisch, text query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/text-query.html):
+
+{% gist 6f7e1ee014c55feefbba %}
+
+Elastisch provides a helper function for constructing boolean text queries, `clojurewerkz.elastisch.query/text`:
+
+{% gist aa2ba7b948ace3662441 %}
+
 
 ### Query String Query
 
-TBD
+The Query String (QS) query accepts text, runs it through Lucene Query Language parser, analyzes it and performs query. It is the most advanced query
+type with 
 
-### Text Query
+The difference with field and query string query types is that text queries do not support field prefixes and do not attempt to Lucene Query syntax parsing.
+As such, QS queries can be seen as more powerful and less efficient kind of text query, suitable for many apps with technical audience.
 
-TBD
+With Elastisch, QS query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/query-string-query.html):
+
+{% gist f87ff598ff8dd84810a3 %}
+
+Elastisch provides a helper function for constructing QS text queries, `clojurewerkz.elastisch.query/query-string`:
+
+{% gist 43edc61a6bd0e31460c6 %}
+
+For all the numerous options this query type accepts, see [ElasticSearch documentation on the subject](http://www.elasticsearch.org/guide/reference/query-dsl/query-string-query.html).
+
 
 ### Range Query
 
@@ -132,98 +162,149 @@ TBD
 
 ### Prefix Query
 
-TBD
+The Prefix query is similar to the term query but matches documents that have at least one term that begins with the given prefix.
+One use case for prefix queries is providing text autocompletion results (works best for non-analyzed fields).
+
+With Elastisch, prefix query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/prefix-query.html):
+
+{% gist cac16c43a7357ba0fc8c %}
+
+Elastisch provides a helper function for constructing prefix queries, `clojurewerkz.elastisch.query/prefix`:
+
+{% gist b7c36240e9fa50cf813c %}
+
 
 ### Wildcard Query
 
-TBD
+The Wildcard query is a generalized version of Prefix query and usually is applicable in the same cases. Note that wildcard suffix queries such as `"*werkz"` have
+very poor performance characteristics on large data sets.
+
+With Elastisch, wildcard query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/wildcard-query.html):
+
+{% gist 731724133c9ca66dc1a3 %}
+
+Elastisch provides a helper function for constructing wildcard queries, `clojurewerkz.elastisch.query/wildcard`:
+
+{% gist f613455403c88f045a72 %}
+
 
 ### IDs Query
 
-TBD
+The IDs query is searches for documents by their IDs (`:_id` field values). It is similar to `WHERE ... IN (...)` in SQL.
+
+With Elastisch, IDs query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/ids-query.html):
+
+{% gist a1da13c2614bd1a9c503 %}
+
+Elastisch provides a helper function for constructing IDs queries, `clojurewerkz.elastisch.query/ids`:
+
+{% gist dd15ca01686789328a73 %}
+
 
 ### Match All Query
 
+The Match All query does what it sounds like: matches every single document in the index. Used almost exclusively during development or
+in combination with other queries in compound queries (e.g. filtered).
+
 TBD
+
 
 ### Dis-Max Query
 
 TBD
 
+
 ### Boosting Query
 
 TBD
+
 
 ### More Like This Query
 
 TBD
 
+
 ### More Like This Field Query
 
 TBD
+
 
 ### Fuzzy Query
 
 TBD
 
+
 ### Fuzzy Like This Query
 
 TBD
+
 
 ### Fuzzy Like This Field Query
 
 TBD
 
+
 ### Nested Query
 
 TBD
+
 
 ### Span First Query
 
 TBD
 
+
 ### Span Near Query
 
 TBD
+
 
 ### Span Not Query
 
 TBD
 
+
 ### Span Or Query
 
 TBD
+
 
 ### Span Term Query
 
 TBD
 
+
 ### Indices Query
 
 TBD
+
 
 ### Top Children Query
 
 TBD
 
+
 ### Has Child Query
 
 TBD
+
 
 ### Constant Score Query
 
 TBD
 
+
 ### Custom Score Query
 
 TBD
+
 
 ### Custom Filter Score Query
 
 TBD
 
 
-## Examples
+## Query Examples
 
 ### Term Query
 
@@ -245,6 +326,21 @@ Will return the 1st document in hits and
 
 will also return the 1st document.
 
+
+### Prefix Query
+
+TBD
+
+
+
+## Filters
+
+TBD
+
+
+## Highlighting
+
+TBD
 
 
 ## Wrapping Up
