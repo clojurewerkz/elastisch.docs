@@ -144,8 +144,8 @@ for example, `clojurewerkz.elastisch.rest.response/ok?` or `clojurewerkz.elastis
 
 ### Overview
 
-ElasticSearch supports [multiple kinds of queries](http://www.elasticsearch.org/guide/reference/query-dsl/): from simple like term and prefix query to compound like the bool query. Some queries can also have
-filters associated with them.
+ElasticSearch supports [multiple kinds of queries](http://www.elasticsearch.org/guide/reference/query-dsl/): from simple like term and prefix query to compound like the bool query.
+Queries can also have filters associated with them.
 
 
 ### Performing queries
