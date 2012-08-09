@@ -146,19 +146,57 @@ For all the numerous options this query type accepts, see [ElasticSearch documen
 
 ### Range Query
 
-TBD
+The Range query returns documents with fields that have numerical values, dates or terms within a specific range. One example of such query is retrieving
+all documents where the `:date` field value is earlier than a particular moment in time, say, `"20120801T160000+0100"`.
+
+Range queries work for numerical values and dates the way you would expect. For string and text fields, they match all documents with terms in the given range
+(for example, `"cha"` to `"cze"`) in a particular field.
+
+With Elastisch, range query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/range-query.html):
+
+{% gist c0603c48788f3285001c %}
+
+Elastisch provides a helper function for constructing range queries, `clojurewerkz.elastisch.query/range`:
+
+{% gist 1ea880308ba360b36183 %}
+
 
 ### Boolean Query
 
-TBD
+A query that matches documents matching boolean combinations of other queries. It is built using one or more boolean clauses, each clause with a typed occurrence.
+The occurrence types are documented on the [ElasticSearch page on boolean queries](http://www.elasticsearch.org/guide/reference/query-dsl/bool-query.html).
+
+With Elastisch, boolean query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/bool-query.html):
+
+{% gist 6973895e39dc8181f1f3 %}
+
+Elastisch provides a helper function for constructing boolean queries, `clojurewerkz.elastisch.query/bool`:
+
+{% gist 5dc9396bf16f0a5efca7 %}
+
+`clojurewerkz.elastisch.query/bool` can be used in combination with other query helpers, such as `clojure.elastisch.query/term`, because they just return maps:
+
+{% gist 50f7145c0c48c163151c %}
+
 
 ### Filtered Query
 
 TBD
 
+
 ### Field Query
 
-TBD
+A query that executes a query string against a specific field. It is a simplified version of query_string query (it is equivalent to setting the `:default_field`
+to the field this query executed against).
+
+With Elastisch, field query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/field-query.html):
+
+{% gist 57aa407c36bb7fbb0f29 %}
+
+Elastisch provides a helper function for constructing field queries, `clojurewerkz.elastisch.query/field`:
+
+{% gist 6e785d8bc947328ad18e %}
+
 
 ### Prefix Query
 
