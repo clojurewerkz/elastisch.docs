@@ -181,7 +181,21 @@ Elastisch provides a helper function for constructing boolean queries, `clojurew
 
 ### Filtered Query
 
-TBD
+A query that applies a filter to the results of another query. Use it if you need to narrow down
+results of an existing query efficiently but the condition you filter on does not affect relevance
+ranking. One example of that is searching over accounts that are active.
+
+With Elastisch, filtered query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/filtered-query.html):
+
+{% gist 0467bff740c8219aabb1 %}
+
+Elastisch provides a helper function for constructing filtered queries, `clojurewerkz.elastisch.query/filtered`:
+
+{% gist f513a1533127b9848d11 %}
+
+`clojurewerkz.elastisch.query/filtered` can be used in combination with other query helpers, such as `clojure.elastisch.query/term`, because they just return maps:
+
+{% gist 08aecbf66de81a507537 %}
 
 
 ### Field Query
