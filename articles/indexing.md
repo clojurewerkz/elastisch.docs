@@ -338,7 +338,7 @@ With ElasticSearch, it is possible to define custom analyzers without writing an
  * A tokenizer, an entity that takes a string and produces **tokens**
  * Zero or more **token filters** that modify or remove tokens (similarly to how `clojure.core/filter`, `clojure.core/map` and `clojure.core/remove` functions
    work)
- * Char filters that modify inputs before tokenization (for example, strip HTML or replace some characters with other ones that are written or sound similarly)
+ * Char filters that modify inputs before tokenization (for example, replace `ß` with `ss` or strip HTML tags)
 
 Analyzers are [configured](http://www.elasticsearch.org/guide/reference/index-modules/analysis/) using index settings:
 
