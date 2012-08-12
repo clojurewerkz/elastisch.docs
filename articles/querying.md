@@ -273,12 +273,41 @@ An example of match-all query being used as part of a filtered query to find all
 
 ### Dis-Max Query
 
-TBD
+Dis-Max or Disjunction Max query is a compound query where only the max score clause is used for ranking (as opposed to boolean queries, where scores are combined).
+This is useful when searching for a word in multiple fields with different boost factors (so that the fields cannot be combined equivalently into a single search field).
+
+Like other compound queries, Dis-Max returns the union of documents produced by subqueries.
+
+With Elastisch, dis-max query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/dis-max-query.html):
+
+{% gist 3f621675b0a98cf6b849 %}
+
+Elastisch provides a helper function for constructing dis-max queries, `clojurewerkz.elastisch.query/dis-max`:
+
+{% gist 77dac195ced1a821f302 %}
+
+`clojurewerkz.elastisch.query/dis-max` can be used in combination with other query helpers, such as `clojure.elastisch.query/field`, because they just return maps:
+
+{% gist 7e90251ffa0827975db8 %}
 
 
 ### Boosting Query
 
-TBD
+Boosting queries are used to demote results that match a particular query. For example, when searching for `"Berlin"`, most likely the intent is to find
+information about Berlin in Germany, not one of the towns in North America. Boosting queries can be used to lower relevancy of some documents without
+affecting scoring of the most.
+
+With Elastisch, boosting query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/boosting-query.html):
+
+{% gist d55b315dea4067315cba %}
+
+Elastisch provides a helper function for constructing boosting queries, `clojurewerkz.elastisch.query/boosting`:
+
+{% gist 5302e6f33b381bae8672 %}
+
+`clojurewerkz.elastisch.query/boosting` can be used in combination with other query helpers, such as `clojure.elastisch.query/term`, because they just return maps:
+
+{% gist b8ec660229692bf4b1ea %}
 
 
 ### More Like This Query
@@ -337,6 +366,8 @@ TBD
 
 
 ### Indices Query
+
+Indices Query executes different queries against different indexes and combine the results.
 
 TBD
 
