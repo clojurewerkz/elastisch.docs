@@ -128,7 +128,7 @@ Elastisch provides a helper function for constructing boolean text queries, `clo
 ### Query String Query
 
 The Query String (QS) query accepts text, runs it through Lucene Query Language parser, analyzes it and performs query. It is the most advanced query
-type with 
+type with
 
 The difference with field and query string query types is that text queries do not support field prefixes and do not attempt to Lucene Query syntax parsing.
 As such, QS queries can be seen as more powerful and less efficient kind of text query, suitable for many apps with technical audience.
@@ -258,7 +258,17 @@ Elastisch provides a helper function for constructing IDs queries, `clojurewerkz
 The Match All query does what it sounds like: matches every single document in the index. Used almost exclusively during development or
 in combination with other queries in compound queries (e.g. filtered).
 
-TBD
+With Elastisch, match-all query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/match-all-query.html):
+
+{% gist bd0eb5a9b49f17a82592 %}
+
+Elastisch provides a helper function for constructing match-all queries, `clojurewerkz.elastisch.query/match-all`:
+
+{% gist b552bbb10de1753e8ba4 %}
+
+An example of match-all query being used as part of a filtered query to find all people in a particular age bracket:
+
+{% gist f99031c42bc8a21ad952 %}
 
 
 ### Dis-Max Query
