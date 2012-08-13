@@ -338,17 +338,42 @@ Elastisch provides a helper function for constructing MLT field queries, `clojur
 
 ### Fuzzy Query
 
-TBD
+A fuzzy based query that uses similarity based on Levenshtein (edit distance) algorithm. **Warning**: this query uses prefix length of 0 by default.
+This will cause a full scan on all terms.
+
+With Elastisch, fuzzy query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/fuzzy-query.html):
+
+{% gist f32b5e41e76b6f7bbb32 %}
+
+Elastisch provides a helper function for constructing fuzzy queries, `clojurewerkz.elastisch.query/fuzzy`:
+
+{% gist b1e21f160ea61b437ad3 %}
 
 
 ### Fuzzy Like This Query
 
-TBD
+A cross between Fuzzy and More Like This queries.
+
+With Elastisch, Fuzzy Like This (FLT) query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/fuzzy-like-this-query.html):
+
+{% gist 5b8c3ef82a712170dd9f %}
+
+Elastisch provides a helper function for constructing fuzzy queries, `clojurewerkz.elastisch.query/fuzzy-like-this`:
+
+{% gist 14623996faad7ffb5181 %}
 
 
 ### Fuzzy Like This Field Query
 
 TBD
+
+With Elastisch, Fuzzy Like This Field query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/fuzzy-like-this-field-query.html):
+
+{% gist  %}
+
+Elastisch provides a helper function for constructing fuzzy queries, `clojurewerkz.elastisch.query/fuzzy-like-this-field`:
+
+{% gist  %}
 
 
 ### Nested Query
@@ -385,7 +410,13 @@ TBD
 
 Indices Query executes different queries against different indexes and combine the results.
 
-TBD
+With Elastisch, indices query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/indices-query.html):
+
+{% gist  %}
+
+Elastisch provides a helper function for constructing fuzzy queries, `clojurewerkz.elastisch.query/indices`:
+
+{% gist  %}
 
 
 ### Top Children Query
