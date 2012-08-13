@@ -312,12 +312,28 @@ Elastisch provides a helper function for constructing boosting queries, `clojure
 
 ### More Like This Query
 
-TBD
+More Like This (MLT) query find documents that are “like” provided text by running it against one or more fields.
+
+With Elastisch, More Like This query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/mlt-query.html):
+
+{% gist 2fef523a3ca1c69aae88 %}
+
+Elastisch provides a helper function for constructing MLT queries, `clojurewerkz.elastisch.query/mlt`:
+
+{% gist 4f5f1706cd9a551717b8 %}
 
 
 ### More Like This Field Query
 
-TBD
+More Like This Field is very similar to the More Like This query but operates on a single field.
+
+With Elastisch, More Like This query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/mlt-field-query.html):
+
+{% gist 72e15aee431b68c3f810 %}
+
+Elastisch provides a helper function for constructing MLT field queries, `clojurewerkz.elastisch.query/mlt-field`:
+
+{% gist f80dfba2a947b9a55f18 %}
 
 
 ### Fuzzy Query
