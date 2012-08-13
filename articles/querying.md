@@ -358,52 +358,104 @@ With Elastisch, Fuzzy Like This (FLT) query structure is the same as described i
 
 {% gist 5b8c3ef82a712170dd9f %}
 
-Elastisch provides a helper function for constructing fuzzy queries, `clojurewerkz.elastisch.query/fuzzy-like-this`:
+Elastisch provides a helper function for constructing FLT queries, `clojurewerkz.elastisch.query/fuzzy-like-this`:
 
 {% gist 14623996faad7ffb5181 %}
 
 
 ### Fuzzy Like This Field Query
 
-TBD
+Same as FTL query but works over a single field.
 
 With Elastisch, Fuzzy Like This Field query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/fuzzy-like-this-field-query.html):
 
-{% gist  %}
+{% gist a87993ae1252816587a6 %}
 
-Elastisch provides a helper function for constructing fuzzy queries, `clojurewerkz.elastisch.query/fuzzy-like-this-field`:
+Elastisch provides a helper function for constructing Fuzzy Like This Field queries, `clojurewerkz.elastisch.query/fuzzy-like-this-field`:
 
-{% gist  %}
+{% gist 4b98ff3ca587cc39ab15 %}
 
 
 ### Nested Query
 
-TBD
+Nested query allows to query nested objects/documents. The query is executed against the nested objects as if they were indexed as separate docs. The root parent document is returned.
+
+With Elastisch, Nested query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/nested-query.html):
+
+{% gist 25d3ab79e99a350da211 %}
+
+Elastisch provides a helper function for constructing nested queries, `clojurewerkz.elastisch.query/nested`:
+
+{% gist ca3e5be53b883e2877bb %}
+
+`clojurewerkz.elastisch.query/nested` can be used in combination with other query helpers, such as `clojure.elastisch.query/term`, because they just return maps:
+
+{% gist 769f9b5af752aa7e39e1 %}
 
 
 ### Span First Query
 
-TBD
+Matches spans near the beginning of a field.
+
+With Elastisch, Span First query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/span-first-query.html):
+
+{% gist 4c357f27e77065a81a57 %}
+
+Elastisch provides a helper function for constructing Span First queries, `clojurewerkz.elastisch.query/span-first`:
+
+{% gist a20ce931cd077c9a6498 %}
 
 
 ### Span Near Query
 
-TBD
+Matches spans which are near one another. One can specify slop, the maximum number of intervening unmatched positions, as well as whether matches are required to be in-order.
+
+With Elastisch, Span Near query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/span-near-query.html):
+
+{% gist 2efd07d4f12ea16328e6 %}
+
+Elastisch provides a helper function for constructing Span Near queries, `clojurewerkz.elastisch.query/span-near`:
+
+{% gist e7800727165abadbf3ff %}
 
 
 ### Span Not Query
 
-TBD
+Removes matches which overlap with another span query.
+
+With Elastisch, Span Not query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/span-not-query.html):
+
+{% gist 55c1a104d248ad9d4788 %}
+
+Elastisch provides a helper function for constructing Span Not queries, `clojurewerkz.elastisch.query/span-not`:
+
+{% gist 69251788c08d40fcff59 %}
 
 
 ### Span Or Query
 
-TBD
+Matches the union of its span clauses.
+
+With Elastisch, Span Or query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/span-or-query.html):
+
+{% gist f88c79c93cfde4f2787f %}
+
+Elastisch provides a helper function for constructing Span Or queries, `clojurewerkz.elastisch.query/span-or`:
+
+{% gist b11b07ececa627e1df5c %}
 
 
 ### Span Term Query
 
-TBD
+Matches spans containing a term.
+
+With Elastisch, Span Term query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/span-term-query.html):
+
+{% gist 383847bde046f755b6d2 %}
+
+Elastisch provides a helper function for constructing Span Term queries, `clojurewerkz.elastisch.query/span-term`:
+
+{% gist 451cc9f58f01e4edfefd %}
 
 
 ### Indices Query
@@ -412,11 +464,11 @@ Indices Query executes different queries against different indexes and combine t
 
 With Elastisch, indices query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/indices-query.html):
 
-{% gist  %}
+{% gist 576f5e363f8d2be42dc3 %}
 
 Elastisch provides a helper function for constructing fuzzy queries, `clojurewerkz.elastisch.query/indices`:
 
-{% gist  %}
+{% gist 736c8f60b263b63a063f %}
 
 
 ### Top Children Query
