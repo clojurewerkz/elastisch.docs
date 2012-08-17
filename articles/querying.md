@@ -475,25 +475,200 @@ Elastisch provides a helper function for constructing fuzzy queries, `clojurewer
 
 TBD
 
+With Elastisch, Top Children query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/top-children-query.html):
+
+{% gist 6d476c53c33d4730a369 %}
+
+Elastisch provides a helper function for constructing Top Children queries, `clojurewerkz.elastisch.query/top-children`:
+
+{% gist ba42a803ce583f5fa6fc %}
+
 
 ### Has Child Query
 
 TBD
 
+With Elastisch, Has Child query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/has-child-query.html):
+
+{% gist 813f9485295d94c327a8 %}
+
+Elastisch provides a helper function for constructing Has Child queries, `clojurewerkz.elastisch.query/has-child`:
+
+{% gist a299331a201bb0a52e23 %}
+
 
 ### Constant Score Query
 
-TBD
+A query that wraps a filter or another query and simply returns a constant score equal to the query boost for every document in the filter.
+The filter object can hold only filter elements, not queries. Filters can be much faster compared to queries since they don’t perform any scoring,
+especially when they are cached.
+
+With Elastisch, Constant Score query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/constant-score-query.html):
+
+{% gist 1a4f25dc39d51dc0c8b7 %}
+
+Elastisch provides a helper function for constructing Constant Score queries, `clojurewerkz.elastisch.query/constant-score`:
+
+{% gist b843b4789c03d96a7f50 %}
 
 
 ### Custom Score Query
 
+Custom Score query allows to wrap another query and customize the scoring of it by providing a script expression.
+
+With Elastisch, Custom Score query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/custom-score-query.html):
+
+{% gist 7f9e08572220f5aacd33 %}
+
+Elastisch provides a helper function for constructing Custom Score queries, `clojurewerkz.elastisch.query/custom-score`:
+
+{% gist 00ad20065bd8989e59f0 %}
+
+
+### Custom Filters Score Query
+
+A Custom Filters Score query allows to execute a query, and if the hit matches a provided filter (ordered), use either a boost or a script associated with it to compute the score.
+This kind of query allows for very efficient parametrized scoring because filters do not perform any scoring and their results can be cached.
+
+With Elastisch, Custom Filters Score query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/custom-filters-score-query.html):
+
+{% gist b2bef712ad02f3d5f35a %}
+
+Elastisch provides a helper function for constructing Custom Filters Score queries, `clojurewerkz.elastisch.query/custom-filter-score`:
+
+{% gist 523f57fbd3da9729deaa %}
+
+
+
+
+## Filters
+
+Often search results need to be filtered (scoped): for example, to make sure results only contain documents that belong to a particular user account
+or organization. Such filtering conditions do not play any role in the relevance ranking and just used as a way of excluding certain documents
+from search results.
+
+*Filters* is an ElasticSearch feature that lets you decide what documents should be included or excluded from a results of a query. Filters are similar
+to the way term queries work but because filters do not participate in document ranking, they are significantly more efficient. Furthermore,
+filters can be cached, improving efficiency even more.
+
+To specify a filter, pass the `:filter` option to `clojurewerkz.elastisch.rest.document/search`:
+
+{% gist e9c68d7d524f9d8457d5 %}
+
+ElasticSearch provides many filters out of the box.
+
+### Term and Terms Filter
+
+Term filter is very similar to the Term query covered above but like all filters, does not contribute to relevance scoring and is more
+efficient. Terms filter works the same way but for multiple terms.
+
+With Elastisch, term filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/term-filter.html):
+
+{% gist 52f799181e03bb8cda0c %}
+
+### Range Filter
+
+Range filter filters documents out on a range of values, similarly to the Range query. Supports numerical values, dates and strings.
+
+With Elastisch, range filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/range-filter.html):
+
+{% gist c69991390c1dff760cdb %}
+
+### Exists Filter
+
+Exists filter filters documents that have a specific field set. This filter always uses caching.
+
+With Elastisch, Exists filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/exists-filter.html):
+
+{% gist 67e6d4dddd934250a9ae %}
+
+### Missing Filter
+
+Exists filter filters documents that do not have a specific field set, that is, the opposite of the Exists filter.
+
+With Elastisch, Missing filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/missing-filter.html):
+
+{% gist 4a678dc47e4b64206f01 %}
+
+### And Filter
+
+TBD
+
+### Or Filter
+
+TBD
+
+### Not Filter
+
+TBD
+
+### Bool Filter
+
+TBD
+
+### Limit Filter
+
+TBD
+
+### Type Filter
+
+TBD
+
+### Prefix Filter
+
+TBD
+
+### Query Filter
+
+TBD
+
+### Geo Distance Filter
+
+TBD
+
+### Geo Distance Range Filter
+
 TBD
 
 
-### Custom Filter Score Query
+### Filter Caching
 
-TBD
+Filters are often good candidates for caching that improves their performance further. Some filter types use caching by default:
+
+ * term/terms
+ * prefix
+ * range
+ * exists
+
+Others are not cached by default:
+
+ * numeric_range
+ * script
+ * various geo filters
+ * compound filters (and, or, not)
+
+It is possible to use `_cache` and `_cache_key` parameters to control caching behavior: disable caching or use custom cache key.
+
+For more information, see [Filters and Caching](http://www.elasticsearch.org/guide/reference/query-dsl/)in ElasticSearch documentation.
+
+
+
+## Highlighting
+
+Having search matches highlighted in the UI is very useful in many cases. ElasticSearch can highlight matched in search results. To enable highlighting,
+use the `:highlight` option `clojurewerkz.elastisch.rest.document/search` accepts. In the example above, search matches in the `biography` field will
+be highlighted (wrapped in `em` tags) and search hits will include one extra "virtual" field called `:highlight` that includes the highlighted fields and the highlighted fragments
+that can be used by your application.
+
+{% gist ae91b88ca45fa83bf417 %}
+
+More examples can be found in this [ElasticSearch documentation section on retrieving subsets of fields](http://www.elasticsearch.org/guide/reference/api/search/highlighting.html).
+`:highlight` values that Elastisch accepts are structured exactly the same as JSON documents in that section.
+
+TBD: examples, cover more features
+
+
+
 
 
 ## Query Examples
@@ -523,16 +698,6 @@ will also return the 1st document.
 
 TBD
 
-
-
-## Filters
-
-TBD
-
-
-## Highlighting
-
-TBD
 
 
 ## Wrapping Up

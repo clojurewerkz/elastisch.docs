@@ -200,104 +200,106 @@ ElasticSearch is a feature rich search engine and it supports many types of quer
 all queries can be passed as Clojure maps, it is common to use convenient functions from the
 `clojurewerkz.elastisch.query` to construct queries.
 
-We won't cover all the functions in this guide but will take a closer look at a few of them:
+We won't cover all the functions in this guide but will take a closer look at a few of them. For more information, see our [guide on Querying](/articles/querying.html).
 
 #### Term query
 
-[Term query](http://www.elasticsearch.org/guide/reference/query-dsl/term-query.html) matches documents that have fields that contain a term (exactly as given, not analyzed).
+The Term query is the most basic query type. It matches documents that have a particular term.
+A common use case for term queries is looking up documents with unanalyzed identifiers
+such as usernames.
 
-Short example:
+A close relative of the term query is the **terms query** which works the same way but takes multiple term values.
 
-{% gist fc01bb14221852a4175d %}
+With Elastisch, term query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/term-query.html):
 
-Raw query:
+{% gist 2a66899e2b200cca499f %}
 
-{% gist e47f48e9f2879e9285f8 %}
+Elastisch provides a helper function for constructing term queries, `clojurewerkz.elastisch.query/term`:
+
+{% gist 2d7b9e0b59f728a35751 %}
+
+If provided values is a collection, Elastisch will construct a terms query under the hood.
+
 
 #### Query string query
 
-[Query string query](http://www.elasticsearch.org/guide/reference/query-dsl/query-string-query.html) parses provided query string using a query parser. It supports Lucene query language
-expressions such as "this AND that OR thus":
+The Query String (QS) query accepts text, runs it through Lucene Query Language parser, analyzes it and performs query. It is the most advanced query
+type with
 
-Short example:
+The difference with field and query string query types is that text queries do not support field prefixes and do not attempt to Lucene Query syntax parsing.
+As such, QS queries can be seen as more powerful and less efficient kind of text query, suitable for many apps with technical audience.
 
-{% gist e9613b3f2c5b9141ff23 %}
+With Elastisch, QS query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/query-string-query.html):
 
-Raw query:
+{% gist f87ff598ff8dd84810a3 %}
 
-{% gist f469349de876d1122883 %}
+Elastisch provides a helper function for constructing QS text queries, `clojurewerkz.elastisch.query/query-string`:
 
-For more information, see our [guide on Querying](/articles/querying.html).
+{% gist 43edc61a6bd0e31460c6 %}
+
+For all the numerous options this query type accepts, see [ElasticSearch documentation on the subject](http://www.elasticsearch.org/guide/reference/query-dsl/query-string-query.html).
+
 
 #### Range query
 
-TBD
+The Range query returns documents with fields that have numerical values, dates or terms within a specific range. One example of such query is retrieving
+all documents where the `:date` field value is earlier than a particular moment in time, say, `"20120801T160000+0100"`.
 
-Short example:
+Range queries work for numerical values and dates the way you would expect. For string and text fields, they match all documents with terms in the given range
+(for example, `"cha"` to `"cze"`) in a particular field.
 
-{% gist  %}
+With Elastisch, range query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/range-query.html):
 
-Raw query:
+{% gist c0603c48788f3285001c %}
 
-{% gist  %}
+Elastisch provides a helper function for constructing range queries, `clojurewerkz.elastisch.query/range`:
 
-For more information, see our [guide on Querying](/articles/querying.html).
+{% gist 1ea880308ba360b36183 %}
+
 
 #### Boolean (bool) query
 
-TBD
+A query that matches documents matching boolean combinations of other queries. It is built using one or more boolean clauses, each clause with a typed occurrence.
+The occurrence types are documented on the [ElasticSearch page on boolean queries](http://www.elasticsearch.org/guide/reference/query-dsl/bool-query.html).
 
-Short example:
+With Elastisch, boolean query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/bool-query.html):
 
-{% gist  %}
+{% gist 6973895e39dc8181f1f3 %}
 
-Raw query:
+Elastisch provides a helper function for constructing boolean queries, `clojurewerkz.elastisch.query/bool`:
 
-{% gist  %}
+{% gist 5dc9396bf16f0a5efca7 %}
 
-For more information, see our [guide on Querying](/articles/querying.html).
+`clojurewerkz.elastisch.query/bool` can be used in combination with other query helpers, such as `clojure.elastisch.query/term`, because they just return maps:
+
+{% gist 50f7145c0c48c163151c %}
+
 
 #### IDs query
 
-TBD
+The IDs query is searches for documents by their IDs (`:_id` field values). It is similar to `WHERE ... IN (...)` in SQL.
 
-Short example:
+With Elastisch, IDs query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/ids-query.html):
 
-{% gist  %}
+{% gist a1da13c2614bd1a9c503 %}
 
-Raw query:
+Elastisch provides a helper function for constructing IDs queries, `clojurewerkz.elastisch.query/ids`:
 
-{% gist  %}
+{% gist dd15ca01686789328a73 %}
 
-For more information, see our [guide on Querying](/articles/querying.html).
 
 #### Field query
 
-TBD
+A query that executes a query string against a specific field. It is a simplified version of query_string query (it is equivalent to setting the `:default_field`
+to the field this query executed against).
 
-Short example:
+With Elastisch, field query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/field-query.html):
 
-{% gist  %}
+{% gist 57aa407c36bb7fbb0f29 %}
 
-Raw query:
+Elastisch provides a helper function for constructing field queries, `clojurewerkz.elastisch.query/field`:
 
-{% gist  %}
-
-For more information, see our [guide on Querying](/articles/querying.html).
-
-#### More Like This query
-
-TBD
-
-Short example:
-
-{% gist  %}
-
-Raw query:
-
-{% gist  %}
-
-For more information, see our [guide on Querying](/articles/querying.html).
+{% gist 6e785d8bc947328ad18e %}
 
 
 ### Sorting Results
@@ -322,7 +324,54 @@ Default value of `:from` is 0, of `:size` is 10.
 
 ### Using Filters
 
-TBD
+Often search results need to be filtered (scoped): for example, to make sure results only contain documents that belong to a particular user account
+or organization. Such filtering conditions do not play any role in the relevance ranking and just used as a way of excluding certain documents
+from search results.
+
+*Filters* is an ElasticSearch feature that lets you decide what documents should be included or excluded from a results of a query. Filters are similar
+to the way term queries work but because filters do not participate in document ranking, they are significantly more efficient. Furthermore,
+filters can be cached, improving efficiency even more.
+
+To specify a filter, pass the `:filter` option to `clojurewerkz.elastisch.rest.document/search`:
+
+{% gist e9c68d7d524f9d8457d5 %}
+
+ElasticSearch provides many filters out of the box. We will only cover a few ones in this guide.
+
+#### Term and Terms Filter
+
+Term filter is very similar to the Term query covered above but like all filters, does not contribute to relevance scoring and is more
+efficient. Terms filter works the same way but for multiple terms.
+
+With Elastisch, term filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/term-filter.html):
+
+{% gist 52f799181e03bb8cda0c %}
+
+#### Range Filter
+
+Range filter filters documents out on a range of values, similarly to the Range query. Supports numerical values, dates and strings.
+
+With Elastisch, range filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/range-filter.html):
+
+{% gist c69991390c1dff760cdb %}
+
+#### Exists Filter
+
+Exists filter filters documents that have a specific field set. This filter always uses caching.
+
+With Elastisch, Exists filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/exists-filter.html):
+
+{% gist 67e6d4dddd934250a9ae %}
+
+#### Missing Filter
+
+Exists filter filters documents that do not have a specific field set, that is, the opposite of the Exists filter.
+
+With Elastisch, Missing filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/missing-filter.html):
+
+{% gist 4a678dc47e4b64206f01 %}
+
+Filters will be covered in more detail in the [Querying](/articles/querying.html) guide.
 
 
 ### Highlighting
