@@ -43,7 +43,7 @@ Elastisch is developed and tested with recent stable ElasticSearch releases (0.1
 
 ## Adding Elastisch Dependency To Your Project
 
-Monger artifacts are [released to Clojars](https://clojars.org/clojurewerkz/elastisch).
+Elastisch artifacts are [released to Clojars](https://clojars.org/clojurewerkz/elastisch).
 
 ### With Leiningen
 
