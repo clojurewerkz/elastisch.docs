@@ -374,6 +374,11 @@ With Elastisch, Missing filter structure is the same as described in the [Elasti
 Filters will be covered in more detail in the [Querying](/articles/querying.html) guide.
 
 
+### Facets
+
+Facets are covered in a separate guide on [ElasticSearch facets](/articles/querying.html) guide.
+
+
 ### Highlighting
 
 Having search matches highlighted in the UI is very useful in many cases. ElasticSearch can highlight matched in search results. To enable highlighting,
