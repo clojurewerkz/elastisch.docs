@@ -1,5 +1,5 @@
 ---
-title: "Elastisch, a minimalistic Clojure client for ElasticSearch: Getting Started with ElasticSearch and Clojure"
+title: "Elastisch, a minimalistic Clojure client for ElasticSearch: Querying"
 layout: article
 ---
 
