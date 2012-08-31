@@ -39,15 +39,13 @@ This guide covers:
  * Other topics related to querying
 
 
-### [Facets](/articles/facets.html)
+### [Facets](/articles/facets.html) (Faceted Search)
 
 This guide covers:
 
- * What are facets in ElasticSearch
- * How to use facets with Elastisch
+ * An overview of faceted search
+ * How to perform queries with facets
  * Other topics related to facets
-
-TBD
 
 
 ### [Percolation](/articles/percolation.html)
