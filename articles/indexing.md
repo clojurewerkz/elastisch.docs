@@ -81,6 +81,11 @@ to be passed as the 3rd argument  and can be used to update existing documents (
 ElasticSearch will version documents when they are updated by default. More on this later in this guide.
 
 
+### Updating With Scripts
+
+TBD
+
+
 ## Creating Indexes
 
 ElasticSearch will create an index the first time it is used but it is also possible to precreate an index with
