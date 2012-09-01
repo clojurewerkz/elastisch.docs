@@ -610,7 +610,6 @@ With Elastisch, And filter structure is the same as described in the [ElasticSea
 
 The Not filter filters out document that match its subquery. This filter does not use caching by default.
 
-
 With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/not-filter.html):
 
 {% gist f8825ea239f94ac350bf %}
