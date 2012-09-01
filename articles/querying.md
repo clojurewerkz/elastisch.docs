@@ -592,43 +592,102 @@ With Elastisch, Missing filter structure is the same as described in the [Elasti
 
 ### And Filter
 
-TBD
+The And filter matches documents using `AND` boolean operator on multiple subqueries. This filter does not use caching by default.
+
+With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/and-filter.html):
+
+{% gist 9047940a7a3be1fa43ea %}
 
 ### Or Filter
 
-TBD
+The Or filter is similar to the And filter but matches documents using `OR` boolean operator on multiple subqueries. It does not use caching by default.
+
+With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/or-filter.html):
+
+{% gist 93e3645da2ba8c60a079 %}
 
 ### Not Filter
 
-TBD
+The Not filter filters out document that match its subquery. This filter does not use caching by default.
+
+
+With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/not-filter.html):
+
+{% gist f8825ea239f94ac350bf %}
 
 ### Bool Filter
 
 TBD
 
+With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/bool-filter.html):
+
+{% gist  %}
+
 ### Limit Filter
 
 TBD
+
+With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/limit-filter.html):
+
+{% gist  %}
 
 ### Type Filter
 
 TBD
 
+With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/type-filter.html):
+
+{% gist  %}
+
 ### Prefix Filter
 
 TBD
+
+With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/prefix-filter.html):
+
+{% gist  %}
 
 ### Query Filter
 
 TBD
 
+With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/query-filter.html):
+
+{% gist  %}
+
 ### Geo Distance Filter
 
 TBD
 
+With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/geo-distance-filter.html):
+
+{% gist  %}
+
 ### Geo Distance Range Filter
 
 TBD
+
+With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/geo-distance-range-filter.html):
+
+{% gist  %}
+
+
+### Geo Polygon Filter
+
+TBD
+
+With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/geo-distance-range-filter.html):
+
+{% gist  %}
+
+
+### Geo Bounding Box Filter
+
+TBD
+
+With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/geo-distance-range-filter.html):
+
+{% gist  %}
 
 
 ### Filter Caching
