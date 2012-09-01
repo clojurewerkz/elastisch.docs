@@ -448,6 +448,24 @@ it is set to infinity (the document will never expire).
 Expired documents are removed periodically (every 60 seconds by default). The period can be controlled via the `indices.ttl.interval` index setting.
 
 
+## Document Timestamps
+
+Very often documents have timestamps associated with them. While it is common to store and index timestamps as a field, [ElasticSearch supports
+timestamps](http://www.elasticsearch.org/guide/reference/mapping/timestamp-field.html) via the special `_timestamp` field. Timestamps can be taken from a specified document field (the so called *external timestamps*) or
+automatically set to current time when a document is indexed. Just like with all date/time fields, ElasticSearch supports multiple date/time
+formats.
+
+An example of `_timestamp` configuration via mapping settings:
+
+{% gist e53be3a72a7da8646cef %}
+
+In the example above, the `_timestamp` value will be populated from the `created_at` document field in the provided format.
+
+An example of `_timestamp` being set for a document:
+
+{% gist bcc05efd735424d01d59 %}
+
+
 ## Document Versioning
 
 Each indexed document in ElasticSearch has a version number. It is accessible via the `:_version` key in the response to operations like `clojurewerkz.elastisch.rest.document/create`, `clojurewerkz.elastisch.rest.document/put`.
@@ -457,14 +475,11 @@ This helps ensure that no data is lost due to concurrent updates of the same doc
 
 To do so, pass the `:version` option to `clojurewerkz.elastisch.rest.document/put`:
 
-{% gist  %}
+{% gist 128f013cdc951b0e61f6 %}
 
 When reading to update, setting `:preference` to `"_primary"` helps ensure you won't get stale reads:
 
-{% gist  %}
-
-
-TBD
+{% gist 0ad254deba5f8c0811cd %}
 
 
 ## Checking If an Index Exists
