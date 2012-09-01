@@ -130,6 +130,17 @@ To add a document to an index, use the `clojurewerkz.elastisch.rest.document/cre
 There is much more to indexing that we won't cover in this guide. A separate [guide on indexing](/articles/indexing.html) will go into much more detail on various aspects related to indexing.
 
 
+### Fetching a Single Document By Id
+
+To [fetch a single document by id](http://www.elasticsearch.org/guide/reference/api/get.html), use `clojurewerkz.elastisch.rest.document/get`:
+
+{% gist d715d2ebab228a580c79 %}
+
+Additional parameters such as `preference` are passed as options:
+
+{% gist 0ad254deba5f8c0811cd %}
+
+
 ### Checking responses
 
 `clojurewerkz.elastisch.rest.document/create`, `clojurewerkz.elastisch.rest.document/put`, `clojurewerkz.elastisch.rest.index/create` and other functions
