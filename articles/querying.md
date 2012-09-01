@@ -596,55 +596,55 @@ The And filter matches documents using `AND` boolean operator on multiple subque
 
 With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/and-filter.html):
 
-{% gist 9047940a7a3be1fa43ea %}
+{% gist a17a7078612e747f1920 %}
 
 ### Or Filter
 
 The Or filter is similar to the And filter but matches documents using `OR` boolean operator on multiple subqueries. It does not use caching by default.
 
-With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/or-filter.html):
+With Elastisch, Or filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/or-filter.html):
 
-{% gist 93e3645da2ba8c60a079 %}
+{% gist 7423a83e6cbeeb0e86b7 %}
 
 ### Not Filter
 
 The Not filter filters out document that match its subquery. This filter does not use caching by default.
 
-With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/not-filter.html):
+With Elastisch, Not filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/not-filter.html):
 
-{% gist f8825ea239f94ac350bf %}
+{% gist 35b76f5b9d6ef3bae843 %}
 
 ### Bool Filter
 
-TBD
+The Bool filter matches documents using boolean combinations of its subqueries. Similar in concept to the Boolean query, except that the clauses are other filters.
 
-With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/bool-filter.html):
+With Elastisch, Bool filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/bool-filter.html):
 
-{% gist  %}
+{% gist 4726c7239c8ea0e78c28 %}
 
 ### Limit Filter
 
-TBD
+The Limit filter limits the number of documents (per shard) that are taken for ranking.
 
-With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/limit-filter.html):
+With Elastisch, Limit filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/limit-filter.html):
 
-{% gist  %}
+{% gist 551b47a33ae02d377c9e %}
 
 ### Type Filter
 
-TBD
+This filter filters out documents based on their `_type` field value. It can work even if the `_type` field is not indexed.
 
-With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/type-filter.html):
+With Elastisch, Type filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/type-filter.html):
 
-{% gist  %}
+{% gist a2e743b1c2d52c2317bb %}
 
 ### Prefix Filter
 
-TBD
+This filter matches documents with fields that have terms starting with the given prefix (**not analyzed**).
 
-With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/prefix-filter.html):
+With Elastisch, Prefix filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/prefix-filter.html):
 
-{% gist  %}
+{% gist 9302d37b20d4731feba1 %}
 
 ### Query Filter
 
