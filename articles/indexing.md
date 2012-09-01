@@ -432,13 +432,20 @@ documents may need a custom analyzer.
 ## Document TTL (Time-to-Live)
 
 ElasticSearch supports [Time-to-Live](http://www.elasticsearch.org/guide/reference/mapping/ttl-field.html) documents: it is possible to specify expiration period
-on a document. It can either be done per mapping type via mapping definition, as demonstrated below:
+on a document. It can either be done per mapping type via mapping definition:
 
 {% gist 980374a17ba4e25632a5 %}
 
+{% gist aa0e6e9ae0912b926950 %}
+
 or on a per-document basis by including the `:_ttl` field in a document.
 
-TBD: full examples
+{% gist aa1803d70e4955961774 %}
+
+TTL defined via mapping sets the default that `_ttl` field value in submitted documents will override. When there is no default and no `_ttl` field present,
+it is set to infinity (the document will never expire).
+
+Expired documents are removed periodically (every 60 seconds by default). The period can be controlled via the `indices.ttl.interval` index setting.
 
 
 ## Document Versioning
