@@ -664,14 +664,32 @@ To set default query field for a mapping, specify `index.query.default_field` in
 {% gist 42eae254ac4cc5771923 %}
 
 
-### Field Boosting
+### Document-level Boosting, Field Boosting
 
-TBD
+Not all fields in a document are equaly important. For example, many documents have titles and title content matches can
+be considered significantly more valuable in many cases. The same goes for documents: in a knowledge base application, for instance,
+some documents will be core documents on a subject and others are just minor additions.
 
+Lucene and ElasticSearch support *boosting*: artificially incrementing (or decrementing) value of different fields or entire documents
+that affect final ranking. 
 
-### Per-Document Boosting
+*Boosting factor* is a score multiplier that Lucene will use when calculating the ranking. The higher field boosting factor is, the more
+that field contributes to the overall score of its document and higher that document will be in the ranking.
+Boosting a document can be thought of as boosting all of its fields (this is an oversimplification that is appropriate for this guide).
 
-TBD
+Boosting with ElasticSearch is typically controlled via mappings (there are also special query types and boosting filters, those are
+outside of the scope of this guide). Here is how boosting factor for individual fields is specified:
+
+{% gist 89a2908dd2039bfdf046 %}
+
+To define document-level boosting, one needs to define a special *document boosting field* and set it to a float value during indexing:
+
+{% gist e5070676162834795ce2 %}
+
+The `null_value` field controls default document-level boosting factor that will be used if the boosting field specified via mapping
+is not present in indexed document.
+
+For a more thorough discussion of boosting, see [Lucene in Action, 2nd edition](http://www.manning.com/hatcher3/), chapter 2.5.
 
 
 ### Testing How Text is Analyzed
