@@ -473,7 +473,7 @@ Elastisch provides a helper function for constructing fuzzy queries, `clojurewer
 
 ### Top Children Query
 
-TBD
+Top Children Query performs a query against child documents and aggregates scores of hits into the parent document.
 
 With Elastisch, Top Children query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/top-children-query.html):
 
@@ -486,7 +486,7 @@ Elastisch provides a helper function for constructing Top Children queries, `clo
 
 ### Has Child Query
 
-TBD
+Has Child Query returns parent documents that have child documents of the given type.
 
 With Elastisch, Has Child query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/has-child-query.html):
 
