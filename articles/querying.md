@@ -646,47 +646,41 @@ With Elastisch, Prefix filter structure is the same as described in the [Elastic
 
 {% gist 9302d37b20d4731feba1 %}
 
-### Query Filter
-
-TBD
-
-With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/query-filter.html):
-
-{% gist  %}
 
 ### Geo Distance Filter
 
-TBD
+Allows to filter hits based on a point location using a bounding box (the `pin.location` nested attribute in this example).
 
 With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/geo-distance-filter.html):
 
-{% gist  %}
+{% gist 2e1fe718b5310563c850 %}
+
 
 ### Geo Distance Range Filter
 
-TBD
+Filters documents that include only hits that exists within a specific distance from a geo point.
 
 With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/geo-distance-range-filter.html):
 
-{% gist  %}
+{% gist 3d188688fcbfa332b351 %}
 
 
 ### Geo Polygon Filter
 
-TBD
+Filters documents that exists within a range from a specific point.
 
 With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/geo-distance-range-filter.html):
 
-{% gist  %}
+{% gist 27b0ec49d6c82869368d %}
 
 
 ### Geo Bounding Box Filter
 
-TBD
+A filter allowing to include hits that only fall within a polygon of points.
 
 With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/geo-distance-range-filter.html):
 
-{% gist  %}
+{% gist f18954ecbf10889de3a0 %}
 
 
 ### Filter Caching
