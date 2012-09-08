@@ -37,6 +37,7 @@ This guide covers:
  * How to perform search queries with Elastisch
  * Various kinds of queries
  * Various kinds of filters
+ * Highlighting of search results
  * Other topics related to querying
 
 
