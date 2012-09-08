@@ -755,6 +755,32 @@ will also return the 1st document.
 TBD
 
 
+### Query String Query
+
+TBD
+
+
+### Field Query
+
+TBD
+
+
+### Range Query
+
+TBD
+
+
+### Boolean Query
+
+TBD
+
+
+### Text Query
+
+TBD
+
+
+
 
 ## Wrapping Up
 
