@@ -717,7 +717,11 @@ that can be used by your application.
 More examples can be found in this [ElasticSearch documentation section on retrieving subsets of fields](http://www.elasticsearch.org/guide/reference/api/search/highlighting.html).
 `:highlight` values that Elastisch accepts are structured exactly the same as JSON documents in that section.
 
-TBD: examples, cover more features
+For example, to override highlighting tags (`em` by default):
+
+{% gist 0f934fdc37194666b347 %}
+
+
 
 
 
