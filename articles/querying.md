@@ -60,6 +60,17 @@ To search against multiple indexes or mappings, pass them as vectors to their re
 
 {% gist 51b9bab4f00a6e533c9d %}
 
+To search against all mappings in an index, use `clojurewerkz.elastisch.rest.document/search-all-types`. It works the same as `clojurewerkz.elastisch.rest.document/search`
+but takes one less argument because no need to specify mapping types:
+
+{% gist e4f014ac73302c8cd454 %}
+
+To search globally (across all indexes and mappings), use `clojurewerkz.elastisch.rest.document/search-all-indexes-and-types`:
+
+{% gist c3f2c1bd44711cc521da %}
+
+Note that this operation may be **very expensive** and is generally not recommended for medium and large data sets.
+
 
 ## Checking results
 
