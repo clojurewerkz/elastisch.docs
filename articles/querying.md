@@ -792,6 +792,18 @@ TBD
 
 
 
+## Validating Queries
+
+ElasticSearch provides an API operation that validates queries without executing them. Elastisch exposes it as the `clojurewerkz.elastisch.rest.document/validate-query` function:
+
+{% gist 69cf012c9a5afe6f1d7b %}
+
+Note that unlike `clojurewerkz.elastisch.rest.document/search`, this function does not take mapping type as a parameter.
+
+Query Validation requests with Elastisch have exactly the same structure as JSON documents in the [ElasticSearch Validation API guide](http://www.elasticsearch.org/guide/reference/api/validate.html)
+but passed as Clojure maps.
+
+
 
 ## Wrapping Up
 
