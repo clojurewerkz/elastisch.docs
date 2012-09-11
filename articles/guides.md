@@ -52,7 +52,12 @@ This guide covers:
 
 ### [Percolation](/articles/percolation.html)
 
-TBD
+This guide covers:
+
+ * What is percolation
+ * How to register a query for percolation
+ * How to perform a query percolation
+ * How to unregister a query from percolation
 
 
 ### [Routing and Distribution](/articles/distribution.html)
