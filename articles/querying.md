@@ -17,6 +17,12 @@ This guide covers ElasticSearch search capabilities in depth, explains how Elast
 This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a> (including images & stylesheets). The source is available [on Github](https://github.com/clojurewerkz/elastisch.docs).
 
 
+## What version of Elastisch does this guide cover?
+
+This guide covers Elastisch 1.0.x releases.
+
+
+
 ## Overview
 
 The whole point of a search server is to be able to run search queries against it and ElasticSearch has a lot to offer in this area.

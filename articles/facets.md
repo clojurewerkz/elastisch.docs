@@ -14,6 +14,12 @@ This guide covers ElasticSearch search faceting capabilities and explains how El
 This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a> (including images & stylesheets). The source is available [on Github](https://github.com/clojurewerkz/elastisch.docs).
 
 
+## What version of Elastisch does this guide cover?
+
+This guide covers Elastisch 1.0.x releases.
+
+
+
 ## Overview
 
 Faceted search (also called *faceted navigation*) is a feature that lets the user refine search results using data from [faceted classification](http://en.wikipedia.org/wiki/Faceted_classification)
