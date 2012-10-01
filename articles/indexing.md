@@ -73,8 +73,6 @@ response is was successful.
 
 If the index does not exist, it will be automatically created.
 
-TBD: the `:op_type` option.
-
 
 ### Updating Documents
 
@@ -84,6 +82,33 @@ to be passed as the 3rd argument  and can be used to update existing documents (
 {% gist 4903ddfd635e08b3b49a %}
 
 ElasticSearch will version documents when they are updated by default. More on this later in this guide.
+
+
+### Write Consistency
+
+Each index shard in Elastic Search can have one or more replicas. It is possible to control how many replicas should be active
+for a write operation to occur (to be considered successful) using the `:consistency` parameter that can be one of
+
+ * `"default"`: use the default value configured for the node
+ * `"one"`: just 1 replica
+ * `"quorum"`: the majority of replicas
+ * `"all"`: all replicas must be up
+
+Write consistency can be specified for `clojurewerkz.elastisch.rest.document/create`, `clojurewerkz.elastisch.rest.document/put`,
+`clojurewerkz.elastisch.rest.document/put` and `clojurewerkz.elastisch.rest.document/delete` operations.
+
+
+### Replication Types (Sync, Async)
+
+Elastic Search can replicate data synchronously or asynchronously. This behavior can be controlled on the per-request basis
+using the `:replication` parameter that `clojurewerkz.elastisch.rest.document/create` and `clojurewerkz.elastisch.rest.document/put`,
+`clojurewerkz.elastisch.rest.document/put` take.
+
+Supported parameter values are
+
+ * `"default"`: use the default value configured for the node
+ * `"sync"`: replicate synchronously (waiting for replicas to respond)
+ * `"async"`: replicate asynchronously (no waiting for responses)
 
 
 ### Updating With Scripts
