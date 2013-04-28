@@ -8,6 +8,12 @@ layout: article
 [Elastisch has a mailing list](https://groups.google.com/forum/?fromgroups#!forum/clojure-elasticsearch). Feel free to join it and ask any questions you may have.
 
 
+## IRC
+
+Feel free to stop by `#clojurewerkz` on `irc.freenode.net`. There is a [Web IRC client](http://webchat.freenode.net/)
+if you need one.
+
+
 ## News & Announcements on Twitter
 
 To subscribe for announcements of releases, important changes and so on, please follow [@ClojureWerkz](https://twitter.com/clojurewerkz) on Twitter.
