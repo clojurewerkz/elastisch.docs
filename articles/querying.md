@@ -46,7 +46,24 @@ query DSL](http://www.elasticsearch.org/guide/reference/query-dsl/).
 To perform a query with Elastisch, use the `clojurewerkz.elastisch.rest.document/search` function. It takes index name, mapping name and query
 (as a Clojure map):
 
-{% gist 1dfaf5fa28a46712c41a %}
+``` clojure
+(ns clojurewerkz.elastisch.docs.examples
+  (:require [clojurewerkz.elastisch.rest          :as esr]
+            [clojurewerkz.elastisch.rest.document :as esd]
+            [clojurewerkz.elastisch.query         :as q]
+            [clojurewerkz.elastisch.rest.response :as esrsp]
+            [clojure.pprint :as pp]))
+
+(defn -main
+  [& args]
+  (esr/connect! "http://127.0.0.1:9200")
+  ;; performs a term query using a convenience function
+  (let [res  (esd/search "myapp_development" "person" :query (q/term :biography "New York"))
+        n    (esrsp/total-hits res)
+        hits (esrsp/hits-from res)]
+    (println (format "Total hits: %d" n))
+    (pp/pprint hits)))
+```
 
 Search requests with Elastisch have exactly the same structure as JSON documents in the [ElasticSearch Query API guide](http://www.elasticsearch.org/guide/reference/query-dsl/)
 but passed as Clojure maps. `:query`, `:sort`, `:facets` and other keys that [ElasticSearch Search API documentation](http://www.elasticsearch.org/guide/reference/api/search/)
@@ -57,23 +74,91 @@ from the `clojurewerkz.elastisch.query` namespace (more on them later in this gu
 
 The example from above can also be written like so:
 
-{% gist a0b3f8e653769688e1dd %}
+``` clojure
+(ns clojurewerkz.elastisch.docs.examples
+  (:require [clojurewerkz.elastisch.rest          :as esr]
+            [clojurewerkz.elastisch.rest.document :as esd]
+            [clojurewerkz.elastisch.query         :as q]
+            [clojurewerkz.elastisch.rest.response :as esrsp]
+            [clojure.pprint :as pp]))
+
+(defn -main
+  [& args]
+  (esr/connect! "http://127.0.0.1:9200")
+  ;; performs a term query using a convenience function
+  (let [res  (doc/search "myapp_development" "person" :query {:term {:city "New York"}})
+        n    (esrsp/total-hits res)
+        hits (esrsp/hits-from res)]
+    (println (format "Total hits: %d" n))
+    (pp/pprint hits)))
+```
 
 
 ### Searching Against Multiple Indexes or Mappings
 
 To search against multiple indexes or mappings, pass them as vectors to their respective function arguments:
 
-{% gist 51b9bab4f00a6e533c9d %}
+``` clojure
+(ns clojurewerkz.elastisch.docs.examples
+  (:require [clojurewerkz.elastisch.rest          :as esr]
+            [clojurewerkz.elastisch.rest.document :as esd]
+            [clojurewerkz.elastisch.query         :as q]
+            [clojurewerkz.elastisch.rest.response :as esrsp]
+            [clojure.pprint :as pp]))
+
+(defn -main
+  [& args]
+  (esr/connect! "http://127.0.0.1:9200")
+  ;; performs a term query across two mapping types in the same index
+  (let [res  (doc/search "myapp_development" ["person" "checkin"] :query {:term {:city "New York"}})
+        n    (esrsp/total-hits res)
+        hits (esrsp/hits-from res)]
+    (println (format "Total hits: %d" n))
+    (pp/pprint hits)))
+```
 
 To search against all mappings in an index, use `clojurewerkz.elastisch.rest.document/search-all-types`. It works the same as `clojurewerkz.elastisch.rest.document/search`
 but takes one less argument because no need to specify mapping types:
 
-{% gist e4f014ac73302c8cd454 %}
+``` clojure
+(ns clojurewerkz.elastisch.docs.examples
+  (:require [clojurewerkz.elastisch.rest          :as esr]
+            [clojurewerkz.elastisch.rest.document :as esd]
+            [clojurewerkz.elastisch.query         :as q]
+            [clojurewerkz.elastisch.rest.response :as esrsp]
+            [clojure.pprint :as pp]))
+
+(defn -main
+  [& args]
+  (esr/connect! "http://127.0.0.1:9200")
+  ;; performs a term query across all mapping types in the index
+  (let [res  (doc/search-all-types "myapp_development" :query {:term {:city "New York"}})
+        n    (esrsp/total-hits res)
+        hits (esrsp/hits-from res)]
+    (println (format "Total hits: %d" n))
+    (pp/pprint hits)))
+```
 
 To search globally (across all indexes and mappings), use `clojurewerkz.elastisch.rest.document/search-all-indexes-and-types`:
 
-{% gist c3f2c1bd44711cc521da %}
+``` clojure
+(ns clojurewerkz.elastisch.docs.examples
+  (:require [clojurewerkz.elastisch.rest          :as esr]
+            [clojurewerkz.elastisch.rest.document :as esd]
+            [clojurewerkz.elastisch.query         :as q]
+            [clojurewerkz.elastisch.rest.response :as esrsp]
+            [clojure.pprint :as pp]))
+
+(defn -main
+  [& args]
+  (esr/connect! "http://127.0.0.1:9200")
+  ;; performs a term query across all indexes and mapping types. This is an expensive operation!
+  (let [res  (doc/search-all-indexes-and-types :query {:term {:city "New York"}})
+        n    (esrsp/total-hits res)
+        hits (esrsp/hits-from res)]
+    (println (format "Total hits: %d" n))
+    (pp/pprint hits)))
+```
 
 Note that this operation may be **very expensive** and is generally not recommended for medium and large data sets.
 
@@ -82,7 +167,30 @@ Note that this operation may be **very expensive** and is generally not recommen
 
 Results returned by search functions have the same structure as ElasticSearch JSON responses:
 
-{% gist 5e0892e1fd56a33f3083 %}
+``` clojure
+{:took 2, ;; how long did this request take
+ ;; did the request time out?
+ :timed_out false,
+ ;; shard responses information
+ :_shards {:total 5, :successful 5, :failed 0},
+ ;; search hits information
+ :hits {:total 1,
+        :max_score 0.30685282,
+        ;; search results
+        :hits [{:_index "articles",
+                :_type "article",
+                ;; document id
+                :_id "2",
+                :_score 0.30685282,
+                ;; actual document
+                :_source {:latest-edit {:date "2012-03-11T02:19:00", :author "Thorwald"},
+                          :number-of-edits 48,
+                          :language "English",
+                          :title "Apache Lucene",
+                          :url "http://en.wikipedia.org/wiki/Apache_Lucene",
+                          :summary "Apache Lucene is a free/open source information retrieval software library, originally created in Java by Doug Cutting. It in supported by the Apache Software Foundation and is released under the Apache Software License.",
+                          :tags "technology, opensource, search, full-text search, distributed, software, lucene"}}]}}
+```
 
 Several functions in the `clojurewerkz.elastisch.rest.response` namespace can be used to access more specific piece of information from a response,
 such as total number of hits.
@@ -114,11 +222,20 @@ A close relative of the term query is the **terms query** which works the same w
 
 With Elastisch, term query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/term-query.html):
 
-{% gist 2a66899e2b200cca499f %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "tweets" "tweet" :query {:term {:text "improved"}})
+```
 
 Elastisch provides a helper function for constructing term queries, `clojurewerkz.elastisch.query/term`:
 
-{% gist 2d7b9e0b59f728a35751 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+(require '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "tweets" "tweet" :query (q/term :text "improved"))
+```
 
 If provided values is a collection, Elastisch will construct a terms query under the hood.
 
@@ -135,11 +252,28 @@ audience.
 
 With Elastisch, text query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/text-query.html):
 
-{% gist 6f7e1ee014c55feefbba %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+;; the outer :text refers to the text query (query type). the inner :text is the name of the document field.
+(esd/search "tweets" "tweet" :query {:text {:text {:query "late at night"}}})
+
+;; a boolean text query that uses OR operator
+(esd/search "tweets" "tweet" :query {:text {:text {:query "late at night" :operator "or"}}})
+```
 
 Elastisch provides a helper function for constructing boolean text queries, `clojurewerkz.elastisch.query/text`:
 
-{% gist aa2ba7b948ace3662441 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+(require '[clojurewerkz.elastisch.query :as q])
+
+;; a full text query, the query text will be analyzed
+(esd/search "tweets" "tweet" :query (q/text "text" "late at night"))
+
+;; a boolean text query that uses OR operator
+(esd/search "tweets" "tweet" :query (q/text "text" "late at night" :operator "OR"))
+```
 
 
 ### Query String Query
@@ -152,11 +286,25 @@ As such, QS queries can be seen as more powerful and less efficient kind of text
 
 With Elastisch, QS query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/query-string-query.html):
 
-{% gist f87ff598ff8dd84810a3 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "tweets" "tweet" :query {:query_string {:query "(pineapple OR banana) dessert recipe"
+                                                    :allow_leading_wildcard false
+                                                    :default_operator "AND"}})
+```
 
 Elastisch provides a helper function for constructing QS text queries, `clojurewerkz.elastisch.query/query-string`:
 
-{% gist 43edc61a6bd0e31460c6 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+(require '[clojurewerkz.elastisch.query :as q])
+
+;; a full text query, the query text will be analyzed
+(esd/search "tweets" "tweet" :query (q/query-string :query "(pineapple OR banana) dessert recipe"
+                                                    :allow_leading_wildcard false
+                                                    :default_operator "AND"))
+```
 
 For all the numerous options this query type accepts, see [ElasticSearch documentation on the subject](http://www.elasticsearch.org/guide/reference/query-dsl/query-string-query.html).
 
@@ -171,11 +319,20 @@ Range queries work for numerical values and dates the way you would expect. For 
 
 With Elastisch, range query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/range-query.html):
 
-{% gist c0603c48788f3285001c %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "people" "person" :query {:range {:age {:from 10 :to 20 :include_lower true :include_upper false}}}})
+```
 
 Elastisch provides a helper function for constructing range queries, `clojurewerkz.elastisch.query/range`:
 
-{% gist 1ea880308ba360b36183 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "people" "person" :query (q/range :age {:from 10 :to 20 :include_lower true :include_upper false}))
+```
 
 
 ### Boolean Query
@@ -185,15 +342,41 @@ The occurrence types are documented on the [ElasticSearch page on boolean querie
 
 With Elastisch, boolean query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/bool-query.html):
 
-{% gist 6973895e39dc8181f1f3 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "people" "person" :query {:bool {:must     {:term {:user "kimchy"}}
+                                             :must_not {:range {:age {:from 10 :to 20}}}
+                                             :should   [{:term {:tag "wow"}}
+                                                        {:term {:tag "elasticsearch"}}]
+                                             :minimum_number_should_match 1}})
+```
 
 Elastisch provides a helper function for constructing boolean queries, `clojurewerkz.elastisch.query/bool`:
 
-{% gist 5dc9396bf16f0a5efca7 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "people" "person" :query (q/bool {:must     {:term {:user "kimchy"}}
+                                              :must_not {:range {:age {:from 10 :to 20}}}
+                                              :should   [{:term {:tag "wow"}}
+                                                         {:term {:tag "elasticsearch"}}]
+                                              :minimum_number_should_match 1}))
+```
 
 `clojurewerkz.elastisch.query/bool` can be used in combination with other query helpers, such as `clojure.elastisch.query/term`, because they just return maps:
 
-{% gist 50f7145c0c48c163151c %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "people" "person" :query (q/bool {:must     (q/term :user "kimchy")
+                                              :must_not (q/range :age :from 10 :to 20)
+                                              :should   [(q/term :tag "wow")
+                                                         (q/term :tag "elasticsearch")]
+                                              :minimum_number_should_match 1}))
+```
 
 
 ### Filtered Query
@@ -204,15 +387,32 @@ ranking. One example of that is searching over accounts that are active.
 
 With Elastisch, filtered query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/filtered-query.html):
 
-{% gist 0467bff740c8219aabb1 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "people" "person" :query {:filtered {:query  {:term {:interests "cooking"}}
+                                                 :filter {:range {:age {:from 25 :to 30}}}}})
+```
 
 Elastisch provides a helper function for constructing filtered queries, `clojurewerkz.elastisch.query/filtered`:
 
-{% gist f513a1533127b9848d11 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "people" "person" :query (q/filtered :query  {:term {:interests "cooking"}}
+                                                 :filter {:range {:age {:from 25 :to 30}}}))
+```
 
 `clojurewerkz.elastisch.query/filtered` can be used in combination with other query helpers, such as `clojure.elastisch.query/term`, because they just return maps:
 
-{% gist 08aecbf66de81a507537 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "people" "person" :query (q/filtered :query  (q/term :interests "cooking")
+                                                 :filter (q/range :age :from 25 :to 30)))
+```
 
 
 ### Field Query
@@ -222,11 +422,20 @@ to the field this query executed against).
 
 With Elastisch, field query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/field-query.html):
 
-{% gist 57aa407c36bb7fbb0f29 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "people" "person" :query {:field {"address.street" "(Oak OR Elm)"}})
+```
 
 Elastisch provides a helper function for constructing field queries, `clojurewerkz.elastisch.query/field`:
 
-{% gist 6e785d8bc947328ad18e %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "people" "person" :query (q/field "address.street" "(Oak OR Elm)"))
+```
 
 
 ### Prefix Query
@@ -236,11 +445,20 @@ One use case for prefix queries is providing text autocompletion results (works 
 
 With Elastisch, prefix query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/prefix-query.html):
 
-{% gist cac16c43a7357ba0fc8c %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "tweets" "tweet" :query {:prefix {:username "cloj"}})
+```
 
 Elastisch provides a helper function for constructing prefix queries, `clojurewerkz.elastisch.query/prefix`:
 
-{% gist b7c36240e9fa50cf813c %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+(require '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "tweets" "tweet" :query (q/prefix :username "cloj"))
+```
 
 
 ### Wildcard Query
@@ -250,11 +468,24 @@ very poor performance characteristics on large data sets.
 
 With Elastisch, wildcard query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/wildcard-query.html):
 
-{% gist 731724133c9ca66dc1a3 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+;; please note: on large data sets, wildcard prefix queries won't perform
+;; well. Prefix wildcard queries like cloj*, however, will work just fine.
+(esd/search "tweets" "tweet" :query {:wildcard {:username "*werkz"}})
+```
 
 Elastisch provides a helper function for constructing wildcard queries, `clojurewerkz.elastisch.query/wildcard`:
 
-{% gist f613455403c88f045a72 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+(require '[clojurewerkz.elastisch.query :as q])
+
+;; please note: on large data sets, wildcard prefix like *werkz queries won't perform
+;; well. Prefix wildcard queries like cloj*, however, will work just fine.
+(esd/search "tweets" "tweet" :query (q/wildcard :username "*werkz"))
+```
 
 
 ### IDs Query
@@ -263,11 +494,22 @@ The IDs query is searches for documents by their IDs (`:_id` field values). It i
 
 With Elastisch, IDs query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/ids-query.html):
 
-{% gist a1da13c2614bd1a9c503 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+;; search for 3 tweets by their ids
+(esd/search "tweets" "tweet" :query {:ids {:type "tweet" :values ["1" "722" "633"]}})
+```
 
 Elastisch provides a helper function for constructing IDs queries, `clojurewerkz.elastisch.query/ids`:
 
-{% gist dd15ca01686789328a73 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+(require '[clojurewerkz.elastisch.query :as q])
+
+;; search for 3 tweets by their ids
+(esd/search "tweets" "tweet" :query (q/ids "tweet" ["1" "722" "633"]))
+```
 
 
 ### Match All Query
@@ -277,15 +519,30 @@ in combination with other queries in compound queries (e.g. filtered).
 
 With Elastisch, match-all query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/match-all-query.html):
 
-{% gist bd0eb5a9b49f17a82592 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "people" "person" :query {:match_all {:boost 1.2}})
+```
 
 Elastisch provides a helper function for constructing match-all queries, `clojurewerkz.elastisch.query/match-all`:
 
-{% gist b552bbb10de1753e8ba4 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "people" "person" :query (q/match-all))
+```
 
 An example of match-all query being used as part of a filtered query to find all people in a particular age bracket:
 
-{% gist f99031c42bc8a21ad952 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "people" "person" :query (q/filtered :query  (q/match-all)
+                                                 :filter (q/range :age :from 25 :to 30)))
+```
 
 
 ### Dis-Max Query
@@ -297,15 +554,34 @@ Like other compound queries, Dis-Max returns the union of documents produced by 
 
 With Elastisch, dis-max query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/dis-max-query.html):
 
-{% gist 3f621675b0a98cf6b849 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "venues" "venue" :query {:dis_max {:queries [{:field {"address.street" "Lafayette"}}
+                                                         {:field {"description"    "Lafayette"}}]
+                                               :tie_breaker 1.5}})
+```
 
 Elastisch provides a helper function for constructing dis-max queries, `clojurewerkz.elastisch.query/dis-max`:
 
-{% gist 77dac195ced1a821f302 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "venues" "venue" :query {:dis_max {:queries [{:field {"address.street" "Lafayette"}}
+                                                         {:field {"description"    "Lafayette"}}]
+                                               :tie_breaker 1.5}})
+```
 
 `clojurewerkz.elastisch.query/dis-max` can be used in combination with other query helpers, such as `clojure.elastisch.query/field`, because they just return maps:
 
-{% gist 7e90251ffa0827975db8 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "venues" "venue" :query (q/dis-max :queries [(q/field "address.street" "Lafayette")
+                                                         (q/field "description"    "Lafayette")]
+                                               :tie_breaker 1.5})
+```
 
 
 ### Boosting Query
@@ -316,15 +592,35 @@ affecting scoring of the most.
 
 With Elastisch, boosting query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/boosting-query.html):
 
-{% gist d55b315dea4067315cba %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "people" "person" :query {:boosting {:positive {:term {:city "Berlin"}}
+                                                 :negative {:term {:country "USA"}}
+                                                 :negative_boost 0.5}})
+```
 
 Elastisch provides a helper function for constructing boosting queries, `clojurewerkz.elastisch.query/boosting`:
 
-{% gist 5302e6f33b381bae8672 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "people" "person" :query (q/boosting {:positive {:term {:city "Berlin"}}
+                                                  :negative {:term {:country "USA"}}
+                                                  :negative_boost 0.5}))
+```
 
 `clojurewerkz.elastisch.query/boosting` can be used in combination with other query helpers, such as `clojure.elastisch.query/term`, because they just return maps:
 
-{% gist b8ec660229692bf4b1ea %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "people" "person" :query (q/boosting {:positive (q/term :city "Berlin")
+                                                  :negative (q/term :country "USA")
+                                                  :negative_boost 0.5}))
+```
 
 
 ### More Like This Query
@@ -333,11 +629,26 @@ More Like This (MLT) query find documents that are “like” provided text by r
 
 With Elastisch, More Like This query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/mlt-query.html):
 
-{% gist 2fef523a3ca1c69aae88 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "people" "person" :query {:more_like_this {:fields ["name.first" "name.last"]
+                                                       :like_text "Ryan"
+                                                       :min_term_freq 1
+                                                       :max_query_terms 12}})
+```
 
 Elastisch provides a helper function for constructing MLT queries, `clojurewerkz.elastisch.query/mlt`:
 
-{% gist 4f5f1706cd9a551717b8 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "people" "person" :query (q/mlt :fields ["name.first" "name.last"]
+                                            :like_text "Ryan"
+                                            :min_term_freq 1
+                                            :max_query_terms 12))
+```
 
 
 ### More Like This Field Query
@@ -346,11 +657,24 @@ More Like This Field is very similar to the More Like This query but operates on
 
 With Elastisch, More Like This query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/mlt-field-query.html):
 
-{% gist 72e15aee431b68c3f810 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "people" "person" :query {:more_like_this_field {:last_name {:like_text "Ryan"
+                                                                         :min_term_freq 1
+                                                                         :max_query_terms 12}}})
+```
 
 Elastisch provides a helper function for constructing MLT field queries, `clojurewerkz.elastisch.query/mlt-field`:
 
-{% gist f80dfba2a947b9a55f18 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "people" "person" :query (q/mlt-field :last_name {:like_text "Ryan"
+                                                              :min_term_freq 1
+                                                              :max_query_terms 12}))
+```
 
 
 ### Fuzzy Query
@@ -360,11 +684,26 @@ This will cause a full scan on all terms.
 
 With Elastisch, fuzzy query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/fuzzy-query.html):
 
-{% gist f32b5e41e76b6f7bbb32 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "people" "person" :query {:fuzzy {:user {:value "ki"
+                                                     :boost 1.2
+                                                     :min_similarity 0.5
+                                                     :prefix_length 0}}})
+```
 
 Elastisch provides a helper function for constructing fuzzy queries, `clojurewerkz.elastisch.query/fuzzy`:
 
-{% gist b1e21f160ea61b437ad3 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "people" "person" :query (q/fuzzy :user {:value "ki"
+                                                     :boost 1.2
+                                                     :min_similarity 0.5
+                                                     :prefix_length 0}))
+```
 
 
 ### Fuzzy Like This Query
@@ -373,11 +712,24 @@ A cross between Fuzzy and More Like This queries.
 
 With Elastisch, Fuzzy Like This (FLT) query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/fuzzy-like-this-query.html):
 
-{% gist 5b8c3ef82a712170dd9f %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "people" "person" :query {:fuzzy_like_this {:fields ["name.first" "name.last"]
+                                                        :like_text "Ryan"
+                                                        :max_query_terms 12}})
+```
 
 Elastisch provides a helper function for constructing FLT queries, `clojurewerkz.elastisch.query/fuzzy-like-this`:
 
-{% gist 14623996faad7ffb5181 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "people" "person" :query (q/fuzzy-like-this :fields ["name.first" "name.last"]
+                                                        :like_text "Ryan"
+                                                        :max_query_terms 12))
+```
 
 
 ### Fuzzy Like This Field Query
@@ -386,11 +738,22 @@ Same as FTL query but works over a single field.
 
 With Elastisch, Fuzzy Like This Field query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/fuzzy-like-this-field-query.html):
 
-{% gist a87993ae1252816587a6 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "people" "person" :query {:fuzzy_like_this_field {"name.first" {:like_text "Michael"
+                                                                            :max_query_terms 12}}})
+```
 
 Elastisch provides a helper function for constructing Fuzzy Like This Field queries, `clojurewerkz.elastisch.query/fuzzy-like-this-field`:
 
-{% gist 4b98ff3ca587cc39ab15 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "people" "person" :query (q/fuzzy-like-this-field "name.first" {:like_text "Ryan"
+                                                                            :max_query_terms 12}))
+```
 
 
 ### Nested Query
@@ -399,15 +762,38 @@ Nested query allows to query nested objects/documents. The query is executed aga
 
 With Elastisch, Nested query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/nested-query.html):
 
-{% gist 25d3ab79e99a350da211 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "people" "person" :query {:nested {:path "obj1"
+                                               :score_mode "avg"
+                                               :query {:bool {:must [{:text  {"obj1.name" "blue"}}
+                                                                     {:range {"obj1.count" {:gt 5}}}]}}}})
+```
 
 Elastisch provides a helper function for constructing nested queries, `clojurewerkz.elastisch.query/nested`:
 
-{% gist ca3e5be53b883e2877bb %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "people" "person" :query (q/nested :path "obj1"
+                                               :score_mode "avg"
+                                               :query {:bool {:must [{:text  {"obj1.name" "blue"}}
+                                                                     {:range {"obj1.count" {:gt 5}}}]}}))
+```
 
 `clojurewerkz.elastisch.query/nested` can be used in combination with other query helpers, such as `clojure.elastisch.query/term`, because they just return maps:
 
-{% gist 769f9b5af752aa7e39e1 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd]
+         '[clojurewerkz.elastisch.query :as q])
+
+(esd/search "people" "person" :query (q/nested :path "obj1"
+                                               :score_mode "avg"
+                                               :query {:bool {:must [(q/term "obj1.name" "blue")
+                                                                     (q/range "obj1.count" :gt 5)]}}))
+```
 
 
 ### Span First Query
@@ -416,7 +802,12 @@ Matches spans near the beginning of a field.
 
 With Elastisch, Span First query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/span-first-query.html):
 
-{% gist 4c357f27e77065a81a57 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as esd])
+
+(esd/search "people" "person" :query {:span_first {:match {:span_term {:user "kimchy"}}
+                                                   :end   3}}})
+```
 
 Elastisch provides a helper function for constructing Span First queries, `clojurewerkz.elastisch.query/span-first`:
 
