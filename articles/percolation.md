@@ -41,14 +41,31 @@ Before using the percolation API, one or more queries needs to be registered aga
 (or, to put it differently, each index has a percolator associated with it). With Elastisch, `clojurewerkz.elastisch.rest.percolation/register-query`
 is the function that does that:
 
-{% gist 5c2f813bd6232ba71271 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.percolation :as pcl])
+
+;; register a percolator query for the given index
+(pcl/register-query  "myapp" "sample_percolator" :query {:term {:title "search"}})
+```
 
 
 ## Submitting Documents for Percolation
 
 After one or more queries are registered, you can submit documents for percolation with the `` function:
 
-{% gist 506426c0d6f1e3abef18 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.percolation :as pcl])
+(require '[clojurewerkz.elastisch.rest.response :as r])
+
+;; register a percolator query for the given index
+(pcl/register-query  "myapp" "sample_percolator" :query {:term {:title "search"}})
+
+;; match a document against the percolator
+(let [response (pcl/percolate "myapp" "sample_percolator" :doc {:title "You know, for search"})]
+  (println (r/ok? response))
+  ;; print matches
+  (println (r/matches-from response)))
+```
 
 which returns the response as an immutable Clojure map.
 
@@ -62,7 +79,15 @@ as a collection.
 
 Queries can be unregistered with the `clojurewerkz.elastisch.rest.percolation/unregister-query` function:
 
-{% gist d575b37a4bf72ea5d3e6 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.response :as r])
+
+;; register a percolator query for the given index
+(pcl/register-query  "myapp" "sample_percolator" :query {:term {:title "search"}})
+
+;; unregister the percolator
+(pcl/unregister-query "myapp" "sample_percolator")
+```
 
 
 ## Wrapping Up
@@ -82,7 +107,10 @@ The documentation is organized as [a number of guides](/articles/guides.html), c
 
 ## Tell Us What You Think!
 
-Please take a moment to tell us what you think about this guide on Twitter or the [Elastisch mailing list](https://groups.google.com/forum/#!forum/clojure-elasticsearch)
+Please take a moment to tell us what you think about this guide on
+Twitter or the [Elastisch mailing
+list](https://groups.google.com/forum/#!forum/clojure-elasticsearch)
 
-Let us know what was unclear or what has not been covered. Maybe you do not like the guide style or grammar or discover spelling mistakes. Reader feedback is key to making the
-documentation better.
+Let us know what was unclear or what has not been covered. Maybe you
+do not like the guide style or grammar or discover spelling
+mistakes. Reader feedback is key to making the documentation better.
