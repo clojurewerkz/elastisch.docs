@@ -66,14 +66,34 @@ Facets piggyback on search queries and as such, performed with the `clojurewerkz
 
 With Elastisch, facet query structure is the same as described in the [ElasticSearch documentation](http://www.elasticsearch.org/guide/reference/api/search/facets/):
 
-{% gist c7201de61828ccf45549 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as doc])
+(require '[clojurewerkz.elastisch.query         :as q])
+
+(doc/search "articles" "article" :query (q/match-all) :facets {:tags {:terms {:field :tags}}})
+```
 
 You can give the facet a custom name (in this example, *tags*) and return multiple facets in a single request.
 
 To retrieve the results, access the `:facets` key on the response (which is just a Clojure map with Elastisch). It will contain a
 map of facets:
 
-{% gist 8eeda4c7a62ab3be72a7 %}
+``` clojure
+{:tags {:_type "terms"
+        :missing 0
+        :total 26
+        :other 6
+        :terms [{:term "text" :count 2}
+                {:term "technology" :count 2}
+                {:term "software" :count 2}
+                {:term "search" :count 2}
+                {:term "opensource" :count 2}
+                {:term "norteamérica" :count 2}
+                {:term "lucene" :count 2}
+                {:term "historia" :count 2}
+                {:term "geografía" :count 2}
+                {:term "full" :count 2}]}}
+```
 
 The exact structure will vary between different facet types.
 
@@ -83,7 +103,12 @@ The exact structure will vary between different facet types.
 Facets can have *scope*. By default, facet computation is restricted to the scope of the current query (the so called `main` scope). It is possible to
 use `global` scope, in which case it will return values computed across all documents in the index:
 
-{% gist 0db97a41592b3357fdec %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as doc])
+(require '[clojurewerkz.elastisch.query         :as q])
+
+(doc/search "articles" "article" :query (q/query-string :query "T*") :facets {:tags {:terms {:field :tags} :global true}})
+```
 
 Different facets in a query can use different scopes if needed.
 
@@ -101,7 +126,13 @@ or organization.
 
 In the example below we use a filter to limit facets to articles published in a particular time period (range of years):
 
-{% gist 7cf4503f3e42553180a4 %}
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as doc])
+(require '[clojurewerkz.elastisch.query         :as q])
+
+(doc/search "articles" "article" :query (q/query-string :query "T*") :facets {:tags {:terms {:field :tags}
+                                                                                     :facet_filter {:range {:year {:from 1990 :to 2012}}}}})
+```
 
 Different kinds of filters and  their structure are described in the [Querying guide](/articles/querying.html). Their structure is the same
 for queries and facets.
@@ -124,7 +155,10 @@ The documentation is organized as [a number of guides](/articles/guides.html), c
 
 ## Tell Us What You Think!
 
-Please take a moment to tell us what you think about this guide on Twitter or the [Elastisch mailing list](https://groups.google.com/forum/#!forum/clojure-elasticsearch)
+Please take a moment to tell us what you think about this guide on
+Twitter or the [Elastisch mailing
+list](https://groups.google.com/forum/#!forum/clojure-elasticsearch)
 
-Let us know what was unclear or what has not been covered. Maybe you do not like the guide style or grammar or discover spelling mistakes. Reader feedback is key to making the
-documentation better.
+Let us know what was unclear or what has not been covered. Maybe you
+do not like the guide style or grammar or discover spelling
+mistakes. Reader feedback is key to making the documentation better.
