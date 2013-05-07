@@ -19,7 +19,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Elastisch does this guide cover?
 
-This guide covers Elastisch 1.0.x releases.
+This guide covers Elastisch 1.1.x releases.
 
 
 
@@ -27,7 +27,10 @@ This guide covers Elastisch 1.0.x releases.
 
 Elastisch is an idiomatic Clojure client for [ElasticSearch](http://elasticsearch.org/), a modern, scalable, powerful full text search server. It is simple and easy to use,
 has good baseline performance and strives to support every ElasticSearch feature. Elastisch is minimalistic: it mimics ElasticSearch operations in its API but does not add
-any abstractions or  ODM-like layers beyond that.
+any abstractions or ODM-like layers beyond that.
+
+Elastisch supports HTTP and native transports with almost identical API, so switching
+between the two is usually straightforward.
 
 
 ## Supported Clojure versions
@@ -37,8 +40,14 @@ Elastisch is built from the ground up for Clojure 1.3 and later. The latest stab
 
 ## Supported ElasticSearch versions
 
-Elastisch is developed and tested with recent stable ElasticSearch releases (0.19.x or later). It is very likely that earlier versions also work fine but we do not run
+Elastisch is developed and tested with recent stable ElasticSearch releases (0.90.x or later).
+It is very likely that earlier versions also work fine but we do not run
 [continuous integration](http://travis-ci.org/#!/clojurewerkz/elastisch) against them.
+
+The native client requires ElasticSearch `0.90.x` and may be incompatible with earlier
+or later releases due to possible binary compatibility changes in ElasticSearch.
+Elastisch releases after `1.1.0-rc2` try to stay up to date to the most recent
+stable ElasticSearch version.
 
 
 ## Adding Elastisch Dependency To Your Project
@@ -48,7 +57,7 @@ Elastisch artifacts are [released to Clojars](https://clojars.org/clojurewerkz/e
 ### With Leiningen
 
 ``` clojure
-[clojurewerkz/elastisch "1.0.2"]
+[clojurewerkz/elastisch "1.1.0-rc2"]
 ```
 
 ### With Maven
@@ -68,7 +77,7 @@ And then the dependency:
 <dependency>
   <groupId>clojurewerkz</groupId>
   <artifactId>elastisch</artifactId>
-  <version>1.0.2</version>
+  <version>1.1.0-rc2</version>
 </dependency>
 ```
 
@@ -77,10 +86,41 @@ and important changes are announced
 [@ClojureWerkz](http://twitter.com/ClojureWerkz).
 
 
+## On HTTP or Native ElasticSeach Clients
+
+### Pros and Cons
+
+Elastisch provides both HTTP and native ElasticSearch clients.
+
+HTTP client is easier to get started with (you don't need to know cluster name)
+and will work with hosted and PaaS environments such as Heroku or CloudFoundry.
+It is also known to work with a wide range of ElasticSearch versions.
+
+Some hosted environments do not provide access to ports other than 80 and 8080,
+so the native client may not work with them. The main benefit of the native client
+is it's much higher throughput (up to 6-8 times on some common workloads).
+
+The native client **requires that the version of ElasticSearch is the same as
+the version of ElasticSearch client Elastisch uses internally** (currently `0.90.x`).
+
+
+### API Structure Conversion
+
+Native client follows the same API structure but `rest` in namespace
+names becomes `native`, e.g. `clojurewerkz.elastisch.rest` becomes
+`clojurewerkz.elastisch.native` and
+`clojurewerkz.elastisch.rest.index` becomes
+`clojurewerkz.elastisch.native.index`.
+
+Function arguments and options accepted by the native client are as close
+as possible to those in the HTTP client. The native client also provides
+asynchronous versions of several common operations, they return Clojure futures
+instead of responses.
+
 
 ## Conneciting Over HTTP (Specifying Node HTTP Endpoint)
 
-Before you can index and search with Elastisch, it is necessary to tell Elastisch what ElasticSearch node to use. To do so, you use the `clojurewerkz.elastisch.rest/connect!`
+Before you can index and search with Elastisch, it is necessary to tell Elastisch what ElasticSearch node to use. To use the HTTP transport, you use the `clojurewerkz.elastisch.rest/connect!`
 function that takes an endpoint as its sole argument:
 
 ``` clojure
@@ -93,6 +133,33 @@ function that takes an endpoint as its sole argument:
 ```
 
 By default Elastisch will use the HTTP endpoint at `http://localhost:9200`.
+
+
+## Connecting Over Native Protocol
+
+To use the native transport, you use the `clojurewerkz.elastisch.rest/connect!`
+function that takes two arguments: a list of endpoints (each of which is a pair
+of `[host port]`) and client settings:
+
+``` clojure
+(ns clojurewerkz.elastisch.docs.examples
+  (:require [clojurewerkz.elastisch.native :as es]))
+
+(defn -main
+  [& args]
+               ;; a list of endpoints as pairs
+  (es/connect! [["127.0.0.1" 9300]]
+               ;; options. cluster.name is mandatory!
+               {"cluster.name "your-cluster-name""}))
+```
+
+`cluster.name` is a required setting. Cluster name and transport node
+addresses can be retrieved via HTTP API, for example:
+
+```
+curl http://localhost:9200/_cluster/nodes
+{"ok":true,"cluster_name":"elasticsearch_antares","nodes":...}}
+```
 
 
 ## Indexing
@@ -112,7 +179,7 @@ The process of indexing involves a few steps:
 Next we will take a look at each stage in more detail.
 
 
-### Creating an Index
+### Creating an Index With HTTP Client
 
 ElasticSearch provides support for multiple indexes. Indexes can be thought of as databases in a DBMS. 
 
@@ -136,9 +203,29 @@ To create an index, use the `clojurewerkz.elastisch.rest.index/create` function:
 Most commonly used index settings are `"number_of_shards"` and `"number_of_replicates"`. We won't go into details about them in this guide,
 please refer to the [Indexing guide](/articles/indexing.html) for more details.
 
+### Creating an Index With Native Client
+
+To create an index using the native client, use the same functions but in the
+`clojurewerkz.elastisch.native.index` namespace:
+
+``` clojure
+(ns clojurewerkz.elastisch.docs.examples
+  (:require [clojurewerkz.elastisch.native       :as es]
+            [clojurewerkz.elastisch.native.index :as esi]))
+
+(defn -main
+  [& args]
+  ;; cluster name WILL VARY BETWEEN MACHINES!
+  (es/connect! [["127.0.0.1" 9300]] {"cluster.name" "elasticsearch_antares"})
+  ;; creates an index with default settings and no custom mapping types
+  (esi/create "myapp1_development")
+  ;; creates an index with given settings and no custom mapping types.
+  ;; Settings map structure is the same as in the ElasticSearch API reference at http://www.elasticsearch.org/guide/reference/api/admin-indices-create-index.html
+  (esi/create "myapp2_development" :settings {"number_of_shards" 1}))
+```
 
 
-### Creating a Mapping
+### Creating a Mapping With HTTP Client
 
 Mappings define which fields in documents are indexed, if/how they are tokenized, analyzed and so on. Each index in ElasticSearch may have one or more
 **mapping types**. Mapping types can be thought of as tables in a database (although this analogy does not always stand).

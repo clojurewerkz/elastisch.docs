@@ -19,7 +19,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Elastisch does this guide cover?
 
-This guide covers Elastisch 1.0.x releases.
+This guide covers Elastisch 1.1.x releases.
 
 
 
@@ -39,6 +39,41 @@ Queries are submitted to ElasticSearch as JSON documents with a certain structur
 that have exactly the same structure, or use a few helpful functions that make queries a little bit more concise. In all cases,
 whenever a query requires nesting maps, Elastisch uses exactly the same structure as described in [ElasticSearch documentation on
 query DSL](http://www.elasticsearch.org/guide/reference/query-dsl/).
+
+
+## On HTTP or Native ElasticSeach Clients
+
+### Pros and Cons
+
+Elastisch provides both HTTP and native ElasticSearch clients.
+
+HTTP client is easier to get started with (you don't need to know cluster name)
+and will work with hosted and PaaS environments such as Heroku or CloudFoundry.
+It is also known to work with a wide range of ElasticSearch versions.
+
+Some hosted environments do not provide access to ports other than 80 and 8080,
+so the native client may not work with them. The main benefit of the native client
+is it's much higher throughput (up to 6-8 times on some common workloads).
+
+The native client **requires that the version of ElasticSearch is the same as
+the version of ElasticSearch client Elastisch uses internally** (currently `0.90.x`).
+
+
+### API Structure Conversion
+
+Native client follows the same API structure but `rest` in namespace
+names becomes `native`, e.g. `clojurewerkz.elastisch.rest` becomes
+`clojurewerkz.elastisch.native` and
+`clojurewerkz.elastisch.rest.index` becomes
+`clojurewerkz.elastisch.native.index`.
+
+Function arguments and options accepted by the native client are as close
+as possible to those in the HTTP client. The native client also provides
+asynchronous versions of several common operations, they return Clojure futures
+instead of responses.
+
+Query functions in the `clojurewerkz.elastisch.query` work the same way for
+both clients.
 
 
 ## Performing queries
