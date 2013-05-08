@@ -128,6 +128,30 @@ The example from above can also be written like so:
     (pp/pprint hits)))
 ```
 
+### Searching Using The Native Client
+
+To query with the native client, use `clojurewerkz.elastisch.native.document/search` and
+`clojurewerkz.elastisch.native.response` functions:
+
+``` clojure
+(ns clojurewerkz.elastisch.docs.examples
+  (:require [clojurewerkz.elastisch.native            :as es]
+            [clojurewerkz.elastisch.native.document   :as esd]
+            [clojurewerkz.elastisch.query             :as q]
+            [clojurewerkz.elastisch.response.response :as esrsp]
+            [clojure.pprint :as pp]))
+
+(defn -main
+  [& args]
+  (es/connect! [["127.0.0.1" 9300]] {"cluster.name "your-cluster-name""})
+  ;; performs a term query using a convenience function
+  (let [res  (esd/search "myapp_development" "person" :query (q/term :biography "New York"))
+        n    (esrsp/total-hits res)
+        hits (esrsp/hits-from res)]
+    (println (format "Total hits: %d" n))
+    (pp/pprint hits)))
+```
+
 
 ### Searching Against Multiple Indexes or Mappings
 
@@ -200,6 +224,8 @@ Note that this operation may be **very expensive** and is generally not recommen
 
 ## Checking results
 
+### Using HTTP Client
+
 Results returned by search functions have the same structure as ElasticSearch JSON responses:
 
 ``` clojure
@@ -239,6 +265,11 @@ The most commonly used are:
  * `clojurewerkz.elastisch.rest.response/ids-from`: returns a collection of document ids collected from hits
 
 All of them take a response map as the only argument.
+
+### Using The Native Client
+
+Use `clojurewerkz.elastisch.native.response` functions instead of those in
+`clojurewerkz.elastisch.rest.response`.
 
 
 ## Different kinds of queries
