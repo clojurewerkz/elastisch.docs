@@ -354,13 +354,13 @@ Mapping types can specified when an index is created using the `:mappings` optio
   (esr/connect! "http://127.0.0.1:9200")
   ;; creates an index with given settings and no custom mapping types.
   ;; Mapping types map structure is the same as in the ElasticSearch API reference
-  (let [mapping-types {:person {:properties {:username   {:type "string" :store "yes"}
-                                             :first-name {:type "string" :store "yes"}
-                                             :last-name  {:type "string"}
-                                             :age        {:type "integer"}
-                                             :title      {:type "string" :analyzer "snowball"}
-                                             :planet     {:type "string"}
-                                             :biography  {:type "string" :analyzer "snowball" :term_vector "with_positions_offsets"}}}}]
+  (let [mapping-types {"person" {:properties {:username   {:type "string" :store "yes"}
+                                              :first-name {:type "string" :store "yes"}
+                                              :last-name  {:type "string"}
+                                              :age        {:type "integer"}
+                                              :title      {:type "string" :analyzer "snowball"}
+                                              :planet     {:type "string"}
+                                              :biography  {:type "string" :analyzer "snowball" :term_vector "with_positions_offsets"}}}}]
     (esi/create "myapp2_development" :mappings mapping-types)))
 ```
 
@@ -374,7 +374,7 @@ It is possible to update mapping types after they are created, as described late
 Mapping types define document fields and of what core types (e.g. string, integer or date/time) they are. Settings are provided to ElasticSearch as a JSON document
 and this is how they are [documented on the ElasticSearch site](http://www.elasticsearch.org/guide/reference/mapping/), for example:
 
-``` clojure
+``` javascript
 {
     "mappings" : {
         "type1" : {
@@ -390,7 +390,7 @@ and this is how they are [documented on the ElasticSearch site](http://www.elast
 With Elastisch, mapping settings are specified as Clojure maps. A very minimalistic example:
 
 ``` clojure
-{:tweet {:properties {:username  {:type "string" :index "not_analyzed"}}}}
+{"tweet" {:properties {:username  {:type "string" :index "not_analyzed"}}}}
 ```
 
 Here is a brief and very incomplete list of things that you can define via mapping settings:
@@ -414,7 +414,7 @@ When an index is created using the `clojurewerkz.elastisch.rest.index/create` fu
   (esr/connect! "http://127.0.0.1:9200")
   ;; creates an index with given settings and no custom mapping types.
   ;; Mapping types map structure is the same as in the ElasticSearch API reference
-  (let [mapping-types {:person {:properties {:username   {:type "string" :store "yes"}
+  (let [mapping-types {"person" {:properties {:username   {:type "string" :store "yes"}
                                              :first-name {:type "string" :store "yes"}
                                              :last-name  {:type "string"}
                                              :age        {:type "integer"}
@@ -447,14 +447,14 @@ Settings are passed as maps where keys are names (strings or keywords) and value
 `:properties` which defines a single field which is a string that is not analyzed:
 
 ``` clojure
-{:tweet {:properties {:username  {:type "string" :index "not_analyzed"}}}}
+{"tweet" {:properties {:username  {:type "string" :index "not_analyzed"}}}}
 ```
 
 Next lets take a look at a more realistic example of the tweet type where we have both username and text, and text is analyzed:
 
 ``` clojure
-{:tweet {:properties {:username  {:type "string" :index "not_analyzed"}
-                      :text      {:type "string" :analyzer "standard"}}}}
+{"tweet" {:properties {:username  {:type "string" :index "not_analyzed"}
+                       :text      {:type "string" :analyzer "standard"}}}}
 ```
 
 The second field has the same core type (string) and specifies an analyzer we want ElasticSearch to use for this field. Different types of analyzers
@@ -463,7 +463,7 @@ are described later in this guide. Note that the default value of the `:analyzer
 In the example below the same tweet type is extended with one more field, `:timestamp`:
 
 ``` clojure
-{:tweet {:properties {:username  {:type "string" :index "not_analyzed"}
+{"tweet" {:properties {:username  {:type "string" :index "not_analyzed"}
                       :text      {:type "string" :analyzer "standard"}
                       :timestamp {:type "date" :include_in_all false :format "basic_date_time_no_millis"}}}}
 ```
@@ -476,7 +476,7 @@ The `:include_in_all` setting instructs ElasticSearch to not include timestamps 
 Another common type of field is integer:
 
 ``` clojure
-{:tweet {:properties {:username  {:type "string" :index "not_analyzed"}
+{"tweet" {:properties {:username  {:type "string" :index "not_analyzed"}
                       :text      {:type "string" :analyzer "standard"}
                       :timestamp {:type "date" :include_in_all false :format "basic_date_time_no_millis"}
                       :retweets  {:type "integer" :include_in_all false}}}}
@@ -485,7 +485,7 @@ Another common type of field is integer:
 Boolean fields are also very common and supported by ElasticSearch:
 
 ``` clojure
-{:tweet {:properties {:username  {:type "string" :index "not_analyzed"}
+{"tweet" {:properties {:username  {:type "string" :index "not_analyzed"}
                       :text      {:type "string" :analyzer "standard"}
                       :timestamp {:type "date" :include_in_all false :format "basic_date_time_no_millis"}
                       :retweets  {:type "integer" :include_in_all false}
@@ -499,7 +499,7 @@ boolean field value with the`:default` key.
 ElasticSearch supports indexing and querying over nested documents (very much like document databases MongoDB and CouchDB):
 
 ``` clojure
-{:tweet {:properties {:username  {:type "string" :index "not_analyzed"}
+{"tweet" {:properties {:username  {:type "string" :index "not_analyzed"}
                       :text      {:type "string" :analyzer "standard"}
                       :timestamp {:type "date" :include_in_all false :format "basic_date_time_no_millis"}
                       :retweets  {:type "integer" :include_in_all false}
@@ -646,7 +646,7 @@ A more complete example:
 
 ``` clojure
 ;; this mapping type instructs ElasticSearch to not analyze :username, :location.country, :location.state and :location.city fields
-{:tweet {:properties {:username  {:type "string" :index "not_analyzed"}
+{"tweet" {:properties {:username  {:type "string" :index "not_analyzed"}
                       :text      {:type "string" :analyzer "standard"}
                       :timestamp {:type "date" :include_in_all false :format "basic_date_time_no_millis"}
                       :retweets  {:type "integer" :include_in_all false}
@@ -724,7 +724,7 @@ Analyzers are [configured](http://www.elasticsearch.org/guide/reference/index-mo
               :settings {:index {:analysis {:analyzer {:custom_stopwords {:type      "standard"
                                                                           :filter    ["standard" "lowercase" "stop"]
                                                                           :stopwords ["lol" "rockstar" "ninja" "cloud" "event"]}}}}}
-              :mappings {:tweet {:properties {:text {:type "string" :analyzer "custom_stopwords"}}}}))
+              :mappings {"tweet" {:properties {:text {:type "string" :analyzer "custom_stopwords"}}}}))
 ```
 
 In the above example we define a custom analyzer that uses 3 predefined filters and a custom list of stop words. In addition, we instruct ElasticSearch to use this
