@@ -210,7 +210,44 @@ Supported parameter values are
 
 ### Updating With Scripts
 
-TBD
+#### With HTTP Client
+
+`clojurewerkz.elastisch.rest.document/update-with-script` is a function
+that updates a document with a provided script:
+
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as doc])
+
+;; initializes a counter at 1
+(doc/update-with-script index-name mapping-type "1"
+      "ctx._source.counter = 1")
+
+;; increments the counter by 4
+(doc/update-with-script index-name mapping-type "1"
+      "ctx._source.counter += inc"
+      {"inc" 4})
+```
+
+You can learn more about [updates with scripts](http://www.elasticsearch.org/guide/reference/api/update/) in ElasticSearch
+documentation.
+
+#### With Native Client
+
+To use updates with scripts with the native client, use `clojurewerkz.elastisch.native.document/update-with-script`:
+
+``` clojure
+(require '[clojurewerkz.elastisch.native.document :as doc])
+
+;; initializes a counter at 1
+(doc/update-with-script index-name mapping-type "1"
+      "ctx._source.counter = 1")
+
+;; increments the counter by 4
+(doc/update-with-script index-name mapping-type "1"
+      "ctx._source.counter += inc"
+      {"inc" 4})
+```
+
 
 
 ## Creating Indexes
