@@ -118,7 +118,7 @@ asynchronous versions of several common operations, they return Clojure futures
 instead of responses.
 
 
-## Conneciting Over HTTP (Specifying Node HTTP Endpoint)
+## Connecting Over HTTP (Specifying Node HTTP Endpoint)
 
 Before you can index and search with Elastisch, it is necessary to tell Elastisch what ElasticSearch node to use. To use the HTTP transport, you use the `clojurewerkz.elastisch.rest/connect!`
 function that takes an endpoint as its sole argument:
