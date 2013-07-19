@@ -221,6 +221,26 @@ To search globally (across all indexes and mappings), use `clojurewerkz.elastisc
 
 Note that this operation may be **very expensive** and is generally not recommended for medium and large data sets.
 
+### Performing multiple searches using the multi search api
+The [multi search API](http://www.elasticsearch.org/guide/reference/api/multi-search/) allows you to execute several queries at once. While this doesn't mean that Elasticsearch does less work, it will reduce the latency and thus improve the performance of your application.
+
+Each query must be preceded by a header which states what indices to search on, and optionally mapping types, search type, preference and routing.
+
+``` clojure
+(require '[clojurewerkz.elastisch.rest.multi :as multi]
+         '[clojurewerkz.elastisch.query :as query])
+
+(def queries-with-headers
+  [{:index "people" :type "person"} {:query (query/match-all) :size 1}
+   {:index "articles"} {:query (query/match-all) :size 1}])
+
+(def res (multi/search queries-with-headers))
+
+(first res) ;; the result of the first query
+(last res)  ;; the result of the last query
+```
+
+The result order matches the order of your queries.
 
 ## Checking results
 
