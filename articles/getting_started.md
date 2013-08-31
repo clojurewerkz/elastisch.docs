@@ -200,7 +200,7 @@ To create an index, use the `clojurewerkz.elastisch.rest.index/create` function:
   (esi/create "myapp2_development" :settings {"number_of_shards" 1}))
 ```
 
-Most commonly used index settings are `"number_of_shards"` and `"number_of_replicates"`. We won't go into details about them in this guide,
+Most commonly used index settings are `"number_of_shards"` and `"number_of_replicas"`. We won't go into details about them in this guide,
 please refer to the [Indexing guide](/articles/indexing.html) for more details.
 
 ### Creating an Index With Native Client
