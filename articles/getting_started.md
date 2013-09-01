@@ -19,7 +19,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Elastisch does this guide cover?
 
-This guide covers Elastisch 1.2.x releases.
+This guide covers Elastisch 1.3.x releases, including preview releases.
 
 
 
@@ -35,7 +35,7 @@ between the two is usually straightforward.
 
 ## Supported Clojure versions
 
-Elastisch is built from the ground up for Clojure 1.3 and later. The latest stable release is recommended.
+Elastisch requires Clojure 1.4+. The latest stable release is recommended.
 
 
 ## Supported ElasticSearch versions

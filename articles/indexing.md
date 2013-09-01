@@ -20,7 +20,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Elastisch does this guide cover?
 
-This guide covers Elastisch 1.2.x releases.
+This guide covers Elastisch 1.3.x releases, including preview releases.
 
 
 ## Overview
