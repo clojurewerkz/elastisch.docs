@@ -47,15 +47,15 @@ specified with a search query and ElasticSearch returns information relevant for
 The field used for facet calculations must be of type numeric, date/time or be analyzed as a single token (see the [Indexing guide](/articles/indexing.html) on that).
 ElasticSearch supports multiple [types of facets](http://www.elasticsearch.org/guide/reference/api/search/facets/):
 
- * [Terms](http://www.elasticsearch.org/guide/reference/api/search/facets/terms-facet.html)
- * [Range](http://www.elasticsearch.org/guide/reference/api/search/facets/range-facet.html)
- * [Histogram](http://www.elasticsearch.org/guide/reference/api/search/facets/histogram-facet.html)
- * [Date Histogram](http://www.elasticsearch.org/guide/reference/api/search/facets/date-histogram-facet.html)
- * [Filter](http://www.elasticsearch.org/guide/reference/api/search/facets/filter-facet.html)
- * [Query](http://www.elasticsearch.org/guide/reference/api/search/facets/query-facet.html)
- * [Statistical](http://www.elasticsearch.org/guide/reference/api/search/facets/statistical-facet.html)
- * [Terms Stats](http://www.elasticsearch.org/guide/reference/api/search/facets/terms-stats-facet.html)
- * [Geo Distance](http://www.elasticsearch.org/guide/reference/api/search/facets/geo-distance-facet.html)
+ * [Terms](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets-terms-facet.html)
+ * [Range](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets-range-facet.html)
+ * [Histogram](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets-histogram-facet.html)
+ * [Date Histogram](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets-date-histogram-facet.html)
+ * [Filter](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets-filter-facet.html)
+ * [Query](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets-query-facet.html)
+ * [Statistical](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets-statistical-facet.html)
+ * [Terms Stats](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets-terms-stats-facet.html)
+ * [Geo Distance](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-facets-geo-distance-facet.html)
 
 Next we will see how it works with Elastisch.
 
