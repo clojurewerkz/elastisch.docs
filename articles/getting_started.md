@@ -694,7 +694,7 @@ use the `:sort` option `clojurewerkz.elastisch.rest.document/search` accepts:
     (pp/pprint hits)))
 ```
 
-More examples can be found in this [ElasticSearch documentation section on sorting](http://www.elasticsearch.org/guide/reference/api/search/sort.html).
+More examples can be found in this [ElasticSearch documentation section on sorting](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-sort.html).
 `:sort` values that Elastisch accepts are structured exactly the same as JSON documents in that section.
 
 
@@ -852,7 +852,7 @@ that can be used by your application.
     (pp/pprint hits)))
 ```
 
-More examples can be found in this [ElasticSearch documentation section on retrieving subsets of fields](http://www.elasticsearch.org/guide/reference/api/search/highlighting.html).
+More examples can be found in this [ElasticSearch documentation section on highlighting fields](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-highlighting.html).
 `:highlight` values that Elastisch accepts are structured exactly the same as JSON documents in that section.
 
 Highlighting will be covered in more detail in the [Querying](/articles/querying.html) guide.
@@ -881,7 +881,7 @@ To limit returned number of results, use the `:fields` option `clojurewerkz.elas
     (pp/pprint hits)))
 ```
 
-More examples can be found in this [ElasticSearch documentation section on retrieving subsets of fields](http://www.elasticsearch.org/guide/reference/api/search/fields.html).
+More examples can be found in this [ElasticSearch documentation section on retrieving subsets of fields](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-fields.html).
 `:fields` values that Elastisch accepts are structured exactly the same as JSON documents in that section.
 
 

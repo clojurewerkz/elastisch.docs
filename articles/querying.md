@@ -1494,7 +1494,7 @@ that can be used by your application.
     (pp/pprint hits)))
 ```
 
-More examples can be found in this [ElasticSearch documentation section on retrieving subsets of fields](http://www.elasticsearch.org/guide/reference/api/search/highlighting.html).
+More examples can be found in this [ElasticSearch documentation section on highlighting fields](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-highlighting.html).
 `:highlight` values that Elastisch accepts are structured exactly the same as JSON documents in that section.
 
 For example, to override highlighting tags (`em` by default):
@@ -1636,7 +1636,7 @@ ElasticSearch provides an API operation that validates queries without executing
 
 Note that unlike `clojurewerkz.elastisch.rest.document/search`, this function does not take mapping type as a parameter.
 
-Query Validation requests with Elastisch have exactly the same structure as JSON documents in the [ElasticSearch Validation API guide](http://www.elasticsearch.org/guide/reference/api/validate.html)
+Query Validation requests with Elastisch have exactly the same structure as JSON documents in the [ElasticSearch Validation API guide](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-validate.html)
 but passed as Clojure maps.
 
 
