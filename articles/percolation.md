@@ -7,7 +7,7 @@ layout: article
 
 This guide covers ElasticSearch search capabilities in depth, explains how Elastisch presents them in the API and how some of the key features are commonly used. This guide covers:
 
- * An overview of the ElasticSearch [percolation feature](http://www.elasticsearch.org/guide/reference/api/percolate.html)
+ * An overview of the ElasticSearch [percolation feature](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-percolate.html)
  * What is percolation
  * How to register a query for percolation with Elastisch
  * How to perform a query percolation

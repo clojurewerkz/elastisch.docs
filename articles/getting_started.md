@@ -196,7 +196,7 @@ To create an index, use the `clojurewerkz.elastisch.rest.index/create` function:
   ;; creates an index with default settings and no custom mapping types
   (esi/create "myapp1_development")
   ;; creates an index with given settings and no custom mapping types.
-  ;; Settings map structure is the same as in the ElasticSearch API reference at http://www.elasticsearch.org/guide/reference/api/admin-indices-create-index.html
+  ;; Settings map structure is the same as in the ElasticSearch API reference at http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-create-index.html
   (esi/create "myapp2_development" :settings {"number_of_shards" 1}))
 ```
 
@@ -220,7 +220,7 @@ To create an index using the native client, use the same functions but in the
   ;; creates an index with default settings and no custom mapping types
   (esi/create "myapp1_development")
   ;; creates an index with given settings and no custom mapping types.
-  ;; Settings map structure is the same as in the ElasticSearch API reference at http://www.elasticsearch.org/guide/reference/api/admin-indices-create-index.html
+  ;; Settings map structure is the same as in the ElasticSearch API reference at http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-create-index.html
   (esi/create "myapp2_development" :settings {"number_of_shards" 1}))
 ```
 
@@ -297,7 +297,7 @@ There is much more to indexing that we won't cover in this guide. A separate [gu
 
 ### Fetching a Single Document By Id
 
-To [fetch a single document by id](http://www.elasticsearch.org/guide/reference/api/get.html), use `clojurewerkz.elastisch.rest.document/get`:
+To [fetch a single document by id](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-get.html), use `clojurewerkz.elastisch.rest.document/get`:
 
 ``` clojure
 (ns clojurewerkz.elastisch.docs.examples

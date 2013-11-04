@@ -322,7 +322,7 @@ described later in this guide.
 
 For the reference list of index settings, see
 
- * [Update Index Settings Operation guide](http://www.elasticsearch.org/guide/reference/api/admin-indices-update-settings.html)
+ * [Update Index Settings Operation guide](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-update-settings.html)
  * [Index modules guide](http://www.elasticsearch.org/guide/reference/index-modules/)
 
 
@@ -600,7 +600,7 @@ to `clojurewerkz.elastisch.rest.index.update-mapping`:
 (esi/update-mapping "_all" "person" :mapping {:properties {:first-name {:type "string" :store "no"}}} :ignore_conflicts true)
 ```
 
-For more information, see [ElasticSearch guide on Put Mapping operation](http://www.elasticsearch.org/guide/reference/api/admin-indices-put-mapping.html).
+For more information, see [ElasticSearch guide on Put Mapping operation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-put-mapping.html).
 
 
 
@@ -675,7 +675,7 @@ by applications in the UI.
 
 ElasticSearch supports multiple analyzers and it is possible to define custom ones, often without writing any code (just reusing
 existing tokenizers and filters). This section briefly describes some of them. To experiment with
-analysis and analyzers, you can use the [Analyze API operation](http://www.elasticsearch.org/guide/reference/api/admin-indices-analyze.html) on
+analysis and analyzers, you can use the [Analyze API operation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-analyze.html) on
 any existent index, for example, via tool like `curl`.
 
 ### Standard Analyzer
@@ -995,7 +995,7 @@ To update index settings, use the `clojurewerkz.elastisch.rest.index/update-sett
   (esi/create "myapp_development" {:index {:refresh_interval "30s"}}))
 ```
 
-See also ElasticSearch [Update Index Setting operation guide](http://www.elasticsearch.org/guide/reference/api/admin-indices-update-settings.html)
+See also ElasticSearch [Update Index Setting operation guide](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-update-settings.html)
 
 
 ## Deleting an Index
@@ -1049,7 +1049,7 @@ Use `clojurewerkz.elastisch.rest.index/optimize` to optimize an index:
 (esi/optimize "my-index" :refresh true :max_num_segments 48)
 ```
 
-It takes the same options as documented in the [ElasticSearch guide on the Optimize Index operation](http://www.elasticsearch.org/guide/reference/api/admin-indices-optimize.html)
+It takes the same options as documented in the [ElasticSearch guide on the Optimize Index operation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-optimize.html)
 
 
 ## Flushing an Index
@@ -1073,7 +1073,7 @@ Use `clojurewerkz.elastisch.rest.index/clear-cache` to clear index cache:
 (esi/clear-cache "my-index" :filter true :field_data true :bloom true)
 ```
 
-It takes the same options as documented in the [ElasticSearch guide on the Clear Cache Index operation](http://www.elasticsearch.org/guide/reference/api/admin-indices-clearcache.html)
+It takes the same options as documented in the [ElasticSearch guide on the Clear Cache Index operation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-clearcache.html)
 
 
 ## Getting Index Stats
@@ -1085,7 +1085,7 @@ Use `clojurewerkz.elastisch.rest.index/stats` to get statistics about an index o
 (esi/stats "my-index" :docs true :store true :indexing true)
 ```
 
-It takes the same options as documented in the [ElasticSearch guide on the Index Stats operation](http://www.elasticsearch.org/guide/reference/api/admin-indices-stats.html)
+It takes the same options as documented in the [ElasticSearch guide on the Index Stats operation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-stats.html)
 
 
 ## Getting Index Status
@@ -1123,7 +1123,7 @@ for index name. This function accepts no options.
 
 ## Index Templates
 
-ElasticSearch [index templates](http://www.elasticsearch.org/guide/reference/api/admin-indices-templates.html) let you specify settings and/or mappings
+ElasticSearch [index templates](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-templates.html) let you specify settings and/or mappings
 for indexes that match certain name patterns upfront. For example, in the case of one index per company in the app, it may be desirable to
 use the same mapping types (schema) for all indexes. Because it is likely that the indexes are named the same way (e.g. `customer[identifier]`),
 index templates are applied to indexes matching a certain naming pattern.
@@ -1154,7 +1154,7 @@ Finally, `clojurewerkz.elastisch.rest.index/get-template` lets you retrieve info
 ## Index Aliases
 
 `clojurewerkz.elastisch.rest.index/update-aliases` and `clojurewerkz.elastisch.rest.index/get-aliases`
-are new functions that implement support for [index aliases](http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases.html):
+are new functions that implement support for [index aliases](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-aliases.html):
 
 ``` clojure
 (clojurewerkz.elastisch.rest.index/update-aliases [{:add {:index "client0000001" :alias "alias1"}}
@@ -1308,7 +1308,7 @@ For a more thorough discussion of boosting, see [Lucene in Action, 2nd edition](
 
 ### Testing How Text is Analyzed
 
-It is possible to use the [ElasticSearch Analyze API operation](http://www.elasticsearch.org/guide/reference/api/admin-indices-analyze.html) to see how different
+It is possible to use the [ElasticSearch Analyze API operation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-analyze.html) to see how different
 analyzers process (tokenize and filter) various pieces of text.
 
 
