@@ -399,8 +399,8 @@ Here is a brief and very incomplete list of things that you can define via mappi
  * Document time-to-live (TTL)
  * Whether document type is indexed
  * Special fields (`"_all"`, default field, etc)
- * [Document-level boosting](http://www.elasticsearch.org/guide/reference/mapping/boost-field.html)
- * [Timestamp field](http://www.elasticsearch.org/guide/reference/mapping/timestamp-field.html)
+ * [Document-level boosting](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-boost-field.html)
+ * [Timestamp field](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-timestamp-field.html)
 
 When an index is created using the `clojurewerkz.elastisch.rest.index/create` function, mapping settings are passed with the `:mappings` option:
 
@@ -469,7 +469,7 @@ In the example below the same tweet type is extended with one more field, `:time
 ```
 
 Because `:timestamp` is a date and there are multiple date formats in use, we specify which particular format will be used by our application: `"basic_date_time_no_millis"`.
-An example timestamp in this format looks like this: `"20120802T101232+0100"`, generalized version is `"yyyyDDD’T’HHmmssZ"`. [ElasticSearch supports multiple date/time formats](http://www.elasticsearch.org/guide/reference/mapping/date-format.html).
+An example timestamp in this format looks like this: `"20120802T101232+0100"`, generalized version is `"yyyyDDD’T’HHmmssZ"`. [ElasticSearch supports multiple date/time formats](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-date-format.html).
 
 The `:include_in_all` setting instructs ElasticSearch to not include timestamps in the special `"_all"` field (described later in this document).
 
@@ -523,7 +523,7 @@ So far we have demonstrated a few core field types:
  * boolean
  * object
 
-ElasticSearch documentation covers more [mapping/field types](http://www.elasticsearch.org/guide/reference/mapping/core-types.html).
+ElasticSearch documentation covers more [mapping/field types](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-core-types.html).
 
 
 
@@ -735,7 +735,7 @@ ElasticSearch has many [predefined analyzers, tokenizers and token filters to ch
 
 ## Language-specific Analyzers
 
-ElasticSearch offers a variety of [language-specific analyzers](http://www.elasticsearch.org/guide/reference/index-modules/analysis/lang-analyzer.html) that come with language-specific (e.g. Russian or Arabic or German) stop words:
+ElasticSearch offers a variety of [language-specific analyzers](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-lang-analyzer.html) that come with language-specific (e.g. Russian or Arabic or German) stop words:
 
  * arabic
  * armenian
@@ -777,13 +777,13 @@ All analyzers support setting custom stopwords either via configuration, or by u
 
 For "keyword-like" fields like usernames, ZIP codes or other identifiers, it usually makes sense to make the field
 non-analyzed. It will then be searchable by the exact case sensitive match. If case sensitivity is an issue, it is
-possible to define a custom analyzer that uses the [lowercase token filter](http://www.elasticsearch.org/guide/reference/index-modules/analysis/lowercase-tokenfilter.html)
+possible to define a custom analyzer that uses the [lowercase token filter](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-lowercase-tokenfilter.html)
 or your application can lowercase all values before submitting them to ElasticSearch for indexing.
 
 
 ### Email, URLs
 
-Email and URLs can either be non-analyzed or use a custom analyzer that tokenizes emails and URLs as single tokens with the [UAX Email URL Tokenizer ](http://www.elasticsearch.org/guide/reference/index-modules/analysis/uaxurlemail-tokenizer.html).
+Email and URLs can either be non-analyzed or use a custom analyzer that tokenizes emails and URLs as single tokens with the [UAX Email URL Tokenizer ](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-uaxurlemail-tokenizer.html).
 
 
 ### Human Names
@@ -809,7 +809,7 @@ documents may need a custom analyzer.
 
 ## Document TTL (Time-to-Live)
 
-ElasticSearch supports [Time-to-Live](http://www.elasticsearch.org/guide/reference/mapping/ttl-field.html) documents: it is possible to specify expiration period
+ElasticSearch supports [Time-to-Live](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-ttl-field.html) documents: it is possible to specify expiration period
 on a document. It can either be done per mapping type via mapping definition:
 
 ``` clojure
@@ -856,7 +856,7 @@ Expired documents are removed periodically (every 60 seconds by default). The pe
 ## Document Timestamps
 
 Very often documents have timestamps associated with them. While it is common to store and index timestamps as a field, [ElasticSearch supports
-timestamps](http://www.elasticsearch.org/guide/reference/mapping/timestamp-field.html) via the special `_timestamp` field. Timestamps can be taken from a specified document field (the so called *external timestamps*) or
+timestamps](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-timestamp-field.html) via the special `_timestamp` field. Timestamps can be taken from a specified document field (the so called *external timestamps*) or
 automatically set to current time when a document is indexed. Just like with all date/time fields, ElasticSearch supports multiple date/time
 formats.
 
@@ -1195,7 +1195,7 @@ For example, to set `index.refresh_interval` to 10 seconds, pass the following m
 
 ### The _all Field
 
-[The `_all` field](http://www.elasticsearch.org/guide/reference/mapping/all-field.html) is a special document field that includes the content of one or more (possibly all) document fields combined.
+[The `_all` field](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-all-field.html) is a special document field that includes the content of one or more (possibly all) document fields combined.
 It is helpful in cases when querying against documents with unknown document structure.
 
 It is possible to disable the `_all` field for a mapping or exclude certain fields from being added to it. This is done
