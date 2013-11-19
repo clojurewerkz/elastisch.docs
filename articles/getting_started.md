@@ -57,7 +57,7 @@ Elastisch artifacts are [released to Clojars](https://clojars.org/clojurewerkz/e
 ### With Leiningen
 
 ``` clojure
-[clojurewerkz/elastisch "1.2.0"]
+[clojurewerkz/elastisch "1.3.0-rc1"]
 ```
 
 ### With Maven
@@ -77,7 +77,7 @@ And then the dependency:
 <dependency>
   <groupId>clojurewerkz</groupId>
   <artifactId>elastisch</artifactId>
-  <version>1.2.0</version>
+  <version>1.3.0-rc1</version>
 </dependency>
 ```
 
