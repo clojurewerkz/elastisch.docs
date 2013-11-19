@@ -1170,6 +1170,49 @@ Elastisch provides a helper function for constructing Custom Filters Score queri
 ```
 
 
+## Scolling (Pagination) of Search Results
+
+Search queries can potentially return many documents. Retrieval of documents in a result
+set in chunks, commonly known as pagination, is called **scrolling* in ElasticSearch parlance.
+
+
+### Using HTTP Client
+
+To scroll search results using HTTP API client, use `clojurewerkz.elastisch.rest.document/scroll`
+or `clojurewerkz.elastisch.rest.document/scroll-seq`. The former requires you to first
+obtain a **scroll id** (cursor id) from a response:
+
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as doc])
+(require '[clojurewerkz.elastisch.rest.response :refer [hits-from]])
+
+(let [scroll-id  (:_scroll_id response)
+      next-page  (doc/scroll scroll-id :scroll "1m")]
+  (hits-from next-page))
+```
+
+`scroll-seq` is more convenient: it takes a response and produces a lazy
+sequence of hits in the entire result set:
+
+``` clojure
+(require '[clojurewerkz.elastisch.rest.document :as doc])
+
+(doc/scroll-seq
+  (doc/search index-name mapping-type
+              :query (q/term :title "Emptiness")
+              :search_type "query_then_fetch"
+              :scroll "1m"
+              :size 2))
+;= lazy sequence of hits
+```
+
+
+### Using The Native Client
+
+Scrolling with Elastisch's native client is effectively the same as with the HTTP one.
+The only difference is that you use `clojurewerkz.elastisch.native.document/scroll-seq`
+and `clojurewerkz.elastisch.native.document/scroll`.
+
 
 
 ## Filters
