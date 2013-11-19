@@ -306,7 +306,7 @@ such as usernames.
 
 A close relative of the term query is the **terms query** which works the same way but takes multiple term values.
 
-With Elastisch, term query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/term-query.html):
+With Elastisch, term query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-term-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -336,7 +336,7 @@ The difference with field and query string query types is that text queries do n
 As such, text queries can be seen as more limited and slighly more efficient kind of the query string query, suitable for many apps with non-technical
 audience.
 
-With Elastisch, text query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/text-query.html):
+With Elastisch, text query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-text-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -370,7 +370,7 @@ type with
 The difference with field and query string query types is that text queries do not support field prefixes and do not attempt to Lucene Query syntax parsing.
 As such, QS queries can be seen as more powerful and less efficient kind of text query, suitable for many apps with technical audience.
 
-With Elastisch, QS query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/query-string-query.html):
+With Elastisch, QS query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -392,7 +392,7 @@ Elastisch provides a helper function for constructing QS text queries, `clojurew
                                                     :default_operator "AND"))
 ```
 
-For all the numerous options this query type accepts, see [ElasticSearch documentation on the subject](http://www.elasticsearch.org/guide/reference/query-dsl/query-string-query.html).
+For all the numerous options this query type accepts, see [ElasticSearch documentation on the subject](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html).
 
 
 ### Range Query
@@ -403,7 +403,7 @@ all documents where the `:date` field value is earlier than a particular moment 
 Range queries work for numerical values and dates the way you would expect. For string and text fields, they match all documents with terms in the given range
 (for example, `"cha"` to `"cze"`) in a particular field.
 
-With Elastisch, range query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/range-query.html):
+With Elastisch, range query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-range-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -424,9 +424,9 @@ Elastisch provides a helper function for constructing range queries, `clojurewer
 ### Boolean Query
 
 A query that matches documents matching boolean combinations of other queries. It is built using one or more boolean clauses, each clause with a typed occurrence.
-The occurrence types are documented on the [ElasticSearch page on boolean queries](http://www.elasticsearch.org/guide/reference/query-dsl/bool-query.html).
+The occurrence types are documented on the [ElasticSearch page on boolean queries](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html).
 
-With Elastisch, boolean query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/bool-query.html):
+With Elastisch, boolean query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -471,7 +471,7 @@ A query that applies a filter to the results of another query. Use it if you nee
 results of an existing query efficiently but the condition you filter on does not affect relevance
 ranking. One example of that is searching over accounts that are active.
 
-With Elastisch, filtered query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/filtered-query.html):
+With Elastisch, filtered query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-filtered-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -506,7 +506,7 @@ Elastisch provides a helper function for constructing filtered queries, `clojure
 A query that executes a query string against a specific field. It is a simplified version of query_string query (it is equivalent to setting the `:default_field`
 to the field this query executed against).
 
-With Elastisch, field query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/field-query.html):
+With Elastisch, field query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-field-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -529,7 +529,7 @@ Elastisch provides a helper function for constructing field queries, `clojurewer
 The Prefix query is similar to the term query but matches documents that have at least one term that begins with the given prefix.
 One use case for prefix queries is providing text autocompletion results (works best for non-analyzed fields).
 
-With Elastisch, prefix query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/prefix-query.html):
+With Elastisch, prefix query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-prefix-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -552,7 +552,7 @@ Elastisch provides a helper function for constructing prefix queries, `clojurewe
 The Wildcard query is a generalized version of Prefix query and usually is applicable in the same cases. Note that wildcard suffix queries such as `"*werkz"` have
 very poor performance characteristics on large data sets.
 
-With Elastisch, wildcard query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/wildcard-query.html):
+With Elastisch, wildcard query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -578,7 +578,7 @@ Elastisch provides a helper function for constructing wildcard queries, `clojure
 
 The IDs query is searches for documents by their IDs (`:_id` field values). It is similar to `WHERE ... IN (...)` in SQL.
 
-With Elastisch, IDs query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/ids-query.html):
+With Elastisch, IDs query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-ids-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -603,7 +603,7 @@ Elastisch provides a helper function for constructing IDs queries, `clojurewerkz
 The Match All query does what it sounds like: matches every single document in the index. Used almost exclusively during development or
 in combination with other queries in compound queries (e.g. filtered).
 
-With Elastisch, match-all query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/match-all-query.html):
+With Elastisch, match-all query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-match-all-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -638,7 +638,7 @@ This is useful when searching for a word in multiple fields with different boost
 
 Like other compound queries, Dis-Max returns the union of documents produced by subqueries.
 
-With Elastisch, dis-max query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/dis-max-query.html):
+With Elastisch, dis-max query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-dis-max-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -676,7 +676,7 @@ Boosting queries are used to demote results that match a particular query. For e
 information about Berlin in Germany, not one of the towns in North America. Boosting queries can be used to lower relevancy of some documents without
 affecting scoring of the most.
 
-With Elastisch, boosting query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/boosting-query.html):
+With Elastisch, boosting query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-boosting-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -713,7 +713,7 @@ Elastisch provides a helper function for constructing boosting queries, `clojure
 
 More Like This (MLT) query find documents that are “like” provided text by running it against one or more fields.
 
-With Elastisch, More Like This query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/mlt-query.html):
+With Elastisch, More Like This query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-mlt-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -741,7 +741,7 @@ Elastisch provides a helper function for constructing MLT queries, `clojurewerkz
 
 More Like This Field is very similar to the More Like This query but operates on a single field.
 
-With Elastisch, More Like This query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/mlt-field-query.html):
+With Elastisch, More Like This query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-mlt-field-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -768,7 +768,7 @@ Elastisch provides a helper function for constructing MLT field queries, `clojur
 A fuzzy based query that uses similarity based on Levenshtein (edit distance) algorithm. **Warning**: this query uses prefix length of 0 by default.
 This will cause a full scan on all terms.
 
-With Elastisch, fuzzy query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/fuzzy-query.html):
+With Elastisch, fuzzy query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -796,7 +796,7 @@ Elastisch provides a helper function for constructing fuzzy queries, `clojurewer
 
 A cross between Fuzzy and More Like This queries.
 
-With Elastisch, Fuzzy Like This (FLT) query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/fuzzy-like-this-query.html):
+With Elastisch, Fuzzy Like This (FLT) query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-like-this-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -822,7 +822,7 @@ Elastisch provides a helper function for constructing FLT queries, `clojurewerkz
 
 Same as FTL query but works over a single field.
 
-With Elastisch, Fuzzy Like This Field query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/fuzzy-like-this-field-query.html):
+With Elastisch, Fuzzy Like This Field query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-like-this-field-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -846,7 +846,7 @@ Elastisch provides a helper function for constructing Fuzzy Like This Field quer
 
 Nested query allows to query nested objects/documents. The query is executed against the nested objects as if they were indexed as separate docs. The root parent document is returned.
 
-With Elastisch, Nested query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/nested-query.html):
+With Elastisch, Nested query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-nested-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -886,7 +886,7 @@ Elastisch provides a helper function for constructing nested queries, `clojurewe
 
 Matches spans near the beginning of a field.
 
-With Elastisch, Span First query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/span-first-query.html):
+With Elastisch, Span First query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-span-first-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -910,7 +910,7 @@ Elastisch provides a helper function for constructing Span First queries, `cloju
 
 Matches spans which are near one another. One can specify slop, the maximum number of intervening unmatched positions, as well as whether matches are required to be in-order.
 
-With Elastisch, Span Near query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/span-near-query.html):
+With Elastisch, Span Near query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-span-near-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -944,7 +944,7 @@ Elastisch provides a helper function for constructing Span Near queries, `clojur
 
 Removes matches which overlap with another span query.
 
-With Elastisch, Span Not query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/span-not-query.html):
+With Elastisch, Span Not query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-span-not-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -968,7 +968,7 @@ Elastisch provides a helper function for constructing Span Not queries, `clojure
 
 Matches the union of its span clauses.
 
-With Elastisch, Span Or query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/span-or-query.html):
+With Elastisch, Span Or query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-span-or-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -994,7 +994,7 @@ Elastisch provides a helper function for constructing Span Or queries, `clojurew
 
 Matches spans containing a term.
 
-With Elastisch, Span Term query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/span-term-query.html):
+With Elastisch, Span Term query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-span-term-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1016,7 +1016,7 @@ Elastisch provides a helper function for constructing Span Term queries, `clojur
 
 Indices Query executes different queries against different indexes and combine the results.
 
-With Elastisch, indices query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/indices-query.html):
+With Elastisch, indices query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-indices-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1042,7 +1042,7 @@ Elastisch provides a helper function for constructing fuzzy queries, `clojurewer
 
 Top Children Query performs a query against child documents and aggregates scores of hits into the parent document.
 
-With Elastisch, Top Children query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/top-children-query.html):
+With Elastisch, Top Children query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-top-children-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1071,7 +1071,7 @@ Elastisch provides a helper function for constructing Top Children queries, `clo
 
 Has Child Query returns parent documents that have child documents of the given type.
 
-With Elastisch, Has Child query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/has-child-query.html):
+With Elastisch, Has Child query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-has-child-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1096,7 +1096,7 @@ A query that wraps a filter or another query and simply returns a constant score
 The filter object can hold only filter elements, not queries. Filters can be much faster compared to queries since they don’t perform any scoring,
 especially when they are cached.
 
-With Elastisch, Constant Score query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/constant-score-query.html):
+With Elastisch, Constant Score query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-constant-score-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1119,7 +1119,7 @@ Elastisch provides a helper function for constructing Constant Score queries, `c
 
 Custom Score query allows to wrap another query and customize the scoring of it by providing a script expression.
 
-With Elastisch, Custom Score query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/custom-score-query.html):
+With Elastisch, Custom Score query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-custom-score-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1143,7 +1143,7 @@ Elastisch provides a helper function for constructing Custom Score queries, `clo
 A Custom Filters Score query allows to execute a query, and if the hit matches a provided filter (ordered), use either a boost or a script associated with it to compute the score.
 This kind of query allows for very efficient parametrized scoring because filters do not perform any scoring and their results can be cached.
 
-With Elastisch, Custom Filters Score query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/reference/query-dsl/custom-filters-score-query.html):
+With Elastisch, Custom Filters Score query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-custom-filters-score-query.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1253,7 +1253,7 @@ ElasticSearch provides many filters out of the box.
 Term filter is very similar to the Term query covered above but like all filters, does not contribute to relevance scoring and is more
 efficient. Terms filter works the same way but for multiple terms.
 
-With Elastisch, term filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/term-filter.html):
+With Elastisch, term filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-term-filter.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1268,7 +1268,7 @@ With Elastisch, term filter structure is the same as described in the [ElasticSe
 
 Range filter filters documents out on a range of values, similarly to the Range query. Supports numerical values, dates and strings.
 
-With Elastisch, range filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/range-filter.html):
+With Elastisch, range filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-range-filter.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1283,7 +1283,7 @@ With Elastisch, range filter structure is the same as described in the [ElasticS
 
 Exists filter filters documents that have a specific field set. This filter always uses caching.
 
-With Elastisch, Exists filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/exists-filter.html):
+With Elastisch, Exists filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-exists-filter.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1298,7 +1298,7 @@ With Elastisch, Exists filter structure is the same as described in the [Elastic
 
 Exists filter filters documents that do not have a specific field set, that is, the opposite of the Exists filter.
 
-With Elastisch, Missing filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/missing-filter.html):
+With Elastisch, Missing filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-missing-filter.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1313,7 +1313,7 @@ With Elastisch, Missing filter structure is the same as described in the [Elasti
 
 The And filter matches documents using `AND` boolean operator on multiple subqueries. This filter does not use caching by default.
 
-With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/and-filter.html):
+With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-and-filter.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1330,7 +1330,7 @@ With Elastisch, And filter structure is the same as described in the [ElasticSea
 
 The Or filter is similar to the And filter but matches documents using `OR` boolean operator on multiple subqueries. It does not use caching by default.
 
-With Elastisch, Or filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/or-filter.html):
+With Elastisch, Or filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-or-filter.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1346,7 +1346,7 @@ With Elastisch, Or filter structure is the same as described in the [ElasticSear
 
 The Not filter filters out document that match its subquery. This filter does not use caching by default.
 
-With Elastisch, Not filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/not-filter.html):
+With Elastisch, Not filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-not-filter.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1362,7 +1362,7 @@ With Elastisch, Not filter structure is the same as described in the [ElasticSea
 
 The Bool filter matches documents using boolean combinations of its subqueries. Similar in concept to the Boolean query, except that the clauses are other filters.
 
-With Elastisch, Bool filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/bool-filter.html):
+With Elastisch, Bool filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-bool-filter.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1379,7 +1379,7 @@ With Elastisch, Bool filter structure is the same as described in the [ElasticSe
 
 The Limit filter limits the number of documents (per shard) that are taken for ranking.
 
-With Elastisch, Limit filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/limit-filter.html):
+With Elastisch, Limit filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-limit-filter.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1394,7 +1394,7 @@ With Elastisch, Limit filter structure is the same as described in the [ElasticS
 
 This filter filters out documents based on their `_type` field value. It can work even if the `_type` field is not indexed.
 
-With Elastisch, Type filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/type-filter.html):
+With Elastisch, Type filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-type-filter.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1409,7 +1409,7 @@ With Elastisch, Type filter structure is the same as described in the [ElasticSe
 
 This filter matches documents with fields that have terms starting with the given prefix (**not analyzed**).
 
-With Elastisch, Prefix filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/prefix-filter.html):
+With Elastisch, Prefix filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-prefix-filter.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1425,7 +1425,7 @@ With Elastisch, Prefix filter structure is the same as described in the [Elastic
 
 Allows to filter hits based on a point location using a bounding box (the `pin.location` nested attribute in this example).
 
-With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/geo-distance-filter.html):
+With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-geo-distance-filter.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1444,7 +1444,7 @@ With Elastisch, And filter structure is the same as described in the [ElasticSea
 
 Filters documents that include only hits that exists within a specific distance from a geo point.
 
-With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/geo-distance-range-filter.html):
+With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-geo-distance-range-filter.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
@@ -1462,7 +1462,7 @@ With Elastisch, And filter structure is the same as described in the [ElasticSea
 
 Filters documents that exists within a range from a specific point.
 
-With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/geo-distance-range-filter.html):
+With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-geo-distance-range-filter.html):
 
 ``` clojure
 (esd/search "posts" "post"
@@ -1478,7 +1478,7 @@ With Elastisch, And filter structure is the same as described in the [ElasticSea
 
 A filter allowing to include hits that only fall within a polygon of points.
 
-With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/reference/query-dsl/geo-distance-range-filter.html):
+With Elastisch, And filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-geo-distance-range-filter.html):
 
 ``` clojure
 (esd/search "posts" "post"
@@ -1537,7 +1537,7 @@ that can be used by your application.
     (pp/pprint hits)))
 ```
 
-More examples can be found in this [ElasticSearch documentation section on retrieving subsets of fields](http://www.elasticsearch.org/guide/reference/api/search/highlighting.html).
+More examples can be found in this [ElasticSearch documentation section on highlighting fields](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-highlighting.html).
 `:highlight` values that Elastisch accepts are structured exactly the same as JSON documents in that section.
 
 For example, to override highlighting tags (`em` by default):
@@ -1679,7 +1679,7 @@ ElasticSearch provides an API operation that validates queries without executing
 
 Note that unlike `clojurewerkz.elastisch.rest.document/search`, this function does not take mapping type as a parameter.
 
-Query Validation requests with Elastisch have exactly the same structure as JSON documents in the [ElasticSearch Validation API guide](http://www.elasticsearch.org/guide/reference/api/validate.html)
+Query Validation requests with Elastisch have exactly the same structure as JSON documents in the [ElasticSearch Validation API guide](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-validate.html)
 but passed as Clojure maps.
 
 
