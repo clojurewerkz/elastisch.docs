@@ -25,6 +25,6 @@ In order to regenerate the entire site, run:
 
 ## License & Copyright
 
-Copyright (C) 2011-2013 Alexander Petrov, Michael S. Klishin.
+Copyright (C) 2011-2014 Alexander Petrov, Michael S. Klishin.
 
 Distributed under the Eclipse Public License, the same as Clojure.
