@@ -148,7 +148,7 @@ of `[host port]`) and client settings:
 (defn -main
   [& args]
                ;; a list of endpoints as pairs
-  (es/connect! [["127.0.0.1" 9200]]
+  (es/connect! [["127.0.0.1" 9300]]
                ;; options. cluster.name is mandatory!
                {"cluster.name" "your-cluster-name"}))
 ```
