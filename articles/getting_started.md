@@ -57,7 +57,7 @@ Elastisch artifacts are [released to Clojars](https://clojars.org/clojurewerkz/e
 ### With Leiningen
 
 ``` clojure
-[clojurewerkz/elastisch "1.3.0-rc1"]
+[clojurewerkz/elastisch "1.3.0"]
 ```
 
 ### With Maven
@@ -77,7 +77,7 @@ And then the dependency:
 <dependency>
   <groupId>clojurewerkz</groupId>
   <artifactId>elastisch</artifactId>
-  <version>1.3.0-rc1</version>
+  <version>1.3.0</version>
 </dependency>
 ```
 
@@ -137,7 +137,7 @@ By default Elastisch will use the HTTP endpoint at `http://localhost:9200`.
 
 ## Connecting Over Native Protocol
 
-To use the native transport, you use the `clojurewerkz.elastisch.rest/connect!`
+To use the native transport, you use the `clojurewerkz.elastisch.native/connect!`
 function that takes two arguments: a list of endpoints (each of which is a pair
 of `[host port]`) and client settings:
 
@@ -148,9 +148,9 @@ of `[host port]`) and client settings:
 (defn -main
   [& args]
                ;; a list of endpoints as pairs
-  (es/connect! [["127.0.0.1" 9300]]
+  (es/connect! [["127.0.0.1" 9200]]
                ;; options. cluster.name is mandatory!
-               {"cluster.name "your-cluster-name""}))
+               {"cluster.name" "your-cluster-name"}))
 ```
 
 `cluster.name` is a required setting. Cluster name and transport node
@@ -181,7 +181,7 @@ Next we will take a look at each stage in more detail.
 
 ### Creating an Index With HTTP Client
 
-ElasticSearch provides support for multiple indexes. Indexes can be thought of as databases in a DBMS. 
+ElasticSearch provides support for multiple indexes. Indexes can be thought of as databases in a DBMS.
 
 To create an index, use the `clojurewerkz.elastisch.rest.index/create` function:
 
