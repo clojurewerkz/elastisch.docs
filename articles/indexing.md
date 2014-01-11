@@ -437,7 +437,7 @@ When it is necessary to update mapping for an indexing index with the `clojurewe
   (esr/connect! "http://127.0.0.1:9200")
   (esi/create "myapp_development" :settings {:index {:number_of_replicas 1}})
   ;; update a single mapping type for the index
-  (esi/update-mapping "myapp_development" "person" :mapping {:properties {:first-name {:type "string" :store "no"}}}))
+  (esi/update-mapping "myapp_development" "person" :mapping {:person {:properties {:first-name {:type "string" :store "no"}}}}))
 ```
 
 
@@ -567,7 +567,7 @@ It is possible to update an existing mapping type using the `clojurewerkz.elasti
   (esr/connect! "http://127.0.0.1:9200")
   (esi/create "myapp_development" :settings {:index {:number_of_replicas 1}})
   ;; update a single mapping type for the index
-  (esi/update-mapping "myapp_development" "person" :mapping {:properties {:first-name {:type "string" :store "no"}}}))
+  (esi/update-mapping "myapp_development" "person" :mapping {:person {:properties {:first-name {:type "string" :store "no"}}}}))
 ```
 
 It is possible to specify multiple indexes by passing a vector of names or the special value `"_all"` to update a mapping for all
@@ -584,7 +584,7 @@ existing indexes:
   (esr/connect! "http://127.0.0.1:9200")
   (esi/create "myapp_development" :settings {:index {:number_of_replicas 1}})
   ;; update a single mapping type for ALL indexes
-  (esi/update-mapping "_all" "person" :mapping {:properties {:first-name {:type "string" :store "no"}}}))
+  (esi/update-mapping "_all" "person" :mapping {:person {:properties {:first-name {:type "string" :store "no"}}}}))
 ```
 
 ### Mapping Conflicts
@@ -597,7 +597,7 @@ It is possible to instruct ElasticSearch to ignore conflicts and simply use the 
 to `clojurewerkz.elastisch.rest.index.update-mapping`:
 
 ``` clojure
-(esi/update-mapping "_all" "person" :mapping {:properties {:first-name {:type "string" :store "no"}}} :ignore_conflicts true)
+(esi/update-mapping "_all" "person" :mapping {:person {:properties {:first-name {:type "string" :store "no"}}}} :ignore_conflicts true)
 ```
 
 For more information, see [ElasticSearch guide on Put Mapping operation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-put-mapping.html).
