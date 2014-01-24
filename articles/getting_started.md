@@ -409,7 +409,7 @@ The example from above can also be written like so:
   [& args]
   (esr/connect! "http://127.0.0.1:9200")
   ;; performs a term query using a convenience function
-  (let [res  (doc/search "myapp_development" "person" :query {:term {:city "New York"}})
+  (let [res  (esd/search "myapp_development" "person" :query {:term {:city "New York"}})
         n    (esrsp/total-hits res)
         hits (esrsp/hits-from res)]
     (println (format "Total hits: %d" n))
@@ -433,7 +433,7 @@ To search against multiple indexes or mappings, pass them as vectors to their re
   [& args]
   (esr/connect! "http://127.0.0.1:9200")
   ;; performs a term query across two mapping types in the same index
-  (let [res  (doc/search "myapp_development" ["person" "checkin"] :query {:term {:city "New York"}})
+  (let [res  (esd/search "myapp_development" ["person" "checkin"] :query {:term {:city "New York"}})
         n    (esrsp/total-hits res)
         hits (esrsp/hits-from res)]
     (println (format "Total hits: %d" n))
@@ -687,7 +687,7 @@ use the `:sort` option `clojurewerkz.elastisch.rest.document/search` accepts:
   [& args]
   (esr/connect! "http://127.0.0.1:9200")
   ;; performs a search query with sorting
-  (let [res  (doc/search "myapp_development" "person"
+  (let [res  (esd/search "myapp_development" "person"
                          :query (q/query-string :biography "New York OR Austin")
                          :sort  {:name "desc"})
         hits (esrsp/hits-from res)]
@@ -714,7 +714,7 @@ To limit returned number of results, use `:from` and `:size` options `clojurewer
   [& args]
   (esr/connect! "http://127.0.0.1:9200")
   ;; performs a search query that returns up to 20 results and skips first 10 documents
-  (let [res  (doc/search "myapp_development" "person"
+  (let [res  (esd/search "myapp_development" "person"
                          :query (q/query-string :biography "New York OR Austin")
                          :from 10 :size 20)
         hits (esrsp/hits-from res)]
@@ -748,7 +748,7 @@ To specify a filter, pass the `:filter` option to `clojurewerkz.elastisch.rest.d
   [& args]
   (esr/connect! "http://127.0.0.1:9200")
   ;; performs a search query that returns results filtered on location type
-  (let [res  (doc/search "myapp_development" "location"
+  (let [res  (esd/search "myapp_development" "location"
                          :query (q/query-string :biography "New York OR Austin")
                          :filter {:term {:kind "hospital"}})
         hits (esrsp/hits-from res)]
@@ -874,7 +874,7 @@ To limit returned number of results, use the `:fields` option `clojurewerkz.elas
   [& args]
   (esr/connect! "http://127.0.0.1:9200")
   ;; performs a search query that returns only a subset of (stored) fields
-  (let [res  (doc/search "myapp_development" "person"
+  (let [res  (esd/search "myapp_development" "person"
                          :query (q/query-string :biography "New York OR Austin")
                          :fields ["first_name" "last_name" "username" "location" "blurb"])
         hits (esrsp/hits-from res)]
