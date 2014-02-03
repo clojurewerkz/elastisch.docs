@@ -903,9 +903,9 @@ To replace the entire document, use the `clojurewerkz.elastisch.rest.document/re
 ``` clojure
 (let [doc {:username "happyjoe" :first-name "Joe" :last-name "Smith" :age 30 :title "Teh Boss" :planet "Earth" :biography "N/A"}]
   ;; index a document
-  (esr/put "myapp2_development" :person "happyjoe" doc)
+  (esd/put "myapp2_development" :person "happyjoe" doc)
   ;; replace it in the index
-  (esr/replace "myapp2_development" :person "happyjoe" (assoc doc :title "Digital Marketing Genie"))
+  (esd/replace "myapp2_development" :person "happyjoe" (assoc doc :title "Digital Marketing Genie"))
 ```
 
 it will delete the document first and then add the new version. To create a new version of a document, use
@@ -935,7 +935,7 @@ To delete a single document by id, use the `clojurewerkz.elastisch.rest.document
   (esr/connect! "http://127.0.0.1:9200")
   (let [id "johndoe"]
     ;; deletes a document from the index by id
-    (println (esi/delete "myapp2_development" "person" id))))
+    (println (esd/delete "myapp2_development" "person" id))))
 ```
 
 This function takes additional options that are not covered in this guide. Please see the [Indexing guide](/articles/indexing.html) for more details.
