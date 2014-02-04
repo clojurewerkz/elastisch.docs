@@ -282,7 +282,7 @@ It is also possible to define settings and mapping types at the time an index is
   [& args]
   (esr/connect! "http://127.0.0.1:9200")
   ;; create an index with explicitly provided settings
-  (esi/create "myapp_development" :settings {:index {:number_of_replicas 1}}))
+  (esi/create "myapp_development" :settings {"index" {"number_of_replicas" 1}}))
 ```
 
 ``` clojure
@@ -314,7 +314,7 @@ ElasticSearch documentation on index settings uses dot separated names for neste
 For example, to set `index.refresh_interval` to 10 seconds, pass the following map for the `:settings` key:
 
 ``` clojure
-{:index {:refresh_interval "10s"}}
+{"index" {"refresh_interval" "10s"}}
 ```
 
 Index settings can be updated for an existing index using the `clojurewerkz.elastisch.rest.index/update-settings` function, as
@@ -435,7 +435,7 @@ When it is necessary to update mapping for an indexing index with the `clojurewe
 (defn -main
   [& args]
   (esr/connect! "http://127.0.0.1:9200")
-  (esi/create "myapp_development" :settings {:index {:number_of_replicas 1}})
+  (esi/create "myapp_development" :settings {"index" {"number_of_replicas" 1}})
   ;; update a single mapping type for the index
   (esi/update-mapping "myapp_development" "person" :mapping {:person {:properties {:first-name {:type "string" :store "no"}}}}))
 ```
@@ -540,7 +540,7 @@ To retrieve information about an existing mapping type, use the `clojurewerkz.el
 (defn -main
   [& args]
   (esr/connect! "http://127.0.0.1:9200")
-  (esi/create "myapp_development" :settings {:index {:number_of_replicas 1}})
+  (esi/create "myapp_development" :settings {"index" {"number_of_replicas" 1}})
   ;; get a single mapping type
   (println (esi/get-mapping "myapp_development" "person")))
 ```
@@ -565,7 +565,7 @@ It is possible to update an existing mapping type using the `clojurewerkz.elasti
 (defn -main
   [& args]
   (esr/connect! "http://127.0.0.1:9200")
-  (esi/create "myapp_development" :settings {:index {:number_of_replicas 1}})
+  (esi/create "myapp_development" :settings {"index" {"number_of_replicas" 1}})
   ;; update a single mapping type for the index
   (esi/update-mapping "myapp_development" "person" :mapping {:person {:properties {:first-name {:type "string" :store "no"}}}}))
 ```
@@ -582,7 +582,7 @@ existing indexes:
 (defn -main
   [& args]
   (esr/connect! "http://127.0.0.1:9200")
-  (esi/create "myapp_development" :settings {:index {:number_of_replicas 1}})
+  (esi/create "myapp_development" :settings {"index" {"number_of_replicas" 1}})
   ;; update a single mapping type for ALL indexes
   (esi/update-mapping "_all" "person" :mapping {:person {:properties {:first-name {:type "string" :store "no"}}}}))
 ```
@@ -617,7 +617,7 @@ To delete an existing mapping type, use the `clojurewerkz.elastisch.rest.index/d
 (defn -main
   [& args]
   (esr/connect! "http://127.0.0.1:9200")
-  (esi/create "myapp_development" :settings {:index {:number_of_replicas 1}})
+  (esi/create "myapp_development" :settings {"index" {"number_of_replicas" 1}})
   ;; delete a mapping type with ALL OF ITS DATA
   (esi/delete-mapping "myapp_development" "person"))
 ```
@@ -721,9 +721,9 @@ Analyzers are [configured](http://www.elasticsearch.org/guide/reference/index-mo
   (esr/connect! "http://127.0.0.1:9200")
   (idx/create "myapp"
               ;; defines a custom analyzer with 5 stop words
-              :settings {:index {:analysis {:analyzer {:custom_stopwords {:type      "standard"
-                                                                          :filter    ["standard" "lowercase" "stop"]
-                                                                          :stopwords ["lol" "rockstar" "ninja" "cloud" "event"]}}}}}
+              :settings {:index {"analysis" {"analyzer" {"custom_stopwords" {"type"      "standard"
+                                                                           "filter"    ["standard" "lowercase" "stop"]
+                                                                           "stopwords" ["lol" "rockstar" "ninja" "cloud" "event"]}}}}}
               :mappings {"tweet" {:properties {:text {:type "string" :analyzer "custom_stopwords"}}}}))
 ```
 
@@ -950,7 +950,7 @@ To check if an index exists, use the `clojurewerkz.elastisch.rest.index/exists?`
 (defn -main
   [& args]
   (esr/connect! "http://127.0.0.1:9200")
-  (esi/create "myapp_development" :settings {:index {:number_of_replicas 1}})
+  (esi/create "myapp_development" :settings {"index" {"number_of_replicas" 1}})
   ;= true
   (esi/exists? "myapp_development"))
 ```
@@ -970,7 +970,7 @@ It is possible to fetch index settings using the `clojurewerkz.elastisch.rest.in
   [& args]
   (esr/connect! "http://127.0.0.1:9200")
   ;; create an index and fetch its settings back
-  (esi/create "myapp_development" :settings {:index {:refresh_interval "30s"}})
+  (esi/create "myapp_development" :settings {"index" {"refresh_interval" "30s"}})
   (println (esi/get-settings "myapp_development")))
 ```
 
@@ -1011,7 +1011,7 @@ To delete an index, use the `clojurewerkz.elastisch.rest.index/delete` function:
 (defn -main
   [& args]
   (esr/connect! "http://127.0.0.1:9200")
-  (esi/create "myapp_development" :settings {:index {:number_of_replicas 1}})
+  (esi/create "myapp_development" :settings {"index" {"number_of_replicas" 1}})
   ;; delete the index
   (esi/delete "myapp_development"))
 ```
@@ -1133,7 +1133,7 @@ To create a template, use the `clojurewerkz.elastisch.rest.index/create-template
 ``` clojure
 # creates a template index that will be applicable to indexes named
 # account000001, account000002, account000003 and so on
-(clojurewerkz.elastisch.rest.index/create-template "accounts" :template "account*" :settings {:index {:refresh_interval "60s"}})
+(clojurewerkz.elastisch.rest.index/create-template "accounts" :template "account*" :settings {"index" {"refresh_interval" "60s"}})
 ```
 
 To delete a template, there is `clojurewerkz.elastisch.rest.index/delete-template`:
@@ -1182,7 +1182,7 @@ Set the `index.refresh_interval` to a value like `"5s"`, `"30s"`, `"30m"` and so
   [& args]
   (esr/connect! "http://127.0.0.1:9200")
   ;; create an index with explicitly provided settings
-  (esi/create "myapp_development" :settings {:index {:refresh_interval "30s"}}))
+  (esi/create "myapp_development" :settings {"index" {"refresh_interval" "30s"}}))
 ```
 
 For example, to set `index.refresh_interval` to 10 seconds, pass the following map for the `:settings` key:
