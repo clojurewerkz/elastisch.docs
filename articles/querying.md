@@ -326,42 +326,6 @@ Elastisch provides a helper function for constructing term queries, `clojurewerk
 If provided values is a collection, Elastisch will construct a terms query under the hood.
 
 
-### Text Query
-
-The Text query accepts text, analyzes it and performs a boolean (the default), fuzzy or phrase query. Each query type takes additional options.
-Depending on the exact "subtype", query structure will be slightly different so it is common to pass queries as Clojure maps instead of using the
-helper function (described below).
-
-The difference with field and query string query types is that text queries do not support field prefixes and do not attempt to Lucene Query syntax parsing.
-As such, text queries can be seen as more limited and slighly more efficient kind of the query string query, suitable for many apps with non-technical
-audience.
-
-With Elastisch, text query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-text-query.html):
-
-``` clojure
-(require '[clojurewerkz.elastisch.rest.document :as esd])
-
-;; the outer :text refers to the text query (query type). the inner :text is the name of the document field.
-(esd/search "tweets" "tweet" :query {:text {:text {:query "late at night"}}})
-
-;; a boolean text query that uses OR operator
-(esd/search "tweets" "tweet" :query {:text {:text {:query "late at night" :operator "or"}}})
-```
-
-Elastisch provides a helper function for constructing boolean text queries, `clojurewerkz.elastisch.query/text`:
-
-``` clojure
-(require '[clojurewerkz.elastisch.rest.document :as esd])
-(require '[clojurewerkz.elastisch.query :as q])
-
-;; a full text query, the query text will be analyzed
-(esd/search "tweets" "tweet" :query (q/text "text" "late at night"))
-
-;; a boolean text query that uses OR operator
-(esd/search "tweets" "tweet" :query (q/text "text" "late at night" :operator "OR"))
-```
-
-
 ### Query String Query
 
 The Query String (QS) query accepts text, runs it through Lucene Query Language parser, analyzes it and performs query. It is the most advanced query
@@ -498,29 +462,6 @@ Elastisch provides a helper function for constructing filtered queries, `clojure
 
 (esd/search "people" "person" :query (q/filtered :query  (q/term :interests "cooking")
                                                  :filter (q/range :age :from 25 :to 30)))
-```
-
-
-### Field Query
-
-A query that executes a query string against a specific field. It is a simplified version of query_string query (it is equivalent to setting the `:default_field`
-to the field this query executed against).
-
-With Elastisch, field query structure is the same as described in the [ElasticSearch query DSL documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-field-query.html):
-
-``` clojure
-(require '[clojurewerkz.elastisch.rest.document :as esd])
-
-(esd/search "people" "person" :query {:field {"address.street" "(Oak OR Elm)"}})
-```
-
-Elastisch provides a helper function for constructing field queries, `clojurewerkz.elastisch.query/field`:
-
-``` clojure
-(require '[clojurewerkz.elastisch.rest.document :as esd]
-         '[clojurewerkz.elastisch.query :as q])
-
-(esd/search "people" "person" :query (q/field "address.street" "(Oak OR Elm)"))
 ```
 
 
