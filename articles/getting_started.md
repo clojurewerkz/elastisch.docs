@@ -37,17 +37,12 @@ between the two is usually straightforward.
 
 Elastisch requires Clojure 1.4+. The latest stable release is recommended.
 
+## Supported ElasticSearch Versions
 
-## Supported ElasticSearch versions
+Elasitsch 1.4 targets ElasticSearch `0.90.x` and has **known incompatibilities**
+with ES 1.0 in both REST and native clients.
 
-Elastisch is developed and tested with recent stable ElasticSearch releases (0.90.x or later).
-It is very likely that earlier versions also work fine but we do not run
-[continuous integration](http://travis-ci.org/#!/clojurewerkz/elastisch) against them.
-
-The native client requires ElasticSearch `0.90.x` and may be incompatible with earlier
-or later releases due to possible binary compatibility changes in ElasticSearch.
-Elastisch releases after `1.1.0-rc2` try to stay up to date to the most recent
-stable ElasticSearch version.
+Elastisch master is currently being updated for the [changes in ElasticSearch 1.0](http://www.elasticsearch.org/guide/en/elasticsearch/reference/1.x/breaking-changes.html).
 
 
 ## Adding Elastisch Dependency To Your Project
