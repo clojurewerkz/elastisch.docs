@@ -63,10 +63,3 @@ This guide covers:
 ### [Routing and Distribution](/articles/distribution.html)
 
 TBD
-
-
-## Tell Us What You Think!
-
-Please take a moment to tell us what you think about this guide on Twitter or the [Elastisch mailing list](https://groups.google.com/forum/?fromgroups#!forum/clojure-elasticsearch)
-
-Let us know what was unclear or what has not been covered. Maybe you do not like the guide style or grammar or discover spelling mistakes. Reader feedback is key to making the documentation better.

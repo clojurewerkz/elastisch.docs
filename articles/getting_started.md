@@ -1018,14 +1018,3 @@ The documentation is organized as [a number of guides](/articles/guides.html), c
  * [Routing and Distribution](/articles/distribution.html)
 
 They also cover topics from this guide in more detail.
-
-
-## Tell Us What You Think!
-
-Please take a moment to tell us what you think about this guide on
-Twitter or the [Elastisch mailing
-list](https://groups.google.com/forum/#!forum/clojure-elasticsearch)
-
-Let us know what was unclear or what has not been covered. Maybe you
-do not like the guide style or grammar or discover spelling
-mistakes. Reader feedback is key to making the documentation better.
