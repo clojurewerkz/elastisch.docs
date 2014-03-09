@@ -1583,11 +1583,6 @@ TBD
 TBD
 
 
-### Field Query
-
-TBD
-
-
 ### Range Query
 
 TBD
@@ -1597,10 +1592,6 @@ TBD
 
 TBD
 
-
-### Text Query
-
-TBD
 
 
 
