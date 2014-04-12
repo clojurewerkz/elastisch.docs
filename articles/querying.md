@@ -120,10 +120,10 @@ name, mapping name and query (as a Clojure map):
 
 Search requests with Elastisch have exactly the same structure as JSON
 documents in the [ElasticSearch Query API
-guide](http://www.elasticsearch.org/guide/reference/query-dsl/) but
-passed as Clojure maps. `:query`, `:sort`, `:facets` and other keys
-that [ElasticSearch Search API
-documentation](http://www.elasticsearch.org/guide/reference/api/search/)
+guide](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-body.html)
+but passed as Clojure maps. `:query`, `:sort`, `:facets` and other
+keys that [ElasticSearch Search API
+documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-search.html)
 mentions are passed as maps.
 
 Because every search request contains query information (the `:query`
@@ -1873,6 +1873,7 @@ it comes to querying.
 
 The documentation is organized as [a number of guides](/articles/guides.html), covering different topics in depth:
 
+ * [Aggregation](/articles/aggregation.html)
  * [Facets](/articles/facets.html)
  * [Percolation](/articles/percolation.html)
  * [Routing and Distribution](/articles/distribution.html)

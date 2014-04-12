@@ -1326,6 +1326,7 @@ Elastisch follows ElasticSearch REST API structure and supports nearly all featu
 The documentation is organized as [a number of guides](/articles/guides.html), covering different topics in depth:
 
  * [Querying](/articles/querying.html)
+ * [Aggregation](/articles/aggregation.html)
  * [Facets](/articles/facets.html)
  * [Percolation](/articles/percolation.html)
  * [Routing and Distribution](/articles/distribution.html)
