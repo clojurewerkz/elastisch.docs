@@ -28,7 +28,6 @@ Github](https://github.com/clojurewerkz/elastisch.docs).
 This guide covers Elastisch 2.0.x releases, including preview releases.
 
 
-
 ## Overview
 
 The whole point of a search server is to be able to run search queries
@@ -53,7 +52,7 @@ that have exactly the same structure, or use a few helpful functions
 that make queries a little bit more concise. In all cases, whenever a
 query requires nesting maps, Elastisch uses exactly the same structure
 as described in [ElasticSearch documentation on query
-DSL](http://www.elasticsearch.org/guide/reference/query-dsl/).
+DSL](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-body.html).
 
 
 ## On HTTP or Native ElasticSeach Clients
