@@ -40,6 +40,12 @@ This guide covers:
  * Highlighting of search results
  * Other topics related to querying
 
+### [Aggregation](/articles/aggregation.html)
+
+This guide covers:
+
+ * An overview of aggregation features
+ * How to perform aggregation queries
 
 ### [Facets](/articles/facets.html) (Faceted Search)
 
