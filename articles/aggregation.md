@@ -81,11 +81,7 @@ map. For convenience, aggregation maps can be created using functions from
 ### Using HTTP Client
 
 Results returned by search functions have the same structure as
-ElasticSearch JSON responses:
-
-``` clojure
-
-```
+ElasticSearch JSON responses.
 
 `clojurewerkz.elastisch.rest.response/aggregations-from`
 is a convenience functions for accessing aggregation response:
