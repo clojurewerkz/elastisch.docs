@@ -33,7 +33,7 @@ Aggregate functions compute a single result from a set of documents. Naturally i
 the input documents are retrieved using search queries. Aggregation queries (also known as
 "aggregations") can be used to do the following (some examples):
 
- * Calcualte maximum/minimum/average value of a field (e.g. product price) from a set of documents
+ * Calculate maximum/minimum/average value of a field (e.g. product price) from a set of documents
  * Calculate range and percentiles value of a field
  * Retrieve a set of terms in a field
  * Produce a histogram of numerical values
@@ -81,11 +81,7 @@ map. For convenience, aggregation maps can be created using functions from
 ### Using HTTP Client
 
 Results returned by search functions have the same structure as
-ElasticSearch JSON responses:
-
-``` clojure
-
-```
+ElasticSearch JSON responses.
 
 `clojurewerkz.elastisch.rest.response/aggregations-from`
 is a convenience functions for accessing aggregation response:
