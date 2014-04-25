@@ -115,8 +115,11 @@ instead of responses.
 
 ## Connecting Over HTTP (Specifying Node HTTP Endpoint)
 
-Before you can index and search with Elastisch, it is necessary to tell Elastisch what ElasticSearch node to use. To use the HTTP transport, you use the `clojurewerkz.elastisch.rest/connect!`
-function that takes an endpoint as its sole argument:
+Before you can index and search with Elastisch, it is necessary to
+tell Elastisch what ElasticSearch node to use. To use the HTTP
+transport, you use the `clojurewerkz.elastisch.rest/connect` function
+that takes an endpoint as its sole argument and returns a connection
+(client) record:
 
 ``` clojure
 (ns clojurewerkz.elastisch.docs.examples
@@ -124,7 +127,8 @@ function that takes an endpoint as its sole argument:
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200"))
+  (let [conn (esr/connect "http://127.0.0.1:9200")]
+    ))
 ```
 
 By default Elastisch will use the HTTP endpoint at `http://localhost:9200`.
@@ -132,7 +136,7 @@ By default Elastisch will use the HTTP endpoint at `http://localhost:9200`.
 
 ## Connecting Over Native Protocol
 
-To use the native transport, you use the `clojurewerkz.elastisch.native/connect!`
+To use the native transport, you use the `clojurewerkz.elastisch.native/connect`
 function that takes two arguments: a list of endpoints (each of which is a pair
 of `[host port]`) and client settings:
 
@@ -142,10 +146,10 @@ of `[host port]`) and client settings:
 
 (defn -main
   [& args]
-               ;; a list of endpoints as pairs
-  (es/connect! [["127.0.0.1" 9300]]
-               ;; options. cluster.name is mandatory!
-               {"cluster.name" "your-cluster-name"}))
+  ;; a list of endpoints as pairs
+  ;; and options. cluster.name is mandatory!
+  (let [conn (es/connect  [["127.0.0.1" 9300]]
+             {"cluster.name" "your-cluster-name"}])))
 ```
 
 `cluster.name` is a required setting. Cluster name and transport node
@@ -187,16 +191,18 @@ To create an index, use the `clojurewerkz.elastisch.rest.index/create` function:
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
-  ;; creates an index with default settings and no custom mapping types
-  (esi/create "myapp1_development")
-  ;; creates an index with given settings and no custom mapping types.
-  ;; Settings map structure is the same as in the ElasticSearch API reference at http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-create-index.html
-  (esi/create "myapp2_development" :settings {"number_of_shards" 1}))
+  (let [conn (esr/connect "http://127.0.0.1:9200")]
+    ;; creates an index with default settings and no custom mapping types
+    (esi/create conn "myapp1_development")
+    ;; creates an index with given settings and no custom mapping types.
+    ;; Settings map structure is the same as in the ElasticSearch API reference at http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-create-index.html
+    (esi/create conn "myapp2_development" :settings {"number_of_shards" 1})))
 ```
 
-Most commonly used index settings are `"number_of_shards"` and `"number_of_replicas"`. We won't go into details about them in this guide,
-please refer to the [Indexing guide](/articles/indexing.html) for more details.
+Most commonly used index settings are `"number_of_shards"` and
+`"number_of_replicas"`. We won't go into details about them in this
+guide, please refer to the [Indexing guide](/articles/indexing.html)
+for more details.
 
 ### Creating an Index With Native Client
 
@@ -211,21 +217,25 @@ To create an index using the native client, use the same functions but in the
 (defn -main
   [& args]
   ;; cluster name WILL VARY BETWEEN MACHINES!
-  (es/connect! [["127.0.0.1" 9300]] {"cluster.name" "elasticsearch_antares"})
-  ;; creates an index with default settings and no custom mapping types
-  (esi/create "myapp1_development")
-  ;; creates an index with given settings and no custom mapping types.
-  ;; Settings map structure is the same as in the ElasticSearch API reference at http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-create-index.html
-  (esi/create "myapp2_development" :settings {"number_of_shards" 1}))
+  (let [conn (es/connect [["127.0.0.1" 9300]] {"cluster.name" "elasticsearch_antares"})]
+    ;; creates an index with default settings and no custom mapping types
+    (esi/create conn "myapp1_development")
+    ;; creates an index with given settings and no custom mapping types.
+    ;; Settings map structure is the same as in the ElasticSearch API reference at http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-create-index.html
+    (esi/create conn "myapp2_development" :settings {"number_of_shards" 1})))
+
 ```
 
 
 ### Creating a Mapping With HTTP Client
 
-Mappings define which fields in documents are indexed, if/how they are tokenized, analyzed and so on. Each index in ElasticSearch may have one or more
-**mapping types**. Mapping types can be thought of as tables in a database (although this analogy does not always stand).
+Mappings define which fields in documents are indexed, if/how they are
+tokenized, analyzed and so on. Each index in ElasticSearch may have
+one or more **mapping types**. Mapping types can be thought of as
+tables in a database (although this analogy does not always stand).
 
-Mapping types are specified when an index is created using the `:mapping` option:
+Mapping types are specified when an index is created using the
+`:mapping` option:
 
 ``` clojure
 (ns clojurewerkz.elastisch.docs.examples
@@ -234,17 +244,17 @@ Mapping types are specified when an index is created using the `:mapping` option
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; creates an index with given settings and no custom mapping types.
   ;; Mapping types map structure is the same as in the ElasticSearch API reference
-  (let [mapping-types {"person" {:properties {:username   {:type "string" :store "yes"}
-                                             :first-name {:type "string" :store "yes"}
-                                             :last-name  {:type "string"}
-                                             :age        {:type "integer"}
-                                             :title      {:type "string" :analyzer "snowball"}
-                                             :planet     {:type "string"}
-                                             :biography  {:type "string" :analyzer "snowball" :term_vector "with_positions_offsets"}}}}]
-    (esi/create "myapp2_development" :mappings mapping-types)))
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        mapping-types {"person" {:properties {:username   {:type "string" :store "yes"}
+                                              :first-name {:type "string" :store "yes"}
+                                              :last-name  {:type "string"}
+                                              :age        {:type "integer"}
+                                              :title      {:type "string" :analyzer "snowball"}
+                                              :planet     {:type "string"}
+                                              :biography  {:type "string" :analyzer "snowball" :term_vector "with_positions_offsets"}}}}]
+    (esi/create conn "myapp2_development" :mappings mapping-types)))
 ```
 
 Please refer to the [Indexing guide](/articles/indexing.html) for more information about mapping types, analyzers and so on.
@@ -263,36 +273,41 @@ To add a document to an index, use the `clojurewerkz.elastisch.rest.document/cre
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
-  (let [mapping-types {"person" {:properties {:username   {:type "string" :store "yes"}
-                                             :first-name {:type "string" :store "yes"}
-                                             :last-name  {:type "string"}
-                                             :age        {:type "integer"}
-                                             :title      {:type "string" :analyzer "snowball"}
-                                             :planet     {:type "string"}
-                                             :biography  {:type "string" :analyzer "snowball" :term_vector "with_positions_offsets"}}}}
+  (let [conn          (esr/connect "http://127.0.0.1:9200")
+        mapping-types {"person" {:properties {:username   {:type "string" :store "yes"}
+                                              :first-name {:type "string" :store "yes"}
+                                              :last-name  {:type "string"}
+                                              :age        {:type "integer"}
+                                              :title      {:type "string" :analyzer "snowball"}
+                                              :planet     {:type "string"}
+                                              :biography  {:type "string" :analyzer "snowball" :term_vector "with_positions_offsets"}}}}
         doc           {:username "happyjoe" :first-name "Joe" :last-name "Smith" :age 30 :title "Teh Boss" :planet "Earth" :biography "N/A"}]
-    (esi/create "myapp2_development" :mappings mapping-types)
+    (esi/create conn "myapp2_development" :mappings mapping-types)
     ;; adds a document to the index, id is automatically generated by ElasticSearch
     ;= {:ok true, :_index people, :_type person, :_id "2vr8sP-LTRWhSKOxyWOi_Q", :_version 1}
-    (println (esd/create "myapp2_development" "person" doc))))
+    (println (esd/create conn "myapp2_development" "person" doc))))
 ```
 
 `clojurewerkz.elastisch.rest.document/put` will add a document to the index but expects document id to be provided:
 
 ``` clojure
 ;; adds a document to the index, id is provided as "happyjoe"
-(let [doc {:username "happyjoe" :first-name "Joe" :last-name "Smith" :age 30 :title "Teh Boss" :planet "Earth" :biography "N/A"}]
+(let [conn (esr/connect "http://127.0.0.1:9200")
+      doc  {:username "happyjoe" :first-name "Joe" :last-name "Smith" :age 30 :title "Teh Boss" :planet "Earth" :biography "N/A"}]
   ;= {:ok true, :_index people, :_type person, :_id "happyjoe", :_version 1}
-  (println (esr/put "myapp2_development" "person" "happyjoe" doc)))
+  (println (esr/put conn "myapp2_development" "person" "happyjoe" doc)))
 ```
 
-There is much more to indexing that we won't cover in this guide. A separate [guide on indexing](/articles/indexing.html) will go into much more detail on various aspects related to indexing.
+There is much more to indexing that we won't cover in this guide. A
+separate [guide on indexing](/articles/indexing.html) will go into
+much more detail on various aspects related to indexing.
 
 
 ### Fetching a Single Document By Id
 
-To [fetch a single document by id](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-get.html), use `clojurewerkz.elastisch.rest.document/get`:
+To [fetch a single document by
+id](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-get.html),
+use `clojurewerkz.elastisch.rest.document/get`:
 
 ``` clojure
 (ns clojurewerkz.elastisch.docs.examples
@@ -301,9 +316,9 @@ To [fetch a single document by id](http://www.elasticsearch.org/guide/en/elastic
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
-  ;; fetch a single document by a known id
-  (esd/get "myapp" "articles" "521f246bc6d67300f32d2ed60423dec4740e50f5"))
+  (let [conn (esr/connect "http://127.0.0.1:9200")]
+    ;; fetch a single document by a known id
+    (esd/get conn "myapp" "articles" "521f246bc6d67300f32d2ed60423dec4740e50f5")))
 ```
 
 Additional parameters such as `preference` are passed as options:
@@ -315,9 +330,9 @@ Additional parameters such as `preference` are passed as options:
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
-  ;; fetch a single document by a known id
-  (esd/get "myapp" "articles" "521f246bc6d67300f32d2ed60423dec4740e50f5" :preference "_primary"))
+  (let [conn (esr/connect "http://127.0.0.1:9200")]
+    ;; fetch a single document by a known id
+    (esd/get conn "myapp" "articles" "521f246bc6d67300f32d2ed60423dec4740e50f5" :preference "_primary")))
 ```
 
 
@@ -335,12 +350,11 @@ for example, `clojurewerkz.elastisch.rest.response/ok?` or `clojurewerkz.elastis
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
-  ;; creates an index and check if it was successful
-  (println (esrsp/ok? (esi/create "myapp1_development")))
-  (println (esrsp/conflict? (esi/create "myapp1_development"))))
+  (let [conn (esr/connect "http://127.0.0.1:9200")]
+    ;; creates an index and check if it was successful
+    (println (esrsp/ok? (esi/create conn "myapp1_development")))
+    (println (esrsp/conflict? (esi/create conn "myapp1_development")))))
 ```
-
 
 
 ## Querying
@@ -352,11 +366,11 @@ queries](http://www.elasticsearch.org/guide/reference/query-dsl/):
 from simple like term and prefix query to compound like the bool
 query.  Queries can also have filters associated with them.
 
-
 ### Performing queries
 
-To perform a query with Elastisch, use the `clojurewerkz.elastisch.rest.document/search` function. It takes index name, mapping name and query
-(as a Clojure map):
+To perform a query with Elastisch, use the
+`clojurewerkz.elastisch.rest.document/search` function. It takes index
+name, mapping name and query (as a Clojure map):
 
 ``` clojure
 (ns clojurewerkz.elastisch.docs.examples
@@ -368,9 +382,9 @@ To perform a query with Elastisch, use the `clojurewerkz.elastisch.rest.document
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; performs a term query using a convenience function
-  (let [res  (esd/search "myapp_development" "person" :query (q/term :biography "New York"))
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        res  (esd/search conn "myapp_development" "person" :query (q/term :biography "New York"))
         n    (esrsp/total-hits res)
         hits (esrsp/hits-from res)]
     (println (format "Total hits: %d" n))
@@ -402,9 +416,9 @@ The example from above can also be written like so:
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; performs a term query using a convenience function
-  (let [res  (esd/search "myapp_development" "person" :query {:term {:city "New York"}})
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        res  (esd/search conn "myapp_development" "person" :query {:term {:city "New York"}})
         n    (esrsp/total-hits res)
         hits (esrsp/hits-from res)]
     (println (format "Total hits: %d" n))
@@ -426,9 +440,9 @@ To search against multiple indexes or mappings, pass them as vectors to their re
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; performs a term query across two mapping types in the same index
-  (let [res  (esd/search "myapp_development" ["person" "checkin"] :query {:term {:city "New York"}})
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        res  (esd/search conn "myapp_development" ["person" "checkin"] :query {:term {:city "New York"}})
         n    (esrsp/total-hits res)
         hits (esrsp/hits-from res)]
     (println (format "Total hits: %d" n))
@@ -500,7 +514,7 @@ With Elastisch, term query structure is the same as described in the [ElasticSea
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "tweets" "tweet" :query {:term {:text "improved"}})
+(esd/search conn "tweets" "tweet" :query {:term {:text "improved"}})
 ```
 
 Elastisch provides a helper function for constructing term queries, `clojurewerkz.elastisch.query/term`:
@@ -509,7 +523,7 @@ Elastisch provides a helper function for constructing term queries, `clojurewerk
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "tweets" "tweet" :query (q/term :text "improved"))
+(esd/search conn "tweets" "tweet" :query (q/term :text "improved"))
 ```
 
 If provided values is a collection, Elastisch will construct a terms query under the hood.
@@ -528,7 +542,7 @@ With Elastisch, QS query structure is the same as described in the [ElasticSearc
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "tweets" "tweet" :query {:query_string {:query "(pineapple OR banana) dessert recipe"
+(esd/search conn "tweets" "tweet" :query {:query_string {:query "(pineapple OR banana) dessert recipe"
                                                     :allow_leading_wildcard false
                                                     :default_operator "AND"}})
 ```
@@ -540,7 +554,7 @@ Elastisch provides a helper function for constructing QS text queries, `clojurew
 (require '[clojurewerkz.elastisch.query :as q])
 
 ;; a full text query, the query text will be analyzed
-(esd/search "tweets" "tweet" :query (q/query-string :query "(pineapple OR banana) dessert recipe"
+(esd/search conn "tweets" "tweet" :query (q/query-string :query "(pineapple OR banana) dessert recipe"
                                                     :allow_leading_wildcard false
                                                     :default_operator "AND"))
 ```
@@ -561,7 +575,7 @@ With Elastisch, range query structure is the same as described in the [ElasticSe
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:range {:age {:from 10 :to 20 :include_lower true :include_upper false}}}})
+(esd/search conn "people" "person" :query {:range {:age {:from 10 :to 20 :include_lower true :include_upper false}}}})
 ```
 
 Elastisch provides a helper function for constructing range queries, `clojurewerkz.elastisch.query/range`:
@@ -570,7 +584,7 @@ Elastisch provides a helper function for constructing range queries, `clojurewer
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/range :age {:from 10 :to 20 :include_lower true :include_upper false}))
+(esd/search conn "people" "person" :query (q/range :age {:from 10 :to 20 :include_lower true :include_upper false}))
 ```
 
 
@@ -584,7 +598,7 @@ With Elastisch, boolean query structure is the same as described in the [Elastic
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:bool {:must     {:term {:user "kimchy"}}
+(esd/search conn "people" "person" :query {:bool {:must     {:term {:user "kimchy"}}
                                              :must_not {:range {:age {:from 10 :to 20}}}
                                              :should   [{:term {:tag "wow"}}
                                                         {:term {:tag "elasticsearch"}}]
@@ -597,7 +611,7 @@ Elastisch provides a helper function for constructing boolean queries, `clojurew
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/bool {:must     {:term {:user "kimchy"}}
+(esd/search conn "people" "person" :query (q/bool {:must     {:term {:user "kimchy"}}
                                               :must_not {:range {:age {:from 10 :to 20}}}
                                               :should   [{:term {:tag "wow"}}
                                                          {:term {:tag "elasticsearch"}}]
@@ -610,7 +624,7 @@ Elastisch provides a helper function for constructing boolean queries, `clojurew
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/bool {:must     (q/term :user "kimchy")
+(esd/search conn "people" "person" :query (q/bool {:must     (q/term :user "kimchy")
                                               :must_not (q/range :age :from 10 :to 20)
                                               :should   [(q/term :tag "wow")
                                                          (q/term :tag "elasticsearch")]
@@ -628,7 +642,7 @@ With Elastisch, IDs query structure is the same as described in the [ElasticSear
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
 ;; search for 3 tweets by their ids
-(esd/search "tweets" "tweet" :query {:ids {:type "tweet" :values ["1" "722" "633"]}})
+(esd/search conn "tweets" "tweet" :query {:ids {:type "tweet" :values ["1" "722" "633"]}})
 ```
 
 Elastisch provides a helper function for constructing IDs queries, `clojurewerkz.elastisch.query/ids`:
@@ -638,7 +652,7 @@ Elastisch provides a helper function for constructing IDs queries, `clojurewerkz
 (require '[clojurewerkz.elastisch.query :as q])
 
 ;; search for 3 tweets by their ids
-(esd/search "tweets" "tweet" :query (q/ids "tweet" ["1" "722" "633"]))
+(esd/search conn "tweets" "tweet" :query (q/ids "tweet" ["1" "722" "633"]))
 ```
 
 
@@ -652,7 +666,7 @@ With Elastisch, field query structure is the same as described in the [ElasticSe
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:field {"address.street" "(Oak OR Elm)"}})
+(esd/search conn "people" "person" :query {:field {"address.street" "(Oak OR Elm)"}})
 ```
 
 Elastisch provides a helper function for constructing field queries, `clojurewerkz.elastisch.query/field`:
@@ -661,7 +675,7 @@ Elastisch provides a helper function for constructing field queries, `clojurewer
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/field "address.street" "(Oak OR Elm)"))
+(esd/search conn "people" "person" :query (q/field "address.street" "(Oak OR Elm)"))
 ```
 
 
@@ -680,9 +694,9 @@ use the `:sort` option `clojurewerkz.elastisch.rest.document/search` accepts:
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; performs a search query with sorting
-  (let [res  (esd/search "myapp_development" "person"
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        res  (esd/search conn "myapp_development" "person"
                          :query (q/query-string :biography "New York OR Austin")
                          :sort  {:name "desc"})
         hits (esrsp/hits-from res)]
@@ -707,9 +721,9 @@ To limit returned number of results, use `:from` and `:size` options `clojurewer
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; performs a search query that returns up to 20 results and skips first 10 documents
-  (let [res  (esd/search "myapp_development" "person"
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        res  (esd/search conn "myapp_development" "person"
                          :query (q/query-string :biography "New York OR Austin")
                          :from 10 :size 20)
         hits (esrsp/hits-from res)]
@@ -721,15 +735,21 @@ Default value of `:from` is 0, of `:size` is 10.
 
 ### Using Filters
 
-Often search results need to be filtered (scoped): for example, to make sure results only contain documents that belong to a particular user account
-or organization. Such filtering conditions do not play any role in the relevance ranking and just used as a way of excluding certain documents
-from search results.
+Often search results need to be filtered (scoped): for example, to
+make sure results only contain documents that belong to a particular
+user account or organization. Such filtering conditions do not play
+any role in the relevance ranking and just used as a way of excluding
+certain documents from search results.
 
-*Filters* is an ElasticSearch feature that lets you decide what documents should be included or excluded from a results of a query. Filters are similar
-to the way term queries work but because filters do not participate in document ranking, they are significantly more efficient. Furthermore,
-filters can be cached, improving efficiency even more.
+*Filters* is an ElasticSearch feature that lets you decide what
+documents should be included or excluded from a results of a
+query. Filters are similar to the way term queries work but because
+filters do not participate in document ranking, they are significantly
+more efficient. Furthermore, filters can be cached, improving
+efficiency even more.
 
-To specify a filter, pass the `:filter` option to `clojurewerkz.elastisch.rest.document/search`:
+To specify a filter, pass the `:filter` option to
+`clojurewerkz.elastisch.rest.document/search`:
 
 ``` clojure
 (ns clojurewerkz.elastisch.docs.examples
@@ -741,44 +761,51 @@ To specify a filter, pass the `:filter` option to `clojurewerkz.elastisch.rest.d
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; performs a search query that returns results filtered on location type
-  (let [res  (esd/search "myapp_development" "location"
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        res  (esd/search conn "myapp_development" "location"
                          :query (q/query-string :biography "New York OR Austin")
                          :filter {:term {:kind "hospital"}})
         hits (esrsp/hits-from res)]
     (pp/pprint hits)))
 ```
 
-ElasticSearch provides many filters out of the box. We will only cover a few ones in this guide.
+ElasticSearch provides many filters out of the box. We will only cover
+a few ones in this guide.
 
 #### Term and Terms Filter
 
-Term filter is very similar to the Term query covered above but like all filters, does not contribute to relevance scoring and is more
+Term filter is very similar to the Term query covered above but like
+all filters, does not contribute to relevance scoring and is more
 efficient. Terms filter works the same way but for multiple terms.
 
-With Elastisch, term filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-term-filter.html):
+With Elastisch, term filter structure is the same as described in the
+[ElasticSearch Filter
+documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-term-filter.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "myapp_development" "location"
+(esd/search conn "myapp_development" "location"
             :query (q/query-string :biography "New York OR Austin")
             :filter {:term {:kind "hospital"}})
 ```
 
 #### Range Filter
 
-Range filter filters documents out on a range of values, similarly to the Range query. Supports numerical values, dates and strings.
+Range filter filters documents out on a range of values, similarly to
+the Range query. Supports numerical values, dates and strings.
 
-With Elastisch, range filter structure is the same as described in the [ElasticSearch Filter documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-range-filter.html):
+With Elastisch, range filter structure is the same as described in the
+[ElasticSearch Filter
+documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-range-filter.html):
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "myapp_development" "person"
+(esd/search conn "myapp_development" "person"
             :query (q/query-string :biography "New York OR Austin")
             :filter {:range {:age {:from 25 :to 30}}})
 ```
@@ -793,7 +820,7 @@ With Elastisch, Exists filter structure is the same as described in the [Elastic
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "myapp_development" "location"
+(esd/search conn "myapp_development" "location"
             :query (q/query-string :biography "New York OR Austin")
             :filter {:exists {:field :open_roof}})
 ```
@@ -808,7 +835,7 @@ With Elastisch, Missing filter structure is the same as described in the [Elasti
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "myapp_development" "location"
+(esd/search conn "myapp_development" "location"
             :query (q/query-string :biography "New York OR Austin")
             :filter {:missing {:field :under_construction}})
 ```
@@ -838,9 +865,9 @@ that can be used by your application.
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; performs a search query with highlighting over the biography field
-  (let [res  (esd/search "myapp_development" "person"
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        res  (esd/search conn "myapp_development" "person"
                          :query (q/query-string :biography "New York OR Austin")
                          :highlight {:fields {:biography {}}})
         hits (esrsp/hits-from res)]
@@ -867,17 +894,20 @@ To limit returned number of results, use the `:fields` option `clojurewerkz.elas
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; performs a search query that returns only a subset of (stored) fields
-  (let [res  (esd/search "myapp_development" "person"
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        res  (esd/search conn "myapp_development" "person"
                          :query (q/query-string :biography "New York OR Austin")
                          :fields ["first_name" "last_name" "username" "location" "blurb"])
         hits (esrsp/hits-from res)]
     (pp/pprint hits)))
 ```
 
-More examples can be found in this [ElasticSearch documentation section on retrieving subsets of fields](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-fields.html).
-`:fields` values that Elastisch accepts are structured exactly the same as JSON documents in that section.
+More examples can be found in this [ElasticSearch documentation
+section on retrieving subsets of
+fields](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-fields.html).
+`:fields` values that Elastisch accepts are structured exactly the
+same as JSON documents in that section.
 
 
 ## Updating Documents
@@ -888,8 +918,10 @@ ElasticSearch provides several ways of updating an indexed document:
  * Replace the entire document with a newer version
  * Run a script that updates one or more documents and causes them to be reindexed
 
-Each has its own pros and cons: replacing the entire document is easier but less efficient, using scripts usually requires more effort
-on the developer side but offers higher efficiency and more fine-grained control over concurrent updates.
+Each has its own pros and cons: replacing the entire document is
+easier but less efficient, using scripts usually requires more effort
+on the developer side but offers higher efficiency and more
+fine-grained control over concurrent updates.
 
 ### Replacing a Document
 
@@ -898,14 +930,16 @@ To replace the entire document, use the `clojurewerkz.elastisch.rest.document/re
 ``` clojure
 (let [doc {:username "happyjoe" :first-name "Joe" :last-name "Smith" :age 30 :title "Teh Boss" :planet "Earth" :biography "N/A"}]
   ;; index a document
-  (esd/put "myapp2_development" :person "happyjoe" doc)
+  (esd/put conn "myapp2_development" :person "happyjoe" doc)
   ;; replace it in the index
-  (esd/replace "myapp2_development" :person "happyjoe" (assoc doc :title "Digital Marketing Genie"))
+  (esd/replace conn "myapp2_development" :person "happyjoe" (assoc doc :title "Digital Marketing Genie"))
 ```
 
-it will delete the document first and then add the new version. To create a new version of a document, use
-`clojurewerkz.elastisch.rest.document/put` with explicitly provided id. If the document already exists, ElasticSearch
-will create a new version.
+it will delete the document first and then add the new version. To
+create a new version of a document, use
+`clojurewerkz.elastisch.rest.document/put` with explicitly provided
+id. If the document already exists, ElasticSearch will create a new
+version.
 
 
 ### Using Update Scripts
@@ -918,7 +952,8 @@ Updates via scripts will be covered in the [Indexing guide](/articles/indexing.h
 
 ### Deleting Individual Documents
 
-To delete a single document by id, use the `clojurewerkz.elastisch.rest.document/delete` function:
+To delete a single document by id, use the
+`clojurewerkz.elastisch.rest.document/delete` function:
 
 ``` clojure
 (ns clojurewerkz.elastisch.docs.examples
@@ -927,10 +962,10 @@ To delete a single document by id, use the `clojurewerkz.elastisch.rest.document
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
-  (let [id "johndoe"]
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        id   "johndoe"]
     ;; deletes a document from the index by id
-    (println (esd/delete "myapp2_development" "person" id))))
+    (println (esd/delete conn "myapp2_development" "person" id))))
 ```
 
 This function takes additional options that are not covered in this guide. Please see the [Indexing guide](/articles/indexing.html) for more details.
@@ -948,8 +983,8 @@ It is also possible to delete multiple documents that match a query using the `c
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
-  (let [mapping-types {"person" {:properties {:username   {:type "string" :store "yes"}
+  (let [conn          (esr/connect "http://127.0.0.1:9200")
+        mapping-types {"person" {:properties {:username   {:type "string" :store "yes"}
                                               :first-name {:type "string" :store "yes"}
                                               :last-name  {:type "string"}
                                               :age        {:type "integer"}
@@ -957,37 +992,44 @@ It is also possible to delete multiple documents that match a query using the `c
                                               :planet     {:type "string"}
                                               :biography  {:type "string" :analyzer "snowball" :term_vector "with_positions_offsets"}}}}
         doc           {:username "happyjoe" :first-name "Joe" :last-name "Smith" :age 30 :title "Teh Boss" :planet "Earth" :biography "N/A"}]
-    (esi/create "myapp2_development" :mappings mapping-types)
+    (esi/create conn "myapp2_development" :mappings mapping-types)
     ;; adds a document to the index, id is automatically generated by ElasticSearch
     ;= {:ok true, :_index people, :_type person, :_id "2vr8sP-LTRWhSKOxyWOi_Q", :_version 1}
-    (println (esd/create "myapp2_development" "person" doc))))
+    (println (esd/create conn "myapp2_development" "person" doc))))
 ```
 
 it is possible to specify multiple mappings or indexes:
 
 ``` clojure
-(esd/delete-by-query ["organization1" "organization2"] :person (q/term :username "happyjoe"))
+(esd/delete-by-query conn ["organization1" "organization2"] :person (q/term :username "happyjoe"))
 ```
 
-it is also possible to delete documents across all mapping types or indexes with `clojurewerkz.elastisch.rest.document/delete-by-query-across-all-types`:
+it is also possible to delete documents across all mapping types or
+indexes with
+`clojurewerkz.elastisch.rest.document/delete-by-query-across-all-types`:
 
 ``` clojure
-(esd/delete-by-query-across-all-types "myapp2_development" (q/term :username "happyjoe"))
+(esd/delete-by-query-across-all-types conn "myapp2_development" (q/term :username "happyjoe"))
 ```
 
-as well as globally with `clojurewerkz.elastisch.rest.document/delete-by-query-across-all-indexes-and-types`:
+as well as globally with
+`clojurewerkz.elastisch.rest.document/delete-by-query-across-all-indexes-and-types`:
 
 ``` clojure
-(esd/delete-by-query-across-all-indexes-and-types (q/term :username "happyjoe"))
+(esd/delete-by-query-across-all-indexes-and-types conn (q/term :username "happyjoe"))
 ```
 
-Those functions take additional options that are not covered in this guide. Please see the [Indexing guide](/articles/indexing.html) for more details.
+Those functions take additional options that are not covered in this
+guide. Please see the [Indexing guide](/articles/indexing.html) for
+more details.
 
 
 ## Wrapping Up
 
-Congratulations, you now can use Elastisch to work with ElasticSearch. Now you know enough to start building a real application. ElasticSearch is very feature rich and
-this guide does not cover many topics (or does not cover them in detail):
+Congratulations, you now can use Elastisch to work with
+ElasticSearch. Now you know enough to start building a real
+application. ElasticSearch is very feature rich and this guide does
+not cover many topics (or does not cover them in detail):
 
  * Index operations
  * Advanced mapping features (e.g. settings or nested mappings)
@@ -1001,10 +1043,14 @@ this guide does not cover many topics (or does not cover them in detail):
  * Index templates
  * Routing and distribution features
 
-and more. They are covered in the rest of the guides, with links to respective ElasticSearch documentation sections.
+and more. They are covered in the rest of the guides, with links to
+respective ElasticSearch documentation sections.
 
-We hope you find Elastisch reliable, consistent and easy to use. In case you need help, please ask on the [mailing list](https://groups.google.com/forum/#!forum/clojure-elasticsearch)
-and follow us on Twitter [@ClojureWerkz](http://twitter.com/ClojureWerkz).
+We hope you find Elastisch reliable, consistent and easy to use. In
+case you need help, please ask on the [mailing
+list](https://groups.google.com/forum/#!forum/clojure-elasticsearch)
+and follow us on Twitter
+[@ClojureWerkz](http://twitter.com/ClojureWerkz).
 
 
 ## What to Read Next
