@@ -63,7 +63,7 @@ Elastisch provides both HTTP and native ElasticSearch clients.
 
 HTTP client is easier to get started with (you don't need to know
 cluster name) and will work with hosted and PaaS environments such as
-Heroku or CloudFoundry.  It is also known to work with a wide range of
+Heroku or CloudFoundry. It is also known to work with a wide range of
 ElasticSearch versions.
 
 Some hosted environments do not provide access to ports other than 80
@@ -73,7 +73,7 @@ times on some common workloads).
 
 The native client **requires that the version of ElasticSearch is the
 same as the version of ElasticSearch client Elastisch uses
-internally** (currently `1.0.x`).
+internally** (currently `1.1.x`).
 
 
 ### API Structure Conversion
@@ -109,9 +109,9 @@ name, mapping name and query (as a Clojure map):
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; performs a term query using a convenience function
-  (let [res  (esd/search "myapp_development" "person" :query (q/term :biography "New York"))
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        res  (esd/search conn "myapp_development" "person" :query (q/term :biography "New York"))
         n    (esrsp/total-hits res)
         hits (esrsp/hits-from res)]
     (println (format "Total hits: %d" n))
@@ -143,9 +143,9 @@ The example from above can also be written like so:
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; performs a term query using a convenience function
-  (let [res  (doc/search "myapp_development" "person" :query {:term {:city "New York"}})
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        res  (doc/search conn "myapp_development" "person" :query {:term {:city "New York"}})
         n    (esrsp/total-hits res)
         hits (esrsp/hits-from res)]
     (println (format "Total hits: %d" n))
@@ -168,9 +168,9 @@ To query with the native client, use
 
 (defn -main
   [& args]
-  (es/connect! [["127.0.0.1" 9300]] {"cluster.name "your-cluster-name""})
   ;; performs a term query using a convenience function
-  (let [res  (esd/search "myapp_development" "person" :query (q/term :biography "New York"))
+  (let [conn (es/connect [["127.0.0.1" 9300]] {"cluster.name "your-cluster-name""})
+        res  (esd/search conn "myapp_development" "person" :query (q/term :biography "New York"))
         n    (esrsp/total-hits res)
         hits (esrsp/hits-from res)]
     (println (format "Total hits: %d" n))
@@ -193,9 +193,9 @@ to their respective function arguments:
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; performs a term query across two mapping types in the same index
-  (let [res  (doc/search "myapp_development" ["person" "checkin"] :query {:term {:city "New York"}})
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        res  (doc/search conn "myapp_development" ["person" "checkin"] :query {:term {:city "New York"}})
         n    (esrsp/total-hits res)
         hits (esrsp/hits-from res)]
     (println (format "Total hits: %d" n))
@@ -217,16 +217,17 @@ less argument because no need to specify mapping types:
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; performs a term query across all mapping types in the index
-  (let [res  (doc/search-all-types "myapp_development" :query {:term {:city "New York"}})
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        res  (doc/search-all-types conn "myapp_development" :query {:term {:city "New York"}})
         n    (esrsp/total-hits res)
         hits (esrsp/hits-from res)]
     (println (format "Total hits: %d" n))
     (pp/pprint hits)))
 ```
 
-To search globally (across all indexes and mappings), use `clojurewerkz.elastisch.rest.document/search-all-indexes-and-types`:
+To search globally (across all indexes and mappings), use
+`clojurewerkz.elastisch.rest.document/search-all-indexes-and-types`:
 
 ``` clojure
 (ns clojurewerkz.elastisch.docs.examples
@@ -238,9 +239,9 @@ To search globally (across all indexes and mappings), use `clojurewerkz.elastisc
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; performs a term query across all indexes and mapping types. This is an expensive operation!
-  (let [res  (doc/search-all-indexes-and-types :query {:term {:city "New York"}})
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        res  (doc/search-all-indexes-and-types conn :query {:term {:city "New York"}})
         n    (esrsp/total-hits res)
         hits (esrsp/hits-from res)]
     (println (format "Total hits: %d" n))
@@ -268,9 +269,9 @@ routing.
 
 (def queries-with-headers
   [{:index "people" :type "person"} {:query (query/match-all) :size 1}
-   {:index "articles"} {:query (query/match-all) :size 1}])
+   {:index "articles"}              {:query (query/match-all) :size 1}])
 
-(def res (multi/search queries-with-headers))
+(def res (multi/search conn queries-with-headers))
 
 (first res) ;; the result of the first query
 (last res)  ;; the result of the last query
@@ -353,16 +354,17 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "tweets" "tweet" :query {:term {:text "improved"}})
+(esd/search conn "tweets" "tweet" :query {:term {:text "improved"}})
 ```
 
-Elastisch provides a helper function for constructing term queries, `clojurewerkz.elastisch.query/term`:
+Elastisch provides a helper function for constructing term queries,
+`clojurewerkz.elastisch.query/term`:
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "tweets" "tweet" :query (q/term :text "improved"))
+(esd/search conn "tweets" "tweet" :query (q/term :text "improved"))
 ```
 
 If provided values is a collection, Elastisch will construct a terms query under the hood.
@@ -388,7 +390,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "tweets" "tweet" :query {:query_string {:query "(pineapple OR banana) dessert recipe"
+(esd/search conn "tweets" "tweet" :query {:query_string {:query "(pineapple OR banana) dessert recipe"
                                                     :allow_leading_wildcard false
                                                     :default_operator "AND"}})
 ```
@@ -401,7 +403,7 @@ Elastisch provides a helper function for constructing QS text queries,
 (require '[clojurewerkz.elastisch.query :as q])
 
 ;; a full text query, the query text will be analyzed
-(esd/search "tweets" "tweet" :query (q/query-string :query "(pineapple OR banana) dessert recipe"
+(esd/search conn "tweets" "tweet" :query (q/query-string :query "(pineapple OR banana) dessert recipe"
                                                     :allow_leading_wildcard false
                                                     :default_operator "AND"))
 ```
@@ -431,16 +433,17 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:range {:age {:from 10 :to 20 :include_lower true :include_upper false}}}})
+(esd/search conn "people" "person" :query {:range {:age {:from 10 :to 20 :include_lower true :include_upper false}}}})
 ```
 
-Elastisch provides a helper function for constructing range queries, `clojurewerkz.elastisch.query/range`:
+Elastisch provides a helper function for constructing range queries,
+`clojurewerkz.elastisch.query/range`:
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/range :age {:from 10 :to 20 :include_lower true :include_upper false}))
+(esd/search conn "people" "person" :query (q/range :age {:from 10 :to 20 :include_lower true :include_upper false}))
 ```
 
 
@@ -459,33 +462,36 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:bool {:must     {:term {:user "kimchy"}}
+(esd/search conn "people" "person" :query {:bool {:must     {:term {:user "kimchy"}}
                                              :must_not {:range {:age {:from 10 :to 20}}}
                                              :should   [{:term {:tag "wow"}}
                                                         {:term {:tag "elasticsearch"}}]
                                              :minimum_number_should_match 1}})
 ```
 
-Elastisch provides a helper function for constructing boolean queries, `clojurewerkz.elastisch.query/bool`:
+Elastisch provides a helper function for constructing boolean queries,
+`clojurewerkz.elastisch.query/bool`:
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/bool {:must     {:term {:user "kimchy"}}
+(esd/search conn "people" "person" :query (q/bool {:must     {:term {:user "kimchy"}}
                                               :must_not {:range {:age {:from 10 :to 20}}}
                                               :should   [{:term {:tag "wow"}}
                                                          {:term {:tag "elasticsearch"}}]
                                               :minimum_number_should_match 1}))
 ```
 
-`clojurewerkz.elastisch.query/bool` can be used in combination with other query helpers, such as `clojure.elastisch.query/term`, because they just return maps:
+`clojurewerkz.elastisch.query/bool` can be used in combination with
+other query helpers, such as `clojure.elastisch.query/term`, because
+they just return maps:
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/bool {:must     (q/term :user "kimchy")
+(esd/search conn "people" "person" :query (q/bool {:must     (q/term :user "kimchy")
                                               :must_not (q/range :age :from 10 :to 20)
                                               :should   [(q/term :tag "wow")
                                                          (q/term :tag "elasticsearch")]
@@ -507,17 +513,18 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:filtered {:query  {:term {:interests "cooking"}}
+(esd/search conn "people" "person" :query {:filtered {:query  {:term {:interests "cooking"}}
                                                  :filter {:range {:age {:from 25 :to 30}}}}})
 ```
 
-Elastisch provides a helper function for constructing filtered queries, `clojurewerkz.elastisch.query/filtered`:
+Elastisch provides a helper function for constructing filtered
+queries, `clojurewerkz.elastisch.query/filtered`:
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/filtered :query  {:term {:interests "cooking"}}
+(esd/search conn "people" "person" :query (q/filtered :query  {:term {:interests "cooking"}}
                                                  :filter {:range {:age {:from 25 :to 30}}}))
 ```
 
@@ -529,7 +536,7 @@ because they just return maps:
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/filtered :query  (q/term :interests "cooking")
+(esd/search conn "people" "person" :query (q/filtered :query  (q/term :interests "cooking")
                                                  :filter (q/range :age :from 25 :to 30)))
 ```
 
@@ -548,7 +555,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "tweets" "tweet" :query {:prefix {:username "cloj"}})
+(esd/search conn "tweets" "tweet" :query {:prefix {:username "cloj"}})
 ```
 
 Elastisch provides a helper function for constructing prefix queries,
@@ -558,7 +565,7 @@ Elastisch provides a helper function for constructing prefix queries,
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "tweets" "tweet" :query (q/prefix :username "cloj"))
+(esd/search conn "tweets" "tweet" :query (q/prefix :username "cloj"))
 ```
 
 
@@ -578,7 +585,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 
 ;; please note: on large data sets, wildcard prefix queries won't perform
 ;; well. Prefix wildcard queries like cloj*, however, will work just fine.
-(esd/search "tweets" "tweet" :query {:wildcard {:username "*werkz"}})
+(esd/search conn "tweets" "tweet" :query {:wildcard {:username "*werkz"}})
 ```
 
 Elastisch provides a helper function for constructing wildcard
@@ -590,7 +597,7 @@ queries, `clojurewerkz.elastisch.query/wildcard`:
 
 ;; please note: on large data sets, wildcard prefix like *werkz queries won't perform
 ;; well. Prefix wildcard queries like cloj*, however, will work just fine.
-(esd/search "tweets" "tweet" :query (q/wildcard :username "*werkz"))
+(esd/search conn "tweets" "tweet" :query (q/wildcard :username "*werkz"))
 ```
 
 
@@ -607,7 +614,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
 ;; search for 3 tweets by their ids
-(esd/search "tweets" "tweet" :query {:ids {:type "tweet" :values ["1" "722" "633"]}})
+(esd/search conn "tweets" "tweet" :query {:ids {:type "tweet" :values ["1" "722" "633"]}})
 ```
 
 Elastisch provides a helper function for constructing IDs queries,
@@ -618,7 +625,7 @@ Elastisch provides a helper function for constructing IDs queries,
 (require '[clojurewerkz.elastisch.query :as q])
 
 ;; search for 3 tweets by their ids
-(esd/search "tweets" "tweet" :query (q/ids "tweet" ["1" "722" "633"]))
+(esd/search conn "tweets" "tweet" :query (q/ids "tweet" ["1" "722" "633"]))
 ```
 
 
@@ -635,16 +642,17 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:match_all {:boost 1.2}})
+(esd/search conn "people" "person" :query {:match_all {:boost 1.2}})
 ```
 
-Elastisch provides a helper function for constructing match-all queries, `clojurewerkz.elastisch.query/match-all`:
+Elastisch provides a helper function for constructing match-all
+queries, `clojurewerkz.elastisch.query/match-all`:
 
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/match-all))
+(esd/search conn "people" "person" :query (q/match-all))
 ```
 
 An example of match-all query being used as part of a filtered query
@@ -654,7 +662,7 @@ to find all people in a particular age bracket:
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/filtered :query  (q/match-all)
+(esd/search conn "people" "person" :query (q/filtered :query  (q/match-all)
                                                  :filter (q/range :age :from 25 :to 30)))
 ```
 
@@ -677,7 +685,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "venues" "venue" :query {:dis_max {:queries [{:field {"address.street" "Lafayette"}}
+(esd/search conn "venues" "venue" :query {:dis_max {:queries [{:field {"address.street" "Lafayette"}}
                                                          {:field {"description"    "Lafayette"}}]
                                                :tie_breaker 1.5}})
 ```
@@ -688,7 +696,7 @@ Elastisch provides a helper function for constructing dis-max queries,
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "venues" "venue" :query {:dis_max {:queries [{:field {"address.street" "Lafayette"}}
+(esd/search conn "venues" "venue" :query {:dis_max {:queries [{:field {"address.street" "Lafayette"}}
                                                          {:field {"description"    "Lafayette"}}]
                                                :tie_breaker 1.5}})
 ```
@@ -699,7 +707,7 @@ Elastisch provides a helper function for constructing dis-max queries,
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "venues" "venue" :query (q/dis-max :queries [(q/field "address.street" "Lafayette")
+(esd/search conn "venues" "venue" :query (q/dis-max :queries [(q/field "address.street" "Lafayette")
                                                          (q/field "description"    "Lafayette")]
                                                :tie_breaker 1.5})
 ```
@@ -720,7 +728,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:boosting {:positive {:term {:city "Berlin"}}
+(esd/search conn "people" "person" :query {:boosting {:positive {:term {:city "Berlin"}}
                                                  :negative {:term {:country "USA"}}
                                                  :negative_boost 0.5}})
 ```
@@ -732,7 +740,7 @@ queries, `clojurewerkz.elastisch.query/boosting`:
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/boosting {:positive {:term {:city "Berlin"}}
+(esd/search conn "people" "person" :query (q/boosting {:positive {:term {:city "Berlin"}}
                                                   :negative {:term {:country "USA"}}
                                                   :negative_boost 0.5}))
 ```
@@ -745,7 +753,7 @@ because they just return maps:
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/boosting {:positive (q/term :city "Berlin")
+(esd/search conn "people" "person" :query (q/boosting {:positive (q/term :city "Berlin")
                                                   :negative (q/term :country "USA")
                                                   :negative_boost 0.5}))
 ```
@@ -763,7 +771,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:more_like_this {:fields ["name.first" "name.last"]
+(esd/search conn "people" "person" :query {:more_like_this {:fields ["name.first" "name.last"]
                                                        :like_text "Ryan"
                                                        :min_term_freq 1
                                                        :max_query_terms 12}})
@@ -776,7 +784,7 @@ Elastisch provides a helper function for constructing MLT queries,
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/mlt :fields ["name.first" "name.last"]
+(esd/search conn "people" "person" :query (q/mlt :fields ["name.first" "name.last"]
                                             :like_text "Ryan"
                                             :min_term_freq 1
                                             :max_query_terms 12))
@@ -795,7 +803,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:more_like_this_field {:last_name {:like_text "Ryan"
+(esd/search conn "people" "person" :query {:more_like_this_field {:last_name {:like_text "Ryan"
                                                                          :min_term_freq 1
                                                                          :max_query_terms 12}}})
 ```
@@ -807,7 +815,7 @@ queries, `clojurewerkz.elastisch.query/mlt-field`:
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/mlt-field :last_name {:like_text "Ryan"
+(esd/search conn "people" "person" :query (q/mlt-field :last_name {:like_text "Ryan"
                                                               :min_term_freq 1
                                                               :max_query_terms 12}))
 ```
@@ -826,7 +834,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:fuzzy {:user {:value "ki"
+(esd/search conn "people" "person" :query {:fuzzy {:user {:value "ki"
                                                      :boost 1.2
                                                      :min_similarity 0.5
                                                      :prefix_length 0}}})
@@ -839,7 +847,7 @@ Elastisch provides a helper function for constructing fuzzy queries,
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/fuzzy :user {:value "ki"
+(esd/search conn "people" "person" :query (q/fuzzy :user {:value "ki"
                                                      :boost 1.2
                                                      :min_similarity 0.5
                                                      :prefix_length 0}))
@@ -857,7 +865,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:fuzzy_like_this {:fields ["name.first" "name.last"]
+(esd/search conn "people" "person" :query {:fuzzy_like_this {:fields ["name.first" "name.last"]
                                                         :like_text "Ryan"
                                                         :max_query_terms 12}})
 ```
@@ -869,7 +877,7 @@ Elastisch provides a helper function for constructing FLT queries,
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/fuzzy-like-this :fields ["name.first" "name.last"]
+(esd/search conn "people" "person" :query (q/fuzzy-like-this :fields ["name.first" "name.last"]
                                                         :like_text "Ryan"
                                                         :max_query_terms 12))
 ```
@@ -886,7 +894,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:fuzzy_like_this_field {"name.first" {:like_text "Michael"
+(esd/search conn "people" "person" :query {:fuzzy_like_this_field {"name.first" {:like_text "Michael"
                                                                             :max_query_terms 12}}})
 ```
 
@@ -897,7 +905,7 @@ Field queries, `clojurewerkz.elastisch.query/fuzzy-like-this-field`:
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/fuzzy-like-this-field "name.first" {:like_text "Ryan"
+(esd/search conn "people" "person" :query (q/fuzzy-like-this-field "name.first" {:like_text "Ryan"
                                                                             :max_query_terms 12}))
 ```
 
@@ -915,7 +923,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:nested {:path "obj1"
+(esd/search conn "people" "person" :query {:nested {:path "obj1"
                                                :score_mode "avg"
                                                :query {:bool {:must [{:text  {"obj1.name" "blue"}}
                                                                      {:range {"obj1.count" {:gt 5}}}]}}}})
@@ -928,7 +936,7 @@ Elastisch provides a helper function for constructing nested queries,
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/nested :path "obj1"
+(esd/search conn "people" "person" :query (q/nested :path "obj1"
                                                :score_mode "avg"
                                                :query {:bool {:must [{:text  {"obj1.name" "blue"}}
                                                                      {:range {"obj1.count" {:gt 5}}}]}}))
@@ -942,7 +950,7 @@ they just return maps:
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/nested :path "obj1"
+(esd/search conn "people" "person" :query (q/nested :path "obj1"
                                                :score_mode "avg"
                                                :query {:bool {:must [(q/term "obj1.name" "blue")
                                                                      (q/range "obj1.count" :gt 5)]}}))
@@ -960,7 +968,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:span_first {:match {:span_term {:user "kimchy"}}
+(esd/search conn "people" "person" :query {:span_first {:match {:span_term {:user "kimchy"}}
                                                    :end   3}}})
 ```
 
@@ -971,7 +979,7 @@ queries, `clojurewerkz.elastisch.query/span-first`:
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/span-first :match {:span_term {:user "kimchy"}}
+(esd/search conn "people" "person" :query (q/span-first :match {:span_term {:user "kimchy"}}
                                                    :end   3))
 ```
 
@@ -989,7 +997,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:span_near {:clauses [{:span_term {:field "value1"}}
+(esd/search conn "people" "person" :query {:span_near {:clauses [{:span_term {:field "value1"}}
                                                             {:span_term {:field "value2"}}
                                                             {:span_term {:field "value3"}}
                                                             {:span_term {:field "value4"}}]
@@ -1005,7 +1013,7 @@ queries, `clojurewerkz.elastisch.query/span-near`:
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/span-near :clauses [{:span_term {:field "value1"}}
+(esd/search conn "people" "person" :query (q/span-near :clauses [{:span_term {:field "value1"}}
                                                             {:span_term {:field "value2"}}
                                                             {:span_term {:field "value3"}}
                                                             {:span_term {:field "value4"}}]
@@ -1026,7 +1034,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:span_not {:include {:span_term {:field1 "value1"}}
+(esd/search conn "people" "person" :query {:span_not {:include {:span_term {:field1 "value1"}}
                                                  :exclude {:span_term {:field1 "value2"}}})
 ```
 
@@ -1037,7 +1045,7 @@ queries, `clojurewerkz.elastisch.query/span-not`:
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/span-not :include {:span_term {:field1 "value1"}}
+(esd/search conn "people" "person" :query (q/span-not :include {:span_term {:field1 "value1"}}
                                                  :exclude {:span_term {:field1 "value2"}}))
 ```
 
@@ -1053,7 +1061,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:span_or {:clauses [{:span_term {:field "value1"}}
+(esd/search conn "people" "person" :query {:span_or {:clauses [{:span_term {:field "value1"}}
                                                           {:span_term {:field "value2"}
                                                           {:span_term {:field "value3"}]}})
 ```
@@ -1065,7 +1073,7 @@ Elastisch provides a helper function for constructing Span Or queries,
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/span-or :clauses [{:span_term {:field "value1"}}
+(esd/search conn "people" "person" :query (q/span-or :clauses [{:span_term {:field "value1"}}
                                                           {:span_term {:field "value2"}
                                                            {:span_term {:field "value3"}]))
 ```
@@ -1082,7 +1090,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:span_term {:user "kimchy"}})
+(esd/search conn "people" "person" :query {:span_term {:user "kimchy"}})
 ```
 
 Elastisch provides a helper function for constructing Span Term
@@ -1092,7 +1100,7 @@ queries, `clojurewerkz.elastisch.query/span-term`:
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/span-term :user :kimchy))
+(esd/search conn "people" "person" :query (q/span-term :user :kimchy))
 ```
 
 
@@ -1108,7 +1116,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:indices {:indices ["index1" "index2"]
+(esd/search conn "people" "person" :query {:indices {:indices ["index1" "index2"]
                                                 :query   {:term {:city "Berlin"}}
                                                 :no_match_query {:term {:country "USA"}}}})
 ```
@@ -1120,7 +1128,7 @@ Elastisch provides a helper function for constructing fuzzy queries,
 (require '[clojurewerkz.elastisch.rest.document :as esd]
          '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "people" "person" :query (q/indices :indices ["index1" "index2"]
+(esd/search conn "people" "person" :query (q/indices :indices ["index1" "index2"]
                                                 :query   {:term {:city "Berlin"}}
                                                 :no_match_query {:term {:country "USA"}}))
 ```
@@ -1138,7 +1146,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:top_children {:type "blog_tag"
+(esd/search conn "people" "person" :query {:top_children {:type "blog_tag"
                                                      :query {:term {:tag "cooking"}}
                                                      :score "max"
                                                      :factor 5
@@ -1151,7 +1159,7 @@ queries, `clojurewerkz.elastisch.query/top-children`:
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query (q/top-children :type "blog_tag"
+(esd/search conn "people" "person" :query (q/top-children :type "blog_tag"
                                                      :query {:term {:tag "cooking"}}
                                                      :score "max"
                                                      :factor 5
@@ -1171,7 +1179,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:has_child {:type "blog_tag"
+(esd/search conn "people" "person" :query {:has_child {:type "blog_tag"
                                                   :query {:term {:tag "cooking"}}}})
 ```
 
@@ -1180,7 +1188,7 @@ Elastisch provides a helper function for constructing Has Child queries, `clojur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query (q/has-child :type "blog_tag"
+(esd/search conn "people" "person" :query (q/has-child :type "blog_tag"
                                                   :query {:term {:tag "cooking"}}))
 ```
 
@@ -1200,7 +1208,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:constant_score {:filter {:term {:user "happyjoe"}}
+(esd/search conn "people" "person" :query {:constant_score {:filter {:term {:user "happyjoe"}}
                                                        :boost 1.2}})
 ```
 
@@ -1210,7 +1218,7 @@ queries, `clojurewerkz.elastisch.query/constant-score`:
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query (q/constant-score :filter {:term {:user "happyjoe"}}
+(esd/search conn "people" "person" :query (q/constant-score :filter {:term {:user "happyjoe"}}
                                                        :boost 1.2))
 ```
 
@@ -1227,7 +1235,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:custom_score {:query {:term {:city "Moscow"}}
+(esd/search conn "people" "person" :query {:custom_score {:query {:term {:city "Moscow"}}
                                                      :script "_score * doc['upvotes'].value"}})
 ```
 
@@ -1237,7 +1245,7 @@ queries, `clojurewerkz.elastisch.query/custom-score`:
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query (q/custom-score :query {:term {:city "Moscow"}}
+(esd/search conn "people" "person" :query (q/custom-score :query {:term {:city "Moscow"}}
                                                      :script "_score * doc['upvotes'].value"))
 ```
 
@@ -1257,7 +1265,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query {:custom_filters_score {:query {:match_all {}}
+(esd/search conn "people" "person" :query {:custom_filters_score {:query {:match_all {}}
                                                              :filters [{:filter {:range {:age {:from 26 :to 30}}}
                                                                         :boost 3}
                                                                        {:filter {:range {:age {:from 31 :to 35}}}
@@ -1271,7 +1279,7 @@ Score queries, `clojurewerkz.elastisch.query/custom-filter-score`:
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 
-(esd/search "people" "person" :query (q/custom-filters :query {:match_all {}}
+(esd/search conn "people" "person" :query (q/custom-filters :query {:match_all {}}
                                                        :filters [{:filter {:range {:age {:from 26 :to 30}}}
                                                                   :boost 3}
                                                                  {:filter {:range {:age {:from 31 :to 35}}}
@@ -1299,7 +1307,7 @@ you to first obtain a **scroll id** (cursor id) from a response:
 (require '[clojurewerkz.elastisch.rest.response :refer [hits-from]])
 
 (let [scroll-id  (:_scroll_id response)
-      next-page  (doc/scroll scroll-id :scroll "1m")]
+      next-page  (doc/scroll conn scroll-id :scroll "1m")]
   (hits-from next-page))
 ```
 
@@ -1309,8 +1317,8 @@ lazy sequence of hits in the entire result set:
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as doc])
 
-(doc/scroll-seq
-  (doc/search index-name mapping-type
+(doc/scroll-seq onn
+  (doc/search conn index-name mapping-type
               :query (q/term :title "Emptiness")
               :search_type "query_then_fetch"
               :scroll "1m"
@@ -1343,7 +1351,8 @@ filters do not participate in document ranking, they are significantly
 more efficient. Furthermore, filters can be cached, improving
 efficiency even more.
 
-To specify a filter, pass the `:filter` option to `clojurewerkz.elastisch.rest.document/search`:
+To specify a filter, pass the `:filter` option to
+`clojurewerkz.elastisch.rest.document/search`:
 
 ``` clojure
 (ns clojurewerkz.elastisch.docs.examples
@@ -1355,9 +1364,9 @@ To specify a filter, pass the `:filter` option to `clojurewerkz.elastisch.rest.d
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; performs a search query that returns results filtered on location type
-  (let [res  (doc/search "myapp_development" "location"
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        res  (doc/search conn "myapp_development" "location"
                          :query (q/query-string :biography "New York OR Austin")
                          :filter {:term {:kind "hospital"}})
         hits (esrsp/hits-from res)]
@@ -1380,7 +1389,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "myapp_development" "location"
+(esd/search conn "myapp_development" "location"
             :query (q/query-string :biography "New York OR Austin")
             :filter {:term {:kind "hospital"}})
 ```
@@ -1398,7 +1407,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "myapp_development" "person"
+(esd/search conn "myapp_development" "person"
             :query (q/query-string :biography "New York OR Austin")
             :filter {:range {:age {:from 25 :to 30}}})
 ```
@@ -1416,7 +1425,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "myapp_development" "location"
+(esd/search conn "myapp_development" "location"
             :query (q/query-string :biography "New York OR Austin")
             :filter {:exists {:field :open_roof}})
 ```
@@ -1434,7 +1443,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "myapp_development" "location"
+(esd/search conn "myapp_development" "location"
             :query (q/query-string :biography "New York OR Austin")
             :filter {:missing {:field :under_construction}})
 ```
@@ -1452,7 +1461,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "posts" "post"
+(esd/search conn "posts" "post"
             :query (q/filtered :query  {:term {"name.first" "Shay"}}
                                :filter {:and {:filters [{:range  {:post_date {:from "2010-03-01"
                                                                               :to   "2010-04-01"}}}
@@ -1473,7 +1482,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "posts" "post"
+(esd/search conn "posts" "post"
             :query (q/filtered :query  {:term {"name.first" "Shay"}}
                                :filter {:or {:filters [{:term {"name.second"   "Banon"}}
                                                        {:term {"name.nickname" "kimchy"}}]}}))
@@ -1492,7 +1501,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "posts" "post"
+(esd/search conn "posts" "post"
             :query (q/filtered :query  {:term {"name.first" "Shay"}}
                                :filter {:not {:range  {:post_date {:from "2010-03-01"
                                                                    :to   "2010-04-01"}}}}))
@@ -1512,7 +1521,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "posts" "post"
+(esd/search conn "posts" "post"
             :query (q/filtered :query  {:term {"name.first" "Shay"}}
                                :filter {:bool {:must {:range  {:post_date {:from "2010-03-01"
                                                                            :to   "2010-04-01"}}}
@@ -1532,7 +1541,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "posts" "post"
+(esd/search conn "posts" "post"
             :query (q/filtered :query  {:term  {"name.first" "Shay"}}
                                :filter {:limit {:value 100}}))
 ```
@@ -1550,7 +1559,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "posts" "post"
+(esd/search conn "posts" "post"
             :query (q/filtered :query  {:term  {"name.first" "Shay"}}
                                :filter {:type  {:value "draft"}}))
 ```
@@ -1568,7 +1577,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "posts" "post"
+(esd/search conn "posts" "post"
             :query (q/filtered :query  {:term  {"name.first" "Shay"}}
                                :filter {:prefix {"name.second" "Ba"}}))
 ```
@@ -1587,7 +1596,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "posts" "post"
+(esd/search conn "posts" "post"
             :query (q/filtered :query  {:match_all {}}
                                :filter {:geo_bounding_box {"pin.location" {:top_left     {:lat 40.73
                                                                                           :lon -74.1}
@@ -1609,7 +1618,7 @@ documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/cur
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "posts" "post"
+(esd/search conn "posts" "post"
             :query (q/filtered :query  {:match_all {}}
                                :filter {:geo_distance {:distance      "200km"
                                                        "pin.location" {:lat 40.73
@@ -1626,7 +1635,7 @@ With Elastisch, And filter structure is the same as described in the
 documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-geo-distance-range-filter.html):
 
 ``` clojure
-(esd/search "posts" "post"
+(esd/search conn "posts" "post"
             :query (q/filtered :query  {:match_all {}}
                                :filter {:geo_distance_range {:from          "200km"
                                                              :to            "400km"
@@ -1645,7 +1654,7 @@ With Elastisch, And filter structure is the same as described in the
 documentation](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-geo-distance-range-filter.html):
 
 ``` clojure
-(esd/search "posts" "post"
+(esd/search conn "posts" "post"
             :query (q/filtered :query  {:match_all {}}
                                :filter {:geo_polygon {"person.location" {:points [{:lat 40 :lon -70}
                                                                                   {:lat 30 :lon -80}
@@ -1701,9 +1710,9 @@ application.
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; performs a search query with highlighting over the biography field
-  (let [res  (esd/search "myapp_development" "person"
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        res  (esd/search conn "myapp_development" "person"
                          :query (q/query-string :biography "New York OR Austin")
                          :highlight {:fields {:biography {}}})
         hits (esrsp/hits-from res)]
@@ -1728,9 +1737,9 @@ For example, to override highlighting tags (`em` by default):
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; uses custom highlighting tags
-  (let [res  (esd/search "myapp_development" "person"
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        res  (esd/search conn "myapp_development" "person"
                          :query (q/query-string :biography "New York OR Austin")
                          :highlight {:fields {:biography {}}
                                      :pre_tags  ["<span class='highlighted'>"]
@@ -1793,7 +1802,7 @@ The following term query
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "tweets" "tweet" :query (q/term :text "improved"))
+(esd/search conn "tweets" "tweet" :query (q/term :text "improved"))
 ```
 
 Will return the 1st document in hits and
@@ -1802,7 +1811,7 @@ Will return the 1st document in hits and
 (require '[clojurewerkz.elastisch.rest.document :as esd])
 (require '[clojurewerkz.elastisch.query :as q])
 
-(esd/search "tweets" "tweet" :query (q/term :text ["supported" "improved"]))
+(esd/search conn "tweets" "tweet" :query (q/term :text ["supported" "improved"]))
 ```
 
 will also return the 1st document.
@@ -1841,7 +1850,7 @@ executing them. Elastisch exposes it as the
 (require '[clojurewerkz.elastisch.query :as q])
 (require '[clojurewerkz.elastisch.rest.response :as r])
 
-(let [response (doc/validate-query "myproduct_development" (q/field "latest-edit.author" "Thorwald") :explain true)]
+(let [response (doc/validate-query conn "myproduct_development" (q/field "latest-edit.author" "Thorwald") :explain true)]
   (println response)
   (println (r/valid? response)))
 ```
