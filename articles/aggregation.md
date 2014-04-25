@@ -29,8 +29,9 @@ This guide covers Elastisch 2.0.x releases, including preview releases.
 
 ## Overview
 
-Aggregate functions compute a single result from a set of documents. Naturally in ElasticSearch
-the input documents are retrieved using search queries. Aggregation queries (also known as
+Aggregate functions compute a single result from a set of
+documents. Naturally in ElasticSearch the input documents are
+retrieved using search queries. Aggregation queries (also known as
 "aggregations") can be used to do the following (some examples):
 
  * Calculate maximum/minimum/average value of a field (e.g. product price) from a set of documents
@@ -54,9 +55,10 @@ Aggregations are currently only supported in the REST client.
 ### Using HTTP Client
 
 To perform a query with Elastisch, use the
-`clojurewerkz.elastisch.rest.document/search` function and pass it an aggregation
-map. For convenience, aggregation maps can be created using functions from
-`clojurewerkz.elastisch.aggregation` (similar to `clojurewerkz.elastisch.query`):
+`clojurewerkz.elastisch.rest.document/search` function and pass it an
+aggregation map. For convenience, aggregation maps can be created
+using functions from `clojurewerkz.elastisch.aggregation` (similar to
+`clojurewerkz.elastisch.query`):
 
 ``` clojure
 (ns clojurewerkz.elastisch.docs.examples
@@ -69,9 +71,9 @@ map. For convenience, aggregation maps can be created using functions from
 
 (defn -main
   [& args]
-  (esr/connect! "http://127.0.0.1:9200")
   ;; performs a term query using a convenience function
-  (let [res  (esd/search "myapp_development" "person" {:query (q/term :biography "New York")
+  (let [conn (esr/connect "http://127.0.0.1:9200")
+        res  (esd/search conn "myapp_development" "person" {:query (q/term :biography "New York")
                                                        :aggregations {:avg_age (a/avg "age")})]
     (println (esrsp/aggregation-from res))))
 ```
@@ -92,7 +94,7 @@ is a convenience functions for accessing aggregation response:
 (require '[clojurewerkz.elastisch.aggregation   :as a])
 (require '[clojurewerkz.elastisch.rest.response :as esrsp])
 
-(let [res (esd/search "myapp_development" "person" {:query (q/term :biography "New York")
+(let [res (esd/search conn "myapp_development" "person" {:query (q/term :biography "New York")
                                                     :aggregations {:avg_age (a/avg "age")})]
   (esrsp/aggregation-from res))
 ```
