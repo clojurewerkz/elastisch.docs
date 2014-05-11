@@ -156,8 +156,8 @@ of `[host port]`) and client settings:
 addresses can be retrieved via HTTP API, for example:
 
 ```
-curl http://localhost:9200/_cluster/nodes
-{"ok":true,"cluster_name":"elasticsearch_antares","nodes":...}}
+curl http://localhost:9200/_nodes/cluster
+{"ok":true,"cluster_name":"elasticsearch_antares","nodes":{}}
 ```
 
 
