@@ -118,7 +118,7 @@ instead of responses.
 Before you can index and search with Elastisch, it is necessary to
 tell Elastisch what ElasticSearch node to use. To use the HTTP
 transport, you use the `clojurewerkz.elastisch.rest/connect` function
-that takes an endpoint as its sole argument and returns a connection
+that takes an endpoint and returns a connection
 (client) record:
 
 ``` clojure
@@ -130,9 +130,26 @@ that takes an endpoint as its sole argument and returns a connection
   (let [conn (esr/connect "http://127.0.0.1:9200")]
     ))
 ```
-
 By default Elastisch will use the HTTP endpoint at `http://localhost:9200`.
 
+### Specifying per-connection HTTP options
+
+You map supply [clj-http options](https://github.com/dakrone/clj-http#usage) when connecting over HTTP
+
+Examples:
+
+``` clojure
+;; Basic Authentication
+(esr/connect "http://127.0.0.1:9200" {:basic-auth ["user" "pass"]})
+
+;; HTTP Timeout
+(esr/connect "http://127.0.0.1:9200" {:conn-timeout 5000})
+
+;; Persistent connections
+;; https://github.com/dakrone/clj-http#using-persistent-connections
+(esr/connect "http://127.0.0.1:9200"
+             {:connection-manager (clj-http.conn-mgr/make-reusable-conn-manager {:timeout 10})})
+```
 
 ## Connecting Over Native Protocol
 
