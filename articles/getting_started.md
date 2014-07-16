@@ -19,7 +19,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Elastisch does this guide cover?
 
-This guide covers Elastisch 2.0.x releases, including preview releases.
+This guide covers Elastisch 2.1.x releases, including preview releases.
 
 
 
@@ -52,7 +52,7 @@ Elastisch artifacts are [released to Clojars](https://clojars.org/clojurewerkz/e
 ### With Leiningen
 
 ``` clojure
-[clojurewerkz/elastisch "2.0.0"]
+[clojurewerkz/elastisch "2.1.0-beta3"]
 ```
 
 ### With Maven
@@ -72,7 +72,7 @@ And then the dependency:
 <dependency>
   <groupId>clojurewerkz</groupId>
   <artifactId>elastisch</artifactId>
-  <version>2.0.0</version>
+  <version>2.1.0-beta3</version>
 </dependency>
 ```
 
