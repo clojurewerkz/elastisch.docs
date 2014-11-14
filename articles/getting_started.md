@@ -33,9 +33,9 @@ Elastisch supports HTTP and native transports with almost identical API, so swit
 between the two is usually straightforward.
 
 
-## Supported Clojure versions
+## Supported Clojure Versions
 
-Elastisch requires Clojure 1.4+. The latest stable release is recommended.
+Elastisch requires Clojure 1.5+. The latest stable release is recommended.
 
 ## Supported ElasticSearch Versions
 
@@ -52,7 +52,7 @@ Elastisch artifacts are [released to Clojars](https://clojars.org/clojurewerkz/e
 ### With Leiningen
 
 ``` clojure
-[clojurewerkz/elastisch "2.1.0-beta9"]
+[clojurewerkz/elastisch "2.1.0-rc1"]
 ```
 
 ### With Maven
@@ -72,7 +72,7 @@ And then the dependency:
 <dependency>
   <groupId>clojurewerkz</groupId>
   <artifactId>elastisch</artifactId>
-  <version>2.1.0-beta9</version>
+  <version>2.1.0-rc1</version>
 </dependency>
 ```
 
