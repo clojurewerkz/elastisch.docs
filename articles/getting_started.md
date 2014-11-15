@@ -95,9 +95,6 @@ Some hosted environments do not provide access to ports other than 80 and 8080,
 so the native client may not work with them. The main benefit of the native client
 is it's much higher throughput (up to 6-8 times on some common workloads).
 
-The native client **requires that the version of ElasticSearch is the same as
-the version of ElasticSearch client Elastisch uses internally** (currently `1.1.x`).
-
 
 ### API Structure Conversion
 
