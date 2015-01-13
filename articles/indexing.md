@@ -1175,9 +1175,9 @@ function:
 (defn -main
   [& args]
   (let [conn (esr/connect "http://127.0.0.1:9200")]
-    (esi/create "myapp_development" :settings {"index" {"number_of_replicas" 1}})
+    (esi/create conn "myapp_development" :settings {"index" {"number_of_replicas" 1}})
     ;; delete the index
-    (esi/delete "myapp_development")))
+    (esi/delete conn "myapp_development")))
 
 ```
 
