@@ -309,7 +309,7 @@ To add a document to an index, use the `clojurewerkz.elastisch.rest.document/cre
 (let [conn (esr/connect "http://127.0.0.1:9200")
       doc  {:username "happyjoe" :first-name "Joe" :last-name "Smith" :age 30 :title "Teh Boss" :planet "Earth" :biography "N/A"}]
   ;= {:ok true, :_index people, :_type person, :_id "happyjoe", :_version 1}
-  (println (esr/put conn "myapp2_development" "person" "happyjoe" doc)))
+  (println (esd/put conn "myapp2_development" "person" "happyjoe" doc)))
 ```
 
 There is much more to indexing that we won't cover in this guide. A
