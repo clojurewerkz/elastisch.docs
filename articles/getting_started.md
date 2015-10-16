@@ -131,7 +131,7 @@ By default Elastisch will use the HTTP endpoint at `http://localhost:9200`.
 
 ### Specifying per-connection HTTP options
 
-You map supply [clj-http options](https://github.com/dakrone/clj-http#usage) when connecting over HTTP
+You may supply [clj-http options](https://github.com/dakrone/clj-http#usage) when connecting over HTTP
 
 Examples:
 
