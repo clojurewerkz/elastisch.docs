@@ -163,7 +163,7 @@ To query with the native client, use
   (:require [clojurewerkz.elastisch.native            :as es]
             [clojurewerkz.elastisch.native.document   :as esd]
             [clojurewerkz.elastisch.query             :as q]
-            [clojurewerkz.elastisch.response.response :as esrsp]
+            [clojurewerkz.elastisch.native.response :as esrsp]
             [clojure.pprint :as pp]))
 
 (defn -main
@@ -1288,7 +1288,7 @@ Score queries, `clojurewerkz.elastisch.query/custom-filter-score`:
 ```
 
 
-## Scolling (Pagination) of Search Results
+## Scrolling (Pagination) of Search Results
 
 Search queries can potentially return many documents. Retrieval of
 documents in a result set in chunks, commonly known as pagination, is
@@ -1317,7 +1317,7 @@ lazy sequence of hits in the entire result set:
 ``` clojure
 (require '[clojurewerkz.elastisch.rest.document :as doc])
 
-(doc/scroll-seq onn
+(doc/scroll-seq conn
   (doc/search conn index-name mapping-type
               :query (q/term :title "Emptiness")
               :search_type "query_then_fetch"
