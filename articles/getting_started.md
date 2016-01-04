@@ -19,7 +19,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Elastisch does this guide cover?
 
-This guide covers Elastisch 2.1.x releases, including preview releases.
+This guide covers Elastisch 2.2.x releases, including preview releases.
 
 
 
@@ -35,14 +35,14 @@ between the two is usually straightforward.
 
 ## Supported Clojure Versions
 
-Elastisch requires Clojure 1.5+. The latest stable release is recommended.
+Elastisch requires Clojure 1.6+. The latest stable release is recommended.
 
 
 ## Supported ElasticSearch Versions
 
 Elastisch 2.1 and 2.2 target ElasticSearch 1.x starting with 1.1 and through 1.7.x.
 Elastisch **does not** currently support ElasticSearch 2.x. It will be our focus
-after the (Elastisch) 2.2 release.
+for the (Elastisch) 3.0 release.
 
 
 ## Adding Elastisch Dependency To Your Project
@@ -52,7 +52,7 @@ Elastisch artifacts are [released to Clojars](https://clojars.org/clojurewerkz/e
 ### With Leiningen
 
 ``` clojure
-[clojurewerkz/elastisch "2.2.0-rc1"]
+[clojurewerkz/elastisch "2.2.0"]
 ```
 
 ### With Maven
@@ -72,7 +72,7 @@ And then the dependency:
 <dependency>
   <groupId>clojurewerkz</groupId>
   <artifactId>elastisch</artifactId>
-  <version>2.2.0-rc1</version>
+  <version>2.2.0</version>
 </dependency>
 ```
 

@@ -24,7 +24,7 @@ Github](https://github.com/clojurewerkz/elastisch.docs).
 
 ## What version of Elastisch does this guide cover?
 
-This guide covers Elastisch 2.1.x releases, including preview releases.
+This guide covers Elastisch 2.2.x releases, including preview releases.
 
 
 ## Overview
