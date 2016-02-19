@@ -169,7 +169,7 @@ To query with the native client, use
 (defn -main
   [& args]
   ;; performs a term query using a convenience function
-  (let [conn (es/connect [["127.0.0.1" 9300]] {"cluster.name "your-cluster-name""})
+  (let [conn (es/connect [["127.0.0.1" 9300]] {"cluster.name" "your-cluster-name"})
         res  (esd/search conn "myapp_development" "person" :query (q/term :biography "New York"))
         n    (esrsp/total-hits res)
         hits (esrsp/hits-from res)]
