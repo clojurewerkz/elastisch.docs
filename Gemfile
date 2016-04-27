@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 
 gem "jekyll", "~> 2.5.3"
+gem "liquid", "~> 2.6.2"
 # with Ruby 2.0 on OS X, you may need to install
 # it manually with --with-iconv-dir:
 #

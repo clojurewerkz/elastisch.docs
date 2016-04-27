@@ -42,7 +42,7 @@ GEM
     jekyll-watch (1.2.0)
       listen (~> 2.7)
     kramdown (1.5.0)
-    liquid (2.6.1)
+    liquid (2.6.3)
     listen (2.8.4)
       celluloid (>= 0.15.2)
       rb-fsevent (>= 0.9.3)
@@ -73,3 +73,7 @@ DEPENDENCIES
   albino
   iconv
   jekyll (~> 2.5.3)
+  liquid (~> 2.6.2)
+
+BUNDLED WITH
+   1.11.2
