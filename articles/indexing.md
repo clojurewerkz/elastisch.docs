@@ -1155,7 +1155,7 @@ To update index settings, use the
   (let [conn (esr/connect "http://127.0.0.1:9200")]
     ;; create an index and update its settings
     (esi/create "myapp_development")
-    (esi/create "myapp_development" {:index {:refresh_interval "30s"}})))
+    (esi/update-settings "myapp_development" {:index {:refresh_interval "30s"}})))
 ```
 
 See also ElasticSearch [Update Index Setting operation
