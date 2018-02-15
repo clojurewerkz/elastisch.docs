@@ -55,6 +55,15 @@ This guide covers:
  * How to perform queries with facets
  * Other topics related to facets
 
+### [Suggestions](/articles/suggestions.html) (Autocomplete)
+
+This guide covers:
+
+* A simple term completion
+* A term completion with context
+* A fuzzy completion
+* A fuzzy completion with context
+
 
 ### [Percolation](/articles/percolation.html)
 
