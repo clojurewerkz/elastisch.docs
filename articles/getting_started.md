@@ -19,7 +19,7 @@ This work is licensed under a <a rel="license" href="http://creativecommons.org/
 
 ## What version of Elastisch does this guide cover?
 
-This guide covers Elastisch 2.2.x releases, including preview releases.
+This guide covers Elastisch 3.x releases, including preview releases.
 
 
 
@@ -35,7 +35,7 @@ between the two is usually straightforward.
 
 ## Supported Clojure Versions
 
-Elastisch requires Clojure 1.6+. The latest stable release is recommended.
+Elastisch requires Clojure 1.8+. The latest stable release is recommended.
 
 
 ## Supported ElasticSearch Versions
@@ -52,7 +52,7 @@ Elastisch artifacts are [released to Clojars](https://clojars.org/clojurewerkz/e
 ### With Leiningen
 
 ``` clojure
-[clojurewerkz/elastisch "2.2.1"]
+[clojurewerkz/elastisch "3.0.0"]
 ```
 
 ### With Maven
@@ -62,7 +62,7 @@ Add Clojars repository definition to your `pom.xml`:
 ``` xml
 <repository>
   <id>clojars.org</id>
-  <url>http://clojars.org/repo</url>
+  <url>https://clojars.org/repo</url>
 </repository>
 ```
 
@@ -72,13 +72,13 @@ And then the dependency:
 <dependency>
   <groupId>clojurewerkz</groupId>
   <artifactId>elastisch</artifactId>
-  <version>2.2.1</version>
+  <version>3.0.0</version>
 </dependency>
 ```
 
 It is recommended to stay up-to-date with new versions. New releases
 and important changes are announced
-[@ClojureWerkz](http://twitter.com/ClojureWerkz).
+[@ClojureWerkz](https://twitter.com/ClojureWerkz).
 
 
 ## On HTTP or Native ElasticSeach Clients
@@ -209,7 +209,8 @@ To create an index, use the `clojurewerkz.elastisch.rest.index/create` function:
     ;; creates an index with default settings and no custom mapping types
     (esi/create conn "myapp1_development")
     ;; creates an index with given settings and no custom mapping types.
-    ;; Settings map structure is the same as in the ElasticSearch API reference at http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-create-index.html
+    ;; Settings map structure is the same as in the ElasticSearch API reference at
+    ;; https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-create-index.html
     (esi/create conn "myapp2_development" :settings {"number_of_shards" 1})))
 ```
 
@@ -235,7 +236,8 @@ To create an index using the native client, use the same functions but in the
     ;; creates an index with default settings and no custom mapping types
     (esi/create conn "myapp1_development")
     ;; creates an index with given settings and no custom mapping types.
-    ;; Settings map structure is the same as in the ElasticSearch API reference at http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-create-index.html
+    ;; Settings map structure is the same as in the ElasticSearch API reference at
+    ;; https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-create-index.html
     (esi/create conn "myapp2_development" :settings {"number_of_shards" 1})))
 
 ```
