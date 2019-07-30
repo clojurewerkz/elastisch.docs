@@ -110,7 +110,7 @@ name, mapping name and query (as a Clojure map):
 (defn -main
   [& args]
   ;; performs a term query using a convenience function
-  (let [conn (esr/connect "http://127.0.0.1:9200")
+  (let [conn (esr/connect "http://127.0.0.1:9200" {:content-type :json})
         res  (esd/search conn "myapp_development" "person" :query (q/term :biography "New York"))
         n    (esrsp/total-hits res)
         hits (esrsp/hits-from res)]
@@ -137,15 +137,14 @@ The example from above can also be written like so:
 (ns clojurewerkz.elastisch.docs.examples
   (:require [clojurewerkz.elastisch.rest          :as esr]
             [clojurewerkz.elastisch.rest.document :as esd]
-            [clojurewerkz.elastisch.query         :as q]
             [clojurewerkz.elastisch.rest.response :as esrsp]
             [clojure.pprint :as pp]))
 
 (defn -main
   [& args]
   ;; performs a term query using a convenience function
-  (let [conn (esr/connect "http://127.0.0.1:9200")
-        res  (doc/search conn "myapp_development" "person" :query {:term {:city "New York"}})
+  (let [conn (esr/connect "http://127.0.0.1:9200" {:content-type :json})
+        res  (esd/search conn "myapp_development" "person" {:query {:term {:city "New York"}}})
         n    (esrsp/total-hits res)
         hits (esrsp/hits-from res)]
     (println (format "Total hits: %d" n))
